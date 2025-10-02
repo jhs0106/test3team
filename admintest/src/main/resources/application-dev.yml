@@ -34,7 +34,7 @@ mybatis:
 logging:
   level:
     root: info
-
+#
 # Application Config
 # @Value("${}")
 app:

@@ -8,4 +8,4 @@ public class SignalMessage {
     private String targetSessionId;
     private Object data;
     private String roomId;
-}
+}//

@@ -11,4 +11,4 @@ public class Msg {
     private String sendid;
     private String receiveid;
     private String content1;
-}
+}//

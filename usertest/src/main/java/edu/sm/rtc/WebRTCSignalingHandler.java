@@ -20,7 +20,7 @@ public class WebRTCSignalingHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionEstablished(WebSocketSession session) {
         log.info("New WebSocket connection established: {}", session.getId());
-    }
+    }//
 
     @Override
     public void handleTextMessage(WebSocketSession session, TextMessage message) {

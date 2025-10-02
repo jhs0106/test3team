@@ -12,7 +12,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Value("${app.dir.imgsdir}")
     String imgdir;
-
+    //
     @Value("${app.dir.logsdir}")
     String logdir;
 
