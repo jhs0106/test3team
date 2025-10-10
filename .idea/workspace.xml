@@ -4,25 +4,19 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c5573ccb-e778-4258-b980-fd13f6548239" name="Changes" comment="ds">
-      <change afterPath="$PROJECT_DIR$/usertest/src/main/java/edu/sm/controller/ChatController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/usertest/src/main/java/edu/sm/controller/MsgController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/usertest/src/main/webapp/views/login.jsp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/usertest/src/main/webapp/views/websocket/center.jsp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/usertest/src/main/webapp/views/websocket/left.jsp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules/admintest.main.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules/usertest.main.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules/usertest.main.iml" afterDir="false" />
+    <list default="true" id="c5573ccb-e778-4258-b980-fd13f6548239" name="Changes" comment="WebSocket 기본 구현 및 Login 하드코딩">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/admintest/src/main/java/edu/sm/sse/SseEmitters.java" beforeDir="false" afterPath="$PROJECT_DIR$/admintest/src/main/java/edu/sm/sse/SseEmitters.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/usertest/build/reports/problems/problems-report.html" beforeDir="false" afterPath="$PROJECT_DIR$/usertest/build/reports/problems/problems-report.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/usertest/build/resources/main/application-dev.yml" beforeDir="false" afterPath="$PROJECT_DIR$/usertest/build/resources/main/application-dev.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/admintest/src/main/resources/application-dev.yml" beforeDir="false" afterPath="$PROJECT_DIR$/admintest/src/main/resources/application-dev.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/usertest/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/usertest/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/usertest/build/classes/java/main/edu/sm/config/WebMvcConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/usertest/build/classes/java/main/edu/sm/config/WebMvcConfig.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/usertest/build/tmp/bootWar/MANIFEST.MF" beforeDir="false" afterPath="$PROJECT_DIR$/usertest/build/tmp/bootWar/MANIFEST.MF" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/usertest/build/tmp/compileJava/previous-compilation-data.bin" beforeDir="false" afterPath="$PROJECT_DIR$/usertest/build/tmp/compileJava/previous-compilation-data.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/usertest/src/main/java/edu/sm/config/StomWebSocketConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/usertest/src/main/java/edu/sm/config/StomWebSocketConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/usertest/src/main/java/edu/sm/config/WebMvcConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/usertest/src/main/java/edu/sm/config/WebMvcConfig.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/usertest/src/main/java/edu/sm/controller/LoginController.java" beforeDir="false" afterPath="$PROJECT_DIR$/usertest/src/main/java/edu/sm/controller/LoginController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/usertest/src/main/java/edu/sm/sse/SseEmitters.java" beforeDir="false" afterPath="$PROJECT_DIR$/usertest/src/main/java/edu/sm/sse/SseEmitters.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/usertest/src/main/resources/application-dev.yml" beforeDir="false" afterPath="$PROJECT_DIR$/usertest/src/main/resources/application-dev.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/usertest/src/main/webapp/views/index.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/usertest/src/main/webapp/views/index.jsp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/usertest/src/main/webapp/views/login.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/usertest/src/main/webapp/views/login.jsp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/usertest/src/main/webapp/views/websocket/center.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/usertest/src/main/webapp/views/websocket/center.jsp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -51,21 +45,6 @@
             <expand>
               <path>
                 <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
-                <item name="admintest" type="f1a62948:ProjectNode" />
-              </path>
-              <path>
-                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
-                <item name="admintest" type="f1a62948:ProjectNode" />
-                <item name="Tasks" type="e4a08cd1:TasksNode" />
-              </path>
-              <path>
-                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
-                <item name="admintest" type="f1a62948:ProjectNode" />
-                <item name="Tasks" type="e4a08cd1:TasksNode" />
-                <item name="application" type="c8890929:TasksNode$1" />
-              </path>
-              <path>
-                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
                 <item name="usertest" type="f1a62948:ProjectNode" />
               </path>
               <path>
@@ -78,6 +57,12 @@
                 <item name="usertest" type="f1a62948:ProjectNode" />
                 <item name="Tasks" type="e4a08cd1:TasksNode" />
                 <item name="application" type="c8890929:TasksNode$1" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="usertest" type="f1a62948:ProjectNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
+                <item name="build" type="c8890929:TasksNode$1" />
               </path>
             </expand>
             <select />
@@ -125,8 +110,11 @@
   "keyToString": {
     "Gradle.Build admintest.executor": "Run",
     "Gradle.Build usertest.executor": "Run",
+    "Gradle.Download Sources.executor": "Run",
     "Gradle.admintest [bootRun].executor": "Run",
     "Gradle.usertest [bootRun].executor": "Run",
+    "Gradle.usertest [build].executor": "Run",
+    "Gradle.usertest [clean].executor": "Run",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager": "true",
@@ -161,7 +149,7 @@
       <recent name="edu.sm.controller" />
     </key>
   </component>
-  <component name="RunManager" selected="Gradle.usertest [bootRun]">
+  <component name="RunManager" selected="Gradle.admintest [bootRun]">
     <configuration name="admintest [bootRun]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
@@ -206,6 +194,50 @@
       <RunAsTest>false</RunAsTest>
       <method v="2" />
     </configuration>
+    <configuration name="usertest [build]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$/usertest" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="build" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>false</RunAsTest>
+      <method v="2" />
+    </configuration>
+    <configuration name="usertest [clean]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$/usertest" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="clean" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>false</RunAsTest>
+      <method v="2" />
+    </configuration>
     <configuration name="AdmintestApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
       <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
       <module name="admintest.main" />
@@ -224,10 +256,10 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Gradle.usertest [bootRun]" />
         <item itemvalue="Gradle.admintest [bootRun]" />
         <item itemvalue="Gradle.usertest [bootRun]" />
-        <item itemvalue="Gradle.admintest [bootRun]" />
+        <item itemvalue="Gradle.usertest [build]" />
+        <item itemvalue="Gradle.usertest [clean]" />
         <item itemvalue="Gradle.usertest [bootRun]" />
       </list>
     </recent_temporary>
@@ -291,7 +323,15 @@
       <option name="project" value="LOCAL" />
       <updated>1760061509776</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="WebSocket 기본 구현 및 Login 하드코딩">
+      <option name="closed" value="true" />
+      <created>1760080649158</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1760080649158</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -310,6 +350,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="ds" />
-    <option name="LAST_COMMIT_MESSAGE" value="ds" />
+    <MESSAGE value="WebSocket 기본 구현 및 Login 하드코딩" />
+    <option name="LAST_COMMIT_MESSAGE" value="WebSocket 기본 구현 및 Login 하드코딩" />
   </component>
 </project>
