@@ -64,7 +64,6 @@
     <button id="disconnectBtn" class="btn btn-danger">종료</button>
     <hr>
 
-    <h4>관리자에게 메시지 보내기</h4>
     <div class="input-group mb-3">
         <input type="text" id="messageInput" class="form-control" placeholder="메시지 입력">
         <button id="sendToAdminBtn" class="btn btn-success">Admin에게 전송</button>
