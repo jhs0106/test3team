@@ -65,6 +65,9 @@ dependencies {
     // JSON
     implementation 'com.googlecode.json-simple:json-simple:1.1.1'
 
+    //JSONObject
+    implementation 'org.json:json:20231013'
+
     // pageing
     implementation 'com.github.pagehelper:pagehelper-spring-boot-starter:1.4.6'
 
