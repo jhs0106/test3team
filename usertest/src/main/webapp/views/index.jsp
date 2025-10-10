@@ -43,10 +43,10 @@
 </div>
 <ul class="nav justify-content-end">
     <c:choose>
-        <c:when test="${sessionScope.cust.custId == null}">
-            <li class="nav-item">
-                <a class="nav-link" href="<c:url value="/register"/> ">Register</a>
-            </li>
+        <c:when test="${sessionScope.admin == null}">
+<%--            <li class="nav-item">--%>
+<%--                <a class="nav-link" href="<c:url value="/register"/> ">Register</a>--%>
+<%--            </li>--%>
             <li class="nav-item">
                 <a class="nav-link" href="<c:url value="/login"/>">Login</a>
             </li>
@@ -59,7 +59,7 @@
         </c:when>
         <c:otherwise>
             <li class="nav-item">
-                <a class="nav-link" href="<c:url value="/custinfo?id=${sessionScope.cust.custId}"/> ">${sessionScope.cust.custId}</a>
+                <a class="nav-link" href="#">${sessionScope.admin}님</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="<c:url value="/logout"/> ">Logout</a>
@@ -86,11 +86,11 @@
             <li class="nav-item">
                 <a class="nav-link" href="<c:url value="/chart"/>">Chart</a>
             </li>
-            <c:if test="${sessionScope.cust.custId != null}">
-                <li class="nav-item">
-                    <a class="nav-link" href="<c:url value="/chat"/>">Chat</a>
-                </li>
-            </c:if>
+<%--            <c:if test="${sessionScope.cust.custId != null}">--%>
+            <li class="nav-item">
+                <a class="nav-link" href="<c:url value="/websocket"/>">Chat</a>
+            </li>
+<%--            </c:if>--%>
             <li class="nav-item">
                 <a class="nav-link" href="<c:url value='/stock'/>">Stock</a>
             </li>
