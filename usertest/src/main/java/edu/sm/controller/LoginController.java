@@ -19,14 +19,13 @@ public class LoginController {
     }
 
     @RequestMapping("/loginimpl")
-    public String loginimpl(Model model, @RequestParam("id") String adminId,
-                            @RequestParam("pwd") String adminPwd,
+    public String loginimpl(Model model, @RequestParam("id") String custId,
+                            @RequestParam("pwd") String custPwd,
                             HttpSession httpSession) {
 
-        if ("admin".equals(adminId) && "111111".equals(adminPwd)) {
+        if ("cust".equals(custId) && "111111".equals(custPwd)) {
             // Admin 객체 대신, 로그인 ID 문자열을 세션에 저장합니다.
-            // 다른 코드에 미치는 영향을 줄이기 위해 키 이름은 "admin"으로 유지합니다.
-            httpSession.setAttribute("admin", adminId);
+            httpSession.setAttribute("cust", custId);
             return "redirect:/";
         }
 

@@ -13,7 +13,7 @@
     <form action="<c:url value='/loginimpl'/>" method="post">
         <div class="form-group">
             <label for="id">ID:</label>
-            <input type="text" class="form-control" id="id" name="id" value="admin">
+            <input type="text" class="form-control" id="id" name="id" value="cust">
         </div>
         <div class="form-group">
             <label for="pwd">Password:</label>
