@@ -34,4 +34,11 @@ public class MsgController {
         String target = msg.getReceiveid();
         template.convertAndSend("/send/to/" + target, msg);
     }
+
+    @MessageMapping("/adminreceiveto") // admin → user 통신용
+    public void adminreceiveto(Msg msg, SimpMessageHeaderAccessor headerAccessor) {
+        log.info("adminreceiveto: {}", msg);
+        String target = msg.getReceiveid();
+        template.convertAndSend("/adminsend/to/" + target, msg);
+    }
 }
