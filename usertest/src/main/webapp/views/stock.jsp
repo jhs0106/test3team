@@ -1,9 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-
-<!-- ✅ Highcharts 라이브러리 -->
-<script src="https://code.highcharts.com/highcharts.js"></script>
-<script src="https://code.highcharts.com/modules/exporting.js"></script>
+<%@ page isELIgnored="true" %>
 
 <style>
   #result {
@@ -49,10 +46,14 @@
     },
 
     start: function(symbol) {
-      if (this.timer) clearInterval(this.timer); // 이전 타이머 중지
-      this.createChart();                        // 차트 생성
-      this.updateData();                         // 첫 데이터 즉시 가져오기
-      this.timer = setInterval(() => this.updateData(), 5000); // 5초마다 갱신
+      // ✅ 이전 차트와 타이머 제거
+      if (this.timer) clearInterval(this.timer);
+      if (this.chart) this.chart.destroy();
+
+      this.createChart();
+      this.updateData();
+      // ✅ 5초마다 자동 갱신
+      this.timer = setInterval(() => this.updateData(), 5000);
     },
 
     createChart: function() {
@@ -84,9 +85,12 @@
     },
 
     updateData: function() {
-      $.getJSON(`/api/stocks/${this.symbol}`, (data) => {
-        if (data.error) {
-          $('#result').html("<div style='color:red;'>" + data.error + "</div>");
+      // ✅ HTTPS로 고정된 요청 (Spring Boot HTTPS 환경)
+      const apiUrl = `https://${window.location.host}/api/stocks/${this.symbol}`;
+
+      $.getJSON(apiUrl, (data) => {
+        if (!data || data.error) {
+          $('#result').html("<div style='color:red;'>" + (data?.error || "데이터를 불러오지 못했습니다.") + "</div>");
           return;
         }
 
@@ -101,16 +105,22 @@
         const color = (change >= 0) ? 'red' : 'blue';
         const sign = (change >= 0) ? '▲' : '▼';
 
+        // ✅ 안전한 HTML 갱신
         $('#name').text(name);
         $('#price-info').html(`<span style="color:${color}; font-weight:bold;">${price.toLocaleString()} KRW ${sign}${change.toFixed(2)}%</span>`);
         $('#extra-info').html(`
-        거래량: ${volume.toLocaleString()}<br>
-        시가총액: ${marketCap.toLocaleString()}<br>
-        52주 범위: ${range}
-      `);
+          거래량: ${volume.toLocaleString()}<br>
+          시가총액: ${marketCap.toLocaleString()}<br>
+          52주 범위: ${range}
+        `);
 
-        // ✅ 차트에 새 데이터 추가
-        this.chart.series[0].addPoint([now, price], true, this.chart.series[0].data.length > 20);
+        // ✅ 차트 갱신
+        if (this.chart) {
+          this.chart.series[0].addPoint([now, price], true, this.chart.series[0].data.length > 30);
+        }
+      }).fail((err) => {
+        console.error("API 요청 실패:", err);
+        $('#result').html("<div style='color:red;'>API 요청 중 오류 발생</div>");
       });
     }
   };
