@@ -5,9 +5,8 @@
     let center = {
         adminId:null,
         init:function(){
-            // [수정] sessionScope.admin이 비어있지 않은지만 체크합니다.
+
             <c:if test="${not empty sessionScope.admin}">
-            // [수정] .adminId 없이 sessionScope.admin 값을 바로 사용합니다.
             this.adminId = '${sessionScope.admin}';
             this.connect();
             </c:if>

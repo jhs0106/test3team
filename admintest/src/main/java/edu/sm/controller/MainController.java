@@ -11,11 +11,41 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Slf4j
 public class MainController {
 
+    @Value("${app.url.sse}")
+    String sseUrl;
+    @Value("${app.url.mainsse}")
+    String mainsseUrl;
+
+    @Value("${app.url.wsurl}")
+    String wsurl;
+
+    @Value("${app.url.websocketurl}")
+    String websocketurl;
+
     @RequestMapping("/")
     public String main(Model model) {
-        model.addAttribute("center", "center");
-        model.addAttribute("left", "left");
+        model.addAttribute("sseUrl",sseUrl);
         return "index";
     }
 
+    @RequestMapping("/chart")
+    public String chart(Model model) {
+        model.addAttribute("mainsseUrl",mainsseUrl);
+        model.addAttribute("center", "chart");
+        return "index";
+    }
+
+    @RequestMapping("/chat")
+    public String chat(Model model) {
+        model.addAttribute("wsurl",wsurl);
+        model.addAttribute("center", "chat");
+        return "index";
+    }
+
+    @RequestMapping("/websocket")
+    public String websocket(Model model) {
+        model.addAttribute("websocketurl",websocketurl);
+        model.addAttribute("center", "websocket");
+        return "index";
+    }
 }
