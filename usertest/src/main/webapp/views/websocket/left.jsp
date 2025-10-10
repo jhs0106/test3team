@@ -4,7 +4,8 @@
   <p>Chat Left Menu</p>
   <ul class="nav nav-pills flex-column">
     <li class="nav-item">
-      <a class="nav-link" href="<c:url value ="/audio"/>">Audio</a>
+      <a class="nav-link" href="<c:url value ="/websocket/audio"/>">Audio</a>
+      <a class="nav-link" href="<c:url value ="/websocket/video"/>">Video</a>
     </li>
   </ul>
   <hr class="d-sm-none">
