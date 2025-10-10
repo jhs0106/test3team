@@ -90,11 +90,6 @@
             <li class="nav-item">
                 <a class="nav-link" href="<c:url value="/websocket"/>">Chat</a>
             </li>
-<%--            </c:if>--%>
-            <li class="nav-item">
-                <a class="nav-link" href="<c:url value='/stock'/>">Stock</a>
-            </li>
-
         </ul>
     </div>
 </nav>
