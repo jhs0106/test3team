@@ -52,63 +52,23 @@
     <script src="https://code.highcharts.com/themes/adaptive.js"></script>
 
     <script>
-        let index = {
-            type:'#',
-            init:function(){
-                <c:if test="${loginFailed == true}">
-                $('#loginModal').modal('show');
-                </c:if>
-                $('#login_form > button').click(()=>{
-                    // let id = $('#id').val();
-                    // let pwd = $('#pwd').val();
-                    $('#login_form').attr({
-                        'action':'<c:url value="/loginimpl"/>',
-                        'method':'POST'
-                    });
-                    $('#login_form').submit();
-                });
-                $('#cust_search_form > button').click(()=>{
-                    $('#cust_search_form').attr('method','get');
-                    $('#cust_search_form').attr('action','<c:url value="/custsearch"/>');
-                    $('#cust_search_form').submit();
-                });
-                $('#product_search_form > button').click(()=>{
-                    $('#product_search_form').attr('method','get');
-                    $('#product_search_form').attr('action','<c:url value="/productsearch"/>');
-                    $('#product_search_form').submit();
-                });
+        $(function () {
+            // 로그인 실패 시 모달 창을 띄우는 로직
+            // Controller에서 model에 "loginfail" 이름으로 값을 넘겨주므로, "loginfail"로 체크합니다.
+            <c:if test="${loginfail == 'fail'}">
+            $('#loginModal').modal('show');
+            </c:if>
 
-                $('#sel1').change(()=>{
-                    this.type = $('#sel1').val();
-                    this.display();
+            // 로그인 버튼 클릭 이벤트
+            $('#login_form > button').click(() => {
+                $('#login_form').attr({
+                    'action': '<c:url value="/loginimpl"/>',
+                    'method': 'POST'
                 });
-                $('#cust_search_form').hide();
-                $('#product_search_form').hide();
-                <c:if test="${searchtype == 'cust'}">
-                $('#cust_search_form').show();
-                </c:if>
-                <c:if test="${searchtype == 'product'}">
-                $('#product_search_form').show();
-                </c:if>
+                $('#login_form').submit();
+            });
 
-            },
-            display:function(){
-
-                if(this.type == 'c'){
-                    $('#product_search_form').hide();
-                    $('#cust_search_form').show();
-
-                }else if(this.type == 'p'){
-                    $('#cust_search_form').hide();
-                    $('#product_search_form').show();
-                }else{
-                    $('#cust_search_form').hide();
-                    $('#product_search_form').hide();
-                }
-            }
-        };
-        $(function(){
-            index.init();
+            // 검색 관련 JavaScript는 모두 제거되었습니다.
         });
     </script>
 
@@ -116,33 +76,24 @@
 
 <body id="page-top">
 
-<!-- Page Wrapper -->
 <div id="wrapper">
 
-    <!-- Sidebar -->
     <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
-        <!-- Sidebar - Brand -->
         <a class="sidebar-brand d-flex align-items-center justify-content-center" href="<c:url value="/"/>">
-            <%--<div class="sidebar-brand-icon rotate-n-15">
-                <i class="fas fa-laugh-wink"></i>
-            </div>--%>
             <div class="sidebar-brand-text mx-3" href="<c:url value="/"/>">
                 SMU Admin
             </div>
         </a>
 
-        <!-- Divider -->
         <hr class="sidebar-divider my-0">
 
         <c:if test="${sessionScope.admin != null}">
-            <!-- Nav Item - Dashboard -->
             <li class="nav-item active">
                 <a class="nav-link" href="<c:url value="/"/>">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Dashboard</span></a>
             </li>
-            <!-- Menu -->
             <li class="nav-item active">
                 <a class="nav-link" href="<c:url value="/websocket" />">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
@@ -159,7 +110,8 @@
                     <span>chat</span></a>
             </li>
 
-            <c:if test="${sessionScope.admin.adminRole == 'super'}">
+            <%-- [수정] 'super' 역할 체크: adminId가 'admin'인지 직접 비교 --%>
+            <c:if test="${sessionScope.admin == 'admin'}">
                 <li class="nav-item active">
                     <a class="nav-link" href="<c:url value="#" />">
                         <i class="fas fa-fw fa-tachometer-alt"></i>
@@ -167,14 +119,11 @@
                 </li>
             </c:if>
 
-            <!-- Divider -->
             <hr class="sidebar-divider">
 
-            <!-- Heading -->
             <div class="sidebar-heading">
                 Admin Menu
             </div>
-            <!-- Nav Item - Pages Collapse Menu -->
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
                    aria-expanded="true" aria-controls="collapseTwo">
@@ -192,7 +141,6 @@
                 </div>
             </li>
 
-            <!-- Nav Item - Utilities Collapse Menu -->
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities"
                    aria-expanded="true" aria-controls="collapseUtilities">
@@ -210,237 +158,33 @@
             </li>
         </c:if>
 
-
-        <!-- Divider -->
         <hr class="sidebar-divider">
 
-
-
-        <!-- Sidebar Toggler (Sidebar) -->
         <div class="text-center d-none d-md-inline">
             <button class="rounded-circle border-0" id="sidebarToggle"></button>
         </div>
 
-
-
     </ul>
-    <!-- End of Sidebar -->
-
-    <!-- Content Wrapper -->
     <div id="content-wrapper" class="d-flex flex-column">
 
-        <!-- Main Content -->
         <div id="content">
 
-            <!-- Topbar -->
             <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
 
-                <!-- Sidebar Toggle (Topbar) -->
                 <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
                     <i class="fa fa-bars"></i>
                 </button>
 
-                <!-- Topbar Search -->
-                <form class="form-inline d-none d-sm-block">
-                    <div class="form-group">
-                        <label for="sel1" class="form-control mb-2 mr-sm-2">검색대상 선택</label>
-                        <select class="form-control mb-2 mr-sm-2" id="sel1">
-                            <option value="#">Select</option>
-                            <option value="c" <c:if test="${searchtype == 'cust'}">selected</c:if>>Cust</option>
-                            <option value="p" <c:if test="${searchtype == 'product'}">selected</c:if>>Product</option>
-                        </select>
-                    </div>
-                </form>
-
-                <form class="form-inline" id="cust_search_form">
-                    <div class="form-group" id="sa1">
-                        <input type="text" name="custName" class="form-control mb-2 mr-sm-2" placeholder="Input Name .." id="txt"
-                        <c:if test="${custName != null}">
-                               value="${custName}"
-                        </c:if>
-                        >
-                        <input type="date" name="startDate" class="form-control mb-2 mr-sm-2" id="sdate"
-                        <c:if test="${startDate != null}">
-                               value="${startDate}"
-                        </c:if>
-                        >
-                        <input type="date" name="endDate" class="form-control mb-2 mr-sm-2" id="sdate"
-                        <c:if test="${endDate != null}">
-                               value="${endDate}"
-                        </c:if>
-                        >
-                    </div>
-                    <button type="button" class="btn btn-primary mb-2">Search</button>
-                </form>
-
-                <form class="form-inline" id="product_search_form">
-                    <div class="form-group" id="sa2">
-                        <input type="text" name="productName" class="form-control mb-2 mr-sm-2" placeholder="Input Name .." id="txt"
-                        <c:if test="${productName != null}">
-                               value="${productName}"
-                        </c:if>
-                        >
-                        <input type="number" name="startPrice" class="form-control mb-2 mr-sm-2" id="sprice" min="0" step="5000" placeholder="Input Start Price .."
-                        <c:if test="${startPrice != null}">
-                               value="${startPrice}"
-                        </c:if>
-                        >
-                        <input type="number" name="endPrice" class="form-control mb-2 mr-sm-2" id="sprice" min="0" step="5000" placeholder="Input End Price .."
-                        <c:if test="${endPrice != null}">
-                               value="${endPrice}"
-                        </c:if>
-                        >
-                        <select class="form-control mb-2 mr-sm-2" id="sel1" name="cateId">
-                            <option value="0" <c:if test="${searchproduct.cateId == 0}">selected</c:if>>전체</option>
-                            <option value="10" <c:if test="${searchproduct.cateId == 10}">selected</c:if>>하의</option>
-                            <option value="20" <c:if test="${searchproduct.cateId == 20}">selected</c:if>>상의</option>
-                            <option value="30" <c:if test="${searchproduct.cateId == 30}">selected</c:if>>신발</option>
-                            <option value="40" <c:if test="${searchproduct.cateId == 40}">selected</c:if>>가방</option>
-                        </select>
-                    </div>
-                    <button type="button" class="btn btn-primary mb-2">Search</button>
-                </form>
-
-
-                <!-- Topbar Navbar -->
                 <ul class="navbar-nav ml-auto">
 
-                    <!-- Nav Item - Search Dropdown (Visible Only XS) -->
                     <li class="nav-item dropdown no-arrow d-sm-none">
-                        <a class="nav-link dropdown-toggle" href="#" id="searchDropdown" role="button"
-                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="fas fa-search fa-fw"></i>
-                        </a>
-                        <!-- Dropdown - Messages -->
-                        <div class="dropdown-menu dropdown-menu-right p-3 shadow animated--grow-in"
-                             aria-labelledby="searchDropdown">
-                            <form class="form-inline mr-auto w-100 navbar-search">
-                                <div class="input-group">
-                                    <input type="text" class="form-control bg-light border-0 small"
-                                           placeholder="Search for..." aria-label="Search"
-                                           aria-describedby="basic-addon2">
-                                    <div class="input-group-append">
-                                        <button class="btn btn-primary" type="button">
-                                            <i class="fas fa-search fa-sm"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
+                        <%-- ... --%>
                     </li>
-
-                    <!-- Nav Item - Alerts -->
                     <li class="nav-item dropdown no-arrow mx-1">
-                        <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button"
-                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="fas fa-bell fa-fw"></i>
-                            <!-- Counter - Alerts -->
-                            <span class="badge badge-danger badge-counter">3+</span>
-                        </a>
-                        <!-- Dropdown - Alerts -->
-                        <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
-                             aria-labelledby="alertsDropdown">
-                            <h6 class="dropdown-header">
-                                Alerts Center
-                            </h6>
-                            <a class="dropdown-item d-flex align-items-center" href="#">
-                                <div class="mr-3">
-                                    <div class="icon-circle bg-primary">
-                                        <i class="fas fa-file-alt text-white"></i>
-                                    </div>
-                                </div>
-                                <div>
-                                    <div class="small text-gray-500">December 12, 2019</div>
-                                    <span class="font-weight-bold">A new monthly report is ready to download!</span>
-                                </div>
-                            </a>
-                            <a class="dropdown-item d-flex align-items-center" href="#">
-                                <div class="mr-3">
-                                    <div class="icon-circle bg-success">
-                                        <i class="fas fa-donate text-white"></i>
-                                    </div>
-                                </div>
-                                <div>
-                                    <div class="small text-gray-500">December 7, 2019</div>
-                                    $290.29 has been deposited into your account!
-                                </div>
-                            </a>
-                            <a class="dropdown-item d-flex align-items-center" href="#">
-                                <div class="mr-3">
-                                    <div class="icon-circle bg-warning">
-                                        <i class="fas fa-exclamation-triangle text-white"></i>
-                                    </div>
-                                </div>
-                                <div>
-                                    <div class="small text-gray-500">December 2, 2019</div>
-                                    Spending Alert: We've noticed unusually high spending for your account.
-                                </div>
-                            </a>
-                            <a class="dropdown-item text-center small text-gray-500" href="#">Show All Alerts</a>
-                        </div>
+                        <%-- ... --%>
                     </li>
-
-                    <!-- Nav Item - Messages -->
                     <li class="nav-item dropdown no-arrow mx-1">
-                        <a class="nav-link dropdown-toggle" href="#" id="messagesDropdown" role="button"
-                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="fas fa-envelope fa-fw"></i>
-                            <!-- Counter - Messages -->
-                            <span class="badge badge-danger badge-counter">7</span>
-                        </a>
-                        <!-- Dropdown - Messages -->
-                        <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
-                             aria-labelledby="messagesDropdown">
-                            <h6 class="dropdown-header">
-                                Message Center
-                            </h6>
-                            <a class="dropdown-item d-flex align-items-center" href="#">
-                                <div class="dropdown-list-image mr-3">
-                                    <img class="rounded-circle" src="<c:url value="/img/undraw_profile_1.svg"/>"                                            alt="...">
-                                    <div class="status-indicator bg-success"></div>
-                                </div>
-                                <div class="font-weight-bold">
-                                    <div class="text-truncate">Hi there! I am wondering if you can help me with a
-                                        problem I've been having.</div>
-                                    <div class="small text-gray-500">Emily Fowler · 58m</div>
-                                </div>
-                            </a>
-                            <a class="dropdown-item d-flex align-items-center" href="#">
-                                <div class="dropdown-list-image mr-3">
-                                    <img class="rounded-circle" src="<c:url value="/img/undraw_profile_2.svg"/>"                                            alt="...">
-                                    <div class="status-indicator"></div>
-                                </div>
-                                <div>
-                                    <div class="text-truncate">I have the photos that you ordered last month, how
-                                        would you like them sent to you?</div>
-                                    <div class="small text-gray-500">Jae Chun · 1d</div>
-                                </div>
-                            </a>
-                            <a class="dropdown-item d-flex align-items-center" href="#">
-                                <div class="dropdown-list-image mr-3">
-                                    <img class="rounded-circle" src="<c:url value="/img/undraw_profile_3.svg"/>"                                            alt="...">
-                                    <div class="status-indicator bg-warning"></div>
-                                </div>
-                                <div>
-                                    <div class="text-truncate">Last month's report looks great, I am very happy with
-                                        the progress so far, keep up the good work!</div>
-                                    <div class="small text-gray-500">Morgan Alvarez · 2d</div>
-                                </div>
-                            </a>
-                            <a class="dropdown-item d-flex align-items-center" href="#">
-                                <div class="dropdown-list-image mr-3">
-                                    <img class="rounded-circle" src="https://source.unsplash.com/Mv9hjnEUHR4/60x60"
-                                         alt="...">
-                                    <div class="status-indicator bg-success"></div>
-                                </div>
-                                <div>
-                                    <div class="text-truncate">Am I a good boy? The reason I ask is because someone
-                                        told me that people say this to all dogs, even if they aren't good...</div>
-                                    <div class="small text-gray-500">Chicken the Dog · 2w</div>
-                                </div>
-                            </a>
-                            <a class="dropdown-item text-center small text-gray-500" href="#">Read More Messages</a>
-                        </div>
+                        <%-- ... --%>
                     </li>
 
                     <div class="topbar-divider d-none d-sm-block"></div>
@@ -456,30 +200,22 @@
                             <li class="nav-item dropdown no-arrow">
                                 <a class="nav-link dropdown-toggle" href="#" role="button"
                                    aria-haspopup="true" aria-expanded="false">
-                                    <span class="mr-2 d-none d-lg-inline text-gray-600 small">${sessionScope.admin.adminId}</span>
+                                        <%-- [수정] 세션에 객체가 아닌 문자열이 저장되므로 .adminId 없이 바로 출력합니다. --%>
+                                    <span class="mr-2 d-none d-lg-inline text-gray-600 small">${sessionScope.admin}</span>
                                     <img class="img-profile rounded-circle"
                                          src="<c:url value="/img/undraw_profile.svg"/>">
                                 </a>
-                                <!-- Dropdown - User Information -->
                             </li>
-                            <li class="nav-item dropdown no-arrow">
-                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">${sessionScope.admin.adminRole}</span>
-                            </li>
+                            <%-- [수정] 세션에 Role 정보가 없으므로 해당 부분을 제거합니다. --%>
                             <li class="nav-item dropdown no-arrow">
                                 <a href="<c:url value="/logoutimpl"/>" role="button"
                                    aria-haspopup="true" aria-expanded="false">LOGOUT</a>
                             </li>
                         </c:otherwise>
                     </c:choose>
-                    <!-- Nav Item - User Information -->
-
-
                 </ul>
 
             </nav>
-            <!-- End of Topbar -->
-
-            <!-- Begin Page Content -->
             <c:choose>
                 <c:when test="${center == null}">
                     <jsp:include page="center.jsp"></jsp:include>
@@ -488,33 +224,16 @@
                     <jsp:include page="${center}.jsp"></jsp:include>
                 </c:otherwise>
             </c:choose>
-            <!-- /.container-fluid -->
-
         </div>
-        <!-- End of Main Content -->
-
-        <!-- Footer -->
         <footer class="sticky-footer bg-white">
-            <div class="container my-auto">
-                <div class="copyright text-center my-auto">
-                    <span>Copyright &copy; Your Website 2021</span>
-                </div>
-            </div>
+            <%-- ... --%>
         </footer>
-        <!-- End of Footer -->
-
     </div>
-    <!-- End of Content Wrapper -->
-
 </div>
-<!-- End of Page Wrapper -->
-
-<!-- Scroll to Top Button-->
 <a class="scroll-to-top rounded" href="#page-top">
     <i class="fas fa-angle-up"></i>
 </a>
 
-<!-- Login Modal-->
 <div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel"
      aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -530,16 +249,14 @@
                     <div class="form-group">
                         <label for="id">ID:</label>
                         <input type="text" class="form-control" id="id" placeholder="Enter id" name="id">
-
                     </div>
                     <div class="form-group">
                         <label for="pwd">Password:</label>
                         <input type="password" class="form-control" id="pwd" placeholder="Enter password" name="pwd">
-
                     </div>
-
                     <button type="button" class="btn btn-primary">LOGIN</button>
-                    <c:if test="${loginFailed == true}">
+                    <%-- [수정] Controller에서 넘겨준 "loginfail" 값으로 로그인 실패 여부를 체크합니다. --%>
+                    <c:if test="${loginfail == 'fail'}">
                         <div class="alert alert-danger">아이디 또는 비밀번호가 틀렸습니다.</div>
                     </c:if>
                 </form>
@@ -550,7 +267,6 @@
         </div>
     </div>
 </div>
-
 <!-- Logout Modal-->
 <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
      aria-hidden="true">
