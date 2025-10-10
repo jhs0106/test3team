@@ -3,7 +3,7 @@
 
 <script>
     let websocket = {
-        id: '${sessionScope.cust}', // 테스트용 ID
+        id: '${sessionScope.cust}',
         stompClient: null,
         init: function() {
             $('#connectBtn').click(() => {
@@ -12,21 +12,21 @@
             $('#disconnectBtn').click(() => {
                 this.disconnect();
             });
-            $('#sendAllBtn').click(() => {
-                this.sendAll();
+            $('#sendToAdminBtn').click(() => {  // 버튼 ID 변경
+                this.sendToAdmin();
             });
         },
         connect: function() {
-            let socket = new SockJS('${websocketurl}chat');
+            let socket = new SockJS('${websocketurl}adminchat');
             this.stompClient = Stomp.over(socket);
 
             this.stompClient.connect({}, (frame) => {
                 console.log('Connected: ' + frame);
 
-                // 전체 메시지 구독
-                this.stompClient.subscribe('/send', (message) => {
+                // 나에게 오는 개인 메시지 구독
+                this.stompClient.subscribe('/adminsend/to/' + this.id, (message) => {
                     let msg = JSON.parse(message.body);
-                    $('#messages').prepend('<p>' + msg.sendid + ': ' + msg.content1 + '</p>');
+                    $('#messages').prepend('<p><strong>[' + msg.sendid + ']:</strong> ' + msg.content1 + '</p>');
                 });
             });
         },
@@ -36,12 +36,17 @@
             }
             console.log("Disconnected");
         },
-        sendAll: function() {
+        sendToAdmin: function() {
             let msg = {
-                sendid: this.id,
+                sendid: this.id,        // cust
+                receiveid: 'admin',     // 받는 사람: admin
                 content1: $('#messageInput').val()
             };
-            this.stompClient.send("/receiveall", {}, JSON.stringify(msg));
+            console.log('Sending to admin:', msg);  // 디버깅용
+            this.stompClient.send("/adminreceiveto", {}, JSON.stringify(msg));
+
+            // 내가 보낸 메시지도 화면에 표시
+            $('#messages').prepend('<p><strong>나 → admin:</strong> ' + msg.content1 + '</p>');
             $('#messageInput').val('');
         }
     };
@@ -52,13 +57,19 @@
 </script>
 
 <div class="col-sm-10">
-    <h2>WebSocket Test</h2>
+    <h2>WebSocket Chat</h2>
+    <p>현재 사용자: <strong>${sessionScope.cust}</strong></p>
 
     <button id="connectBtn" class="btn btn-primary">연결</button>
     <button id="disconnectBtn" class="btn btn-danger">종료</button>
     <hr>
-    <input type="text" id="messageInput" class="form-control" placeholder="메시지 입력">
-    <button id="sendAllBtn" class="btn btn-success mt-2">전체 전송</button>
+
+    <div class="input-group mb-3">
+        <input type="text" id="messageInput" class="form-control" placeholder="메시지 입력">
+        <button id="sendToAdminBtn" class="btn btn-success">Admin에게 전송</button>
+    </div>
+
     <hr>
-    <div id="messages" style="border: 1px solid #ccc; padding: 10px; height: 300px; overflow-y: auto;"></div>
+    <h4>메시지</h4>
+    <div id="messages" style="border: 1px solid #ccc; padding: 10px; height: 400px; overflow-y: auto;"></div>
 </div>

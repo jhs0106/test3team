@@ -40,7 +40,7 @@ logging:
 # Application Config
 app:
   url:
-    websocketurl: https://10.20.32.55:8443/
+    websocketurl: https://10.20.32.65:8443/
   dir:
     imgsdir: file:///C:/smspring/imgs/     # 화면 출력 용
     uploadimgsdir: C:/smspring/imgs/    # 파일 Write 용

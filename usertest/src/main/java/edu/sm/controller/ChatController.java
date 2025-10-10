@@ -22,4 +22,12 @@ public class ChatController {
         model.addAttribute("left", dir+"left");
         return "index";
     }
+
+    @RequestMapping("/video")
+    public String video(Model model) {
+        model.addAttribute("websocketurl", webSocketUrl);
+        model.addAttribute("center", dir+"video");
+        model.addAttribute("left", dir+"left");
+        return "index";
+    }
 }
