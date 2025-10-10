@@ -138,81 +138,85 @@
 
   <script>
     let stockMulti = {
-      symbols: ['005930', '000660', '035420', '068270'], // 삼성전자, SK하이닉스, NAVER, 셀트리온
+      symbols: [
+        { code: '005930', name: '삼성전자' },
+        { code: '000660', name: 'SK하이닉스' },
+        { code: '035420', name: 'NAVER' },
+        { code: '068270', name: '셀트리온' }
+      ],
+      charts: {}, // ← 차트 객체 저장
       timer: null,
 
       init: function() {
-        this.loadAll();
-        // ✅ 10초마다 자동 갱신
-        this.timer = setInterval(() => this.loadAll(), 10000);
+        this.createLayout();   // HTML만 처음 한 번 생성
+        this.loadAll();        // 데이터 불러오기
+        this.timer = setInterval(() => this.loadAll(), 5000); // 데이터만 갱신
       },
 
-      loadAll: function() {
-        $('#multi-stocks').empty();
+      // ✅ HTML 레이아웃 1회만 생성
+      createLayout: function() {
+        const container = $('#multi-stocks');
+        container.empty();
 
-        $.each(this.symbols, (i, symbol) => {
-          const containerId = 'chart-' + symbol;
-          const infoId = 'info-' + symbol;
+        this.symbols.forEach(stock => {
+          const chartId = 'chart-' + stock.code;
+          const infoId = 'info-' + stock.code;
 
-          // ✅ col-sm-6 카드 구성
-          $('#multi-stocks').append(`
-            <div class="col-sm-6" style="margin-bottom:30px;">
-              <div style="border:1px solid #ddd; padding:10px; background:#fff; border-radius:8px;">
-                <h5 id="${infoId}-name" style="font-weight:bold;"></h5>
-                <p id="${infoId}-price" style="font-size:1.2em;"></p>
-                <div id="${infoId}-extra" style="margin-bottom:10px;"></div>
-                <div id="${containerId}" style="height:300px;"></div>
-              </div>
-            </div>
-          `);
+          container.append(`
+        <div class="col-sm-6" style="margin-bottom:30px;">
+          <div style="border:1px solid #ddd; padding:10px; background:#fff; border-radius:8px;">
+            <h5 id="${infoId}-name" style="font-weight:bold;">${stock.name}</h5>
+            <p id="${infoId}-price" style="font-size:1.2em;"></p>
+            <div id="${infoId}-extra" style="margin-bottom:10px;"></div>
+            <div id="${chartId}" style="height:300px;"></div>
+          </div>
+        </div>
+      `);
 
-          this.loadStock(symbol, containerId, infoId);
-        });
-      },
-
-      loadStock: function(symbol, chartId, infoId) {
-        const apiUrl = `https://${window.location.host}/api/stocks/${symbol}`;
-        $.getJSON(apiUrl, (data) => {
-          if (!data || data.error) {
-            $(`#${infoId}-name`).text(symbol);
-            $(`#${infoId}-price`).html(`<span style='color:red;'>데이터 불러오기 실패</span>`);
-            return;
-          }
-
-          const price = data.regularMarketPrice || 0;
-          const change = data.regularMarketChangePercent || 0;
-          const color = (change >= 0) ? 'red' : 'blue';
-          const sign = (change >= 0) ? '▲' : '▼';
-          const name = data.longName || data.symbol;
-
-          // ✅ 텍스트 정보 표시
-          $(`#${infoId}-name`).text(name);
-          $(`#${infoId}-price`).html(`<span style="color:${color}; font-weight:bold;">${price.toLocaleString()} KRW ${sign}${change.toFixed(2)}%</span>`);
-          $(`#${infoId}-extra`).html(`
-            거래량: ${data.regularMarketVolume?.toLocaleString() || '-'} |
-            시가총액: ${data.marketCap?.toLocaleString() || '-'}
-          `);
-
-          // ✅ 미니 차트 생성
-          Highcharts.chart(chartId, {
+          // ✅ 차트 객체 생성 및 저장
+          this.charts[stock.code] = Highcharts.chart(chartId, {
             chart: { type: 'areaspline' },
             title: { text: null },
             xAxis: { type: 'datetime', visible: false },
             yAxis: { title: { text: null }, visible: false },
             legend: { enabled: false },
-            series: [{
-              name: name,
-              data: [[(new Date()).getTime(), price]],
-              color: color
-            }],
+            series: [{ name: stock.name, data: [], color: '#32CD32' }],
             credits: { enabled: false },
             plotOptions: {
-              areaspline: {
-                fillOpacity: 0.3,
-                marker: { enabled: false }
-              }
+              areaspline: { fillOpacity: 0.3, marker: { enabled: false } }
             }
           });
+        });
+      },
+
+      // ✅ 데이터만 주기적으로 갱신
+      loadAll: function() {
+        this.symbols.forEach(stock => this.updateStock(stock));
+      },
+
+      updateStock: function(stock) {
+        const apiUrl = `https://${window.location.host}/api/stocks/${stock.code}`;
+        $.getJSON(apiUrl, (data) => {
+          if (!data || data.error) return;
+
+          const now = (new Date()).getTime();
+          const price = data.regularMarketPrice || 0;
+          const change = data.regularMarketChangePercent || 0;
+          const color = (change >= 0) ? 'red' : 'blue';
+          const sign = (change >= 0) ? '▲' : '▼';
+          const volume = data.regularMarketVolume?.toLocaleString() || '-';
+          const cap = data.marketCap?.toLocaleString() || '-';
+
+          $(`#info-${stock.code}-price`).html(
+                  `<span style="color:${color}; font-weight:bold;">${price.toLocaleString()} KRW ${sign}${change.toFixed(2)}%</span>`
+          );
+          $(`#info-${stock.code}-extra`).html(`거래량: ${volume} | 시총: ${cap}`);
+
+          // ✅ 차트에 새로운 포인트 추가
+          const chart = this.charts[stock.code];
+          if (chart) {
+            chart.series[0].addPoint([now, price], true, chart.series[0].data.length > 30);
+          }
         });
       }
     };
