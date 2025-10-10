@@ -12,6 +12,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Slf4j
 public class LoginController {
 
+    @RequestMapping("/login")
+    public String login(HttpSession session, Model model) {
+        model.addAttribute("center", "login");
+        return "index";
+    }
+
     @RequestMapping("/loginimpl")
     public String loginimpl(Model model, @RequestParam("id") String adminId,
                             @RequestParam("pwd") String adminPwd,

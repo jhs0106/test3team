@@ -1,0 +1,25 @@
+package edu.sm.controller;
+
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+@Controller
+@Slf4j
+@RequestMapping("/websocket")
+public class ChatController {
+    @Value("${app.url.websocketurl}")
+    String webSocketUrl;
+
+    String dir = "websocket/";
+
+    @RequestMapping("")
+    public String Main(Model model) {
+        model.addAttribute("websocketurl", webSocketUrl);
+        model.addAttribute("center", dir+"center");
+        model.addAttribute("left", dir+"left");
+        return "index";
+    }
+}
