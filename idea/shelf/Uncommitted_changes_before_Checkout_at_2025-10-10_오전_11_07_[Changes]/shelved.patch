@@ -1,0 +1,42 @@
+Index: .idea/compiler.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"CompilerConfiguration\">\r\n    <annotationProcessing>\r\n      <profile name=\"Gradle Imported\" enabled=\"true\">\r\n        <outputRelativeToContentRoot value=\"true\" />\r\n        <processorPath useClasspath=\"false\">\r\n          <entry name=\"$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.projectlombok/lombok/1.18.40/398c6d2d7c42c96b65e78d2ddc9be0058c163453/lombok-1.18.40.jar\" />\r\n        </processorPath>\r\n        <module name=\"admintest.main\" />\r\n        <module name=\"admintest.test\" />\r\n      </profile>\r\n    </annotationProcessing>\r\n  </component>\r\n  <component name=\"JavacSettings\">\r\n    <option name=\"ADDITIONAL_OPTIONS_OVERRIDE\">\r\n      <module name=\"admintest\" options=\"-parameters\" />\r\n      <module name=\"admintest.main\" options=\"-parameters\" />\r\n      <module name=\"admintest.test\" options=\"-parameters\" />\r\n      <module name=\"usertest\" options=\"-parameters\" />\r\n      <module name=\"usertest.main\" options=\"-parameters\" />\r\n      <module name=\"usertest.test\" options=\"-parameters\" />\r\n    </option>\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/compiler.xml b/.idea/compiler.xml
+--- a/.idea/compiler.xml	(revision a6b08b2fdab7ed59654dfd25d522dc879b636e34)
++++ b/.idea/compiler.xml	(date 1760062053897)
+@@ -7,8 +7,8 @@
+         <processorPath useClasspath="false">
+           <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.projectlombok/lombok/1.18.40/398c6d2d7c42c96b65e78d2ddc9be0058c163453/lombok-1.18.40.jar" />
+         </processorPath>
+-        <module name="admintest.main" />
+-        <module name="admintest.test" />
++        <module name="usertest.main" />
++        <module name="usertest.test" />
+       </profile>
+     </annotationProcessing>
+   </component>
+Index: .idea/modules.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"ProjectModuleManager\">\r\n    <modules>\r\n      <module fileurl=\"file://$PROJECT_DIR$/.idea/test3.iml\" filepath=\"$PROJECT_DIR$/.idea/test3.iml\" />\r\n    </modules>\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/modules.xml b/.idea/modules.xml
+--- a/.idea/modules.xml	(revision a6b08b2fdab7ed59654dfd25d522dc879b636e34)
++++ b/.idea/modules.xml	(date 1760062047143)
+@@ -2,7 +2,9 @@
+ <project version="4">
+   <component name="ProjectModuleManager">
+     <modules>
++      <module fileurl="file://$PROJECT_DIR$/.idea/modules/admintest.main.iml" filepath="$PROJECT_DIR$/.idea/modules/admintest.main.iml" />
+       <module fileurl="file://$PROJECT_DIR$/.idea/test3.iml" filepath="$PROJECT_DIR$/.idea/test3.iml" />
++      <module fileurl="file://$PROJECT_DIR$/.idea/modules/usertest.main.iml" filepath="$PROJECT_DIR$/.idea/modules/usertest.main.iml" />
+     </modules>
+   </component>
+ </project>
+\ No newline at end of file
