@@ -4,11 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c5573ccb-e778-4258-b980-fd13f6548239" name="Changes" comment="usertest 웹 소켓 구현 1차">
+    <list default="true" id="c5573ccb-e778-4258-b980-fd13f6548239" name="Changes" comment="ds">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/usertest/build/tmp/compileJava/previous-compilation-data.bin" beforeDir="false" afterPath="$PROJECT_DIR$/usertest/build/tmp/compileJava/previous-compilation-data.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/usertest/src/main/java/edu/sm/controller/MsgController.java" beforeDir="false" afterPath="$PROJECT_DIR$/usertest/src/main/java/edu/sm/controller/MsgController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/usertest/src/main/webapp/views/websocket/center.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/usertest/src/main/webapp/views/websocket/center.jsp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/usertest/build/reports/problems/problems-report.html" beforeDir="false" afterPath="$PROJECT_DIR$/usertest/build/reports/problems/problems-report.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/usertest/build/tmp/bootWar/MANIFEST.MF" beforeDir="false" afterPath="$PROJECT_DIR$/usertest/build/tmp/bootWar/MANIFEST.MF" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/usertest/src/main/webapp/views/map/map.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/usertest/src/main/webapp/views/map/map.jsp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -35,6 +35,27 @@
         <projects_view>
           <tree_state>
             <expand>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="admintest" type="f1a62948:ProjectNode" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="admintest" type="f1a62948:ProjectNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="admintest" type="f1a62948:ProjectNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
+                <item name="application" type="c8890929:TasksNode$1" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="admintest" type="f1a62948:ProjectNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
+                <item name="build" type="c8890929:TasksNode$1" />
+              </path>
               <path>
                 <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
                 <item name="usertest" type="f1a62948:ProjectNode" />
@@ -88,44 +109,46 @@
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
     &quot;url&quot;: &quot;https://github.com/jhs0106/test3.git&quot;,
-    &quot;accountId&quot;: &quot;04c35870-ce44-4c28-b6a0-33d5a95d6881&quot;
+    &quot;accountId&quot;: &quot;f3dc64ba-2d72-4ec0-a711-652f943a4bdd&quot;
   }
 }</component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 2
 }</component>
   <component name="ProjectId" id="33ovUQDRDnofUSZCOZPlKzznXpr" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Gradle.Build admintest.executor": "Run",
-    "Gradle.Build usertest.executor": "Run",
-    "Gradle.Download Sources.executor": "Run",
-    "Gradle.admintest [bootRun].executor": "Run",
-    "Gradle.usertest [bootRun].executor": "Run",
-    "Gradle.usertest [build].executor": "Run",
-    "Gradle.usertest [clean].executor": "Run",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "jms",
-    "last_opened_file_path": "C:/java/test3/usertest",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "Modules",
-    "project.structure.proportion": "0.0",
-    "project.structure.side.proportion": "0.0",
-    "settings.editor.selected.configurable": "advanced.settings",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Gradle.Build admintest.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.Build usertest.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.admintest [bootRun].executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.admintest [build].executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.usertest [bootRun].executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.usertest [build].executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.usertest [dependencies].executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;daon&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/java/test3/usertest&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\java\test3\usertest" />
@@ -142,7 +165,7 @@
       <recent name="edu.sm.controller" />
     </key>
   </component>
-  <component name="RunManager" selected="Gradle.admintest [build]">
+  <component name="RunManager" selected="Gradle.usertest [bootRun]">
     <configuration name="admintest [bootRun]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
@@ -177,28 +200,6 @@
         <option name="taskNames">
           <list>
             <option value="build" />
-          </list>
-        </option>
-        <option name="vmOptions" />
-      </ExternalSystemSettings>
-      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
-      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
-      <DebugAllEnabled>false</DebugAllEnabled>
-      <RunAsTest>false</RunAsTest>
-      <method v="2" />
-    </configuration>
-    <configuration name="admintest [clean]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
-      <ExternalSystemSettings>
-        <option name="executionName" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$/admintest" />
-        <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" />
-        <option name="taskDescriptions">
-          <list />
-        </option>
-        <option name="taskNames">
-          <list>
-            <option value="clean" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -253,6 +254,28 @@
       <RunAsTest>false</RunAsTest>
       <method v="2" />
     </configuration>
+    <configuration name="usertest [dependencies]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$/usertest" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="dependencies" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>false</RunAsTest>
+      <method v="2" />
+    </configuration>
     <configuration name="AdmintestApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
       <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
       <module name="admintest.main" />
@@ -271,11 +294,11 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Gradle.admintest [build]" />
-        <item itemvalue="Gradle.admintest [clean]" />
-        <item itemvalue="Gradle.admintest [bootRun]" />
         <item itemvalue="Gradle.usertest [bootRun]" />
+        <item itemvalue="Gradle.usertest [dependencies]" />
         <item itemvalue="Gradle.usertest [build]" />
+        <item itemvalue="Gradle.admintest [build]" />
+        <item itemvalue="Gradle.admintest [bootRun]" />
       </list>
     </recent_temporary>
   </component>
@@ -305,6 +328,11 @@
       <workItem from="1760057216732" duration="4802000" />
       <workItem from="1760064439901" duration="141000" />
       <workItem from="1760064617642" duration="1175000" />
+      <workItem from="1760094282028" duration="750000" />
+      <workItem from="1760095172781" duration="3000" />
+      <workItem from="1760095548629" duration="304000" />
+      <workItem from="1760096092952" duration="7000" />
+      <workItem from="1760096723719" duration="46000" />
     </task>
     <task id="LOCAL-00001" summary="ds">
       <option name="closed" value="true" />
@@ -338,23 +366,7 @@
       <option name="project" value="LOCAL" />
       <updated>1760061509776</updated>
     </task>
-    <task id="LOCAL-00005" summary="WebSocket 기본 구현 및 Login 하드코딩">
-      <option name="closed" value="true" />
-      <created>1760080649158</created>
-      <option name="number" value="00005" />
-      <option name="presentableId" value="LOCAL-00005" />
-      <option name="project" value="LOCAL" />
-      <updated>1760080649158</updated>
-    </task>
-    <task id="LOCAL-00006" summary="usertest 웹 소켓 구현 1차">
-      <option name="closed" value="true" />
-      <created>1760087149991</created>
-      <option name="number" value="00006" />
-      <option name="presentableId" value="LOCAL-00006" />
-      <option name="project" value="LOCAL" />
-      <updated>1760087149991</updated>
-    </task>
-    <option name="localTasksCounter" value="7" />
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -373,8 +385,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="ds" />
-    <MESSAGE value="WebSocket 기본 구현 및 Login 하드코딩" />
-    <MESSAGE value="usertest 웹 소켓 구현 1차" />
-    <option name="LAST_COMMIT_MESSAGE" value="usertest 웹 소켓 구현 1차" />
+    <option name="LAST_COMMIT_MESSAGE" value="ds" />
   </component>
 </project>
