@@ -3,7 +3,7 @@
 
 <script>
     let websocket = {
-        id: 'user01', // 테스트용 ID
+        id: '${sessionScope.cust}', // 테스트용 ID
         stompClient: null,
         init: function() {
             $('#connectBtn').click(() => {
@@ -53,6 +53,7 @@
 
 <div class="col-sm-10">
     <h2>WebSocket Test</h2>
+
     <button id="connectBtn" class="btn btn-primary">연결</button>
     <button id="disconnectBtn" class="btn btn-danger">종료</button>
     <hr>

@@ -43,7 +43,7 @@
 </div>
 <ul class="nav justify-content-end">
     <c:choose>
-        <c:when test="${sessionScope.admin == null}">
+        <c:when test="${sessionScope.cust == null}">
 <%--            <li class="nav-item">--%>
 <%--                <a class="nav-link" href="<c:url value="/register"/> ">Register</a>--%>
 <%--            </li>--%>
@@ -59,7 +59,7 @@
         </c:when>
         <c:otherwise>
             <li class="nav-item">
-                <a class="nav-link" href="#">${sessionScope.admin}님</a>
+                <a class="nav-link" href="#">${sessionScope.cust}님</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="<c:url value="/logout"/> ">Logout</a>
