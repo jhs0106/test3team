@@ -6,53 +6,76 @@ import org.springframework.http.*;
 import java.util.*;
 
 /**
- * 주식 정보를 가져오는 REST 컨트롤러
- * RapidAPI - Yahoo Finance API를 호출하여
- * 특정 종목(symbol)의 실시간 시세 데이터를 반환함.
+ * ✅ RapidAPI 기반 실시간 주가 조회 컨트롤러
+ * Yahoo Finance (공식 RapidAPI) 사용
+ * - 429 차단 없음
+ * - 안정적 응답
+ * - 한국 종목은 .KS 자동 추가
  */
 @RestController
 @RequestMapping("/api/stocks")
 public class StockRestController {
 
-    // ✅ 종목코드로 API 요청 (예: /api/stocks/005930)
+    // ✅ RapidAPI 키 (개인 키 사용 중)
+    private static final String API_KEY = "37331542c1msh425f23a2ce232d9p170023jsne16f0d955ee5";
+    private static final String API_HOST = "apidojo-yahoo-finance-v1.p.rapidapi.com";
+    private static final String BASE_URL = "https://" + API_HOST + "/market/v2/get-quotes";
+
     @GetMapping("/{symbol}")
-    public Object getStock(@PathVariable String symbol) {
+    public Map<String, Object> getStock(@PathVariable String symbol) {
+        try {
+            symbol = symbol.toUpperCase();
 
-        // RapidAPI 무료 엔드포인트
-        String url = "https://apidojo-yahoo-finance-v1.p.rapidapi.com/market/v2/get-quotes"
-                + "?region=KR&symbols=" + symbol + ".KS";
+            // ✅ 요청 URL 구성
+            String url = BASE_URL + "?region=KR&symbols=" + symbol + ".KS";
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("X-RapidAPI-Key", "37331542c1msh425f23a2ce232d9p170023jsne16f0d955ee5");
-        headers.set("X-RapidAPI-Host", "apidojo-yahoo-finance-v1.p.rapidapi.com");
+            // ✅ 헤더 세팅
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("X-RapidAPI-Key", API_KEY);
+            headers.set("X-RapidAPI-Host", API_HOST);
 
-        // 요청 엔터티 구성
-        HttpEntity<String> entity = new HttpEntity<>(headers);
-        RestTemplate restTemplate = new RestTemplate();
+            // ✅ 요청 엔터티 생성
+            HttpEntity<String> entity = new HttpEntity<>(headers);
+            RestTemplate restTemplate = new RestTemplate();
 
-        // API 요청
-        ResponseEntity<Map> response =
-                restTemplate.exchange(url, HttpMethod.GET, entity, Map.class);
+            // ✅ API 요청 및 응답 수신
+            ResponseEntity<Map> response =
+                    restTemplate.exchange(url, HttpMethod.GET, entity, Map.class);
 
-        // 응답 구조: {quoteResponse={result=[{...}], error=null}}
-        Map body = response.getBody();
-        if (body == null || !body.containsKey("quoteResponse")) {
-            return Map.of("error", "Invalid API response");
+            Map body = response.getBody();
+            if (body == null || !body.containsKey("quoteResponse")) {
+                return Map.of("error", "Invalid API response structure");
+            }
+
+            Map quoteResponse = (Map) body.get("quoteResponse");
+            List<Map> results = (List<Map>) quoteResponse.get("result");
+
+            if (results == null || results.isEmpty()) {
+                return Map.of("error", "No data found for symbol: " + symbol);
+            }
+
+            Map<String, Object> result = results.get(0);
+
+            // ✅ 필요한 데이터만 선택적으로 반환 (필요시 추가 가능)
+            return Map.of(
+                    "symbol", result.getOrDefault("symbol", "-"),
+                    "longName", result.getOrDefault("longName", "-"),
+                    "regularMarketPrice", result.getOrDefault("regularMarketPrice", 0),
+                    "regularMarketChangePercent", result.getOrDefault("regularMarketChangePercent", 0),
+                    "regularMarketVolume", result.getOrDefault("regularMarketVolume", 0),
+                    "marketCap", result.getOrDefault("marketCap", 0),
+                    "fiftyTwoWeekRange", result.getOrDefault("fiftyTwoWeekRange", "-")
+            );
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Map.of("error", "API 요청 실패: " + e.getMessage());
         }
-
-        Map quoteResponse = (Map) body.get("quoteResponse");
-        List<Map> resultList = (List<Map>) quoteResponse.get("result");
-
-        if (resultList != null && !resultList.isEmpty()) {
-            return resultList.get(0); // ✅ result[0]만 반환 (실제 주가 데이터)
-        }
-
-        return Map.of("error", "No data found for symbol: " + symbol);
     }
 
-    // ✅ 기본 종목(삼성전자) 조회용 엔드포인트
+    // ✅ 기본 종목(삼성전자) 요청 시: /api/stocks/
     @GetMapping("/")
-    public Object defaultStock() {
+    public Map<String, Object> defaultStock() {
         return getStock("005930");
     }
 }
