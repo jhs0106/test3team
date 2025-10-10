@@ -178,13 +178,10 @@
                 <ul class="navbar-nav ml-auto">
 
                     <li class="nav-item dropdown no-arrow d-sm-none">
-                        <%-- ... --%>
                     </li>
                     <li class="nav-item dropdown no-arrow mx-1">
-                        <%-- ... --%>
                     </li>
                     <li class="nav-item dropdown no-arrow mx-1">
-                        <%-- ... --%>
                     </li>
 
                     <div class="topbar-divider d-none d-sm-block"></div>
@@ -200,13 +197,12 @@
                             <li class="nav-item dropdown no-arrow">
                                 <a class="nav-link dropdown-toggle" href="#" role="button"
                                    aria-haspopup="true" aria-expanded="false">
-                                        <%-- [수정] 세션에 객체가 아닌 문자열이 저장되므로 .adminId 없이 바로 출력합니다. --%>
+
                                     <span class="mr-2 d-none d-lg-inline text-gray-600 small">${sessionScope.admin}</span>
                                     <img class="img-profile rounded-circle"
                                          src="<c:url value="/img/undraw_profile.svg"/>">
                                 </a>
                             </li>
-                            <%-- [수정] 세션에 Role 정보가 없으므로 해당 부분을 제거합니다. --%>
                             <li class="nav-item dropdown no-arrow">
                                 <a href="<c:url value="/logoutimpl"/>" role="button"
                                    aria-haspopup="true" aria-expanded="false">LOGOUT</a>
@@ -226,7 +222,6 @@
             </c:choose>
         </div>
         <footer class="sticky-footer bg-white">
-            <%-- ... --%>
         </footer>
     </div>
 </div>
@@ -255,7 +250,6 @@
                         <input type="password" class="form-control" id="pwd" placeholder="Enter password" name="pwd">
                     </div>
                     <button type="button" class="btn btn-primary">LOGIN</button>
-                    <%-- [수정] Controller에서 넘겨준 "loginfail" 값으로 로그인 실패 여부를 체크합니다. --%>
                     <c:if test="${loginfail == 'fail'}">
                         <div class="alert alert-danger">아이디 또는 비밀번호가 틀렸습니다.</div>
                     </c:if>

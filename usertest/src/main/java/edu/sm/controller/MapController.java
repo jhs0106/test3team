@@ -12,10 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/map")
 public class MapController {
 
-    // 뷰 폴더명
     private final String dir = "map/";
 
-    /** /map  */
     @RequestMapping({"", "/map"})
     public String main(Model model) {
         model.addAttribute("center", dir + "map");   // => /views/map/map.jsp
