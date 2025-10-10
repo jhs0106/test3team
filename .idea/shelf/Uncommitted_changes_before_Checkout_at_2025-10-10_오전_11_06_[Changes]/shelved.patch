@@ -1,0 +1,87 @@
+Index: usertest/src/main/webapp/views/stock.jsp
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><%@ page contentType=\"text/html;charset=UTF-8\" language=\"java\" %>\r\n<%@ taglib prefix=\"c\" uri=\"http://java.sun.com/jsp/jstl/core\" %>\r\n\r\n<style>\r\n  #result {\r\n    width: 400px;\r\n    border: 2px solid red;\r\n    padding: 10px;\r\n    margin-top: 15px;\r\n    background: #fff;              /* 배경 흰색 고정 */\r\n    color: #000;                   /* 글자색 검정 */\r\n    position: relative;\r\n    z-index: 9999;                 /* 다른 div 위로 올리기 */\r\n  }\r\n</style>\r\n\r\n\r\n<script>\r\n  let stock1 = {\r\n    init:function() {\r\n      $('#get_btn').click(()=>{\r\n        let symbol = $('#symbol').val().trim();\r\n        if(symbol === ''){\r\n          alert('종목 코드를 입력하세요. (예: 005930)');\r\n          return;\r\n        }\r\n        this.getData(symbol);\r\n      });\r\n    },\r\n\r\n    getData:function(symbol) {\r\n      $.ajax({\r\n        url: '<c:url value=\"/api/stocks/\"/>' + symbol,\r\n        method: 'GET',\r\n        success:(data)=>{\r\n          console.log(\"API 응답:\", data);\r\n\r\n          // ✅ 혹시 quoteResponse 구조일 경우 자동으로 result[0] 가져오기\r\n          if (data.quoteResponse && data.quoteResponse.result) {\r\n            data = data.quoteResponse.result[0];\r\n          }\r\n\r\n          this.display(data);\r\n        },\r\n        error:(xhr, status, err)=>{\r\n          console.error(\"API 요청 오류:\", err);\r\n          $('#result').html(\"<div style='color:red;'>데이터를 불러오는 중 오류가 발생했습니다.</div>\");\r\n        }\r\n      });\r\n    },\r\n\r\n\r\n    display:function(data) {\r\n      if(!data || data.error){\r\n        $('#result').html(\"<div style='color:red;'>데이터가 없습니다.</div>\");\r\n        return;\r\n      }\r\n\r\n      // ✅ 안전하게 숫자 처리\r\n      const safeNumber = v => (typeof v === 'number' ? v : parseFloat(v));\r\n      console.log(\"price:\", data.regularMarketPrice);\r\n      console.log(\"change:\", data.regularMarketChangePercent);\r\n      console.log(\"volume:\", data.regularMarketVolume);\r\n      let name = data.longName || data.shortName || data.symbol;\r\n      console.log(\"name: %s\", name);\r\n      let price = data.regularMarketPrice ? safeNumber(data.regularMarketPrice).toLocaleString() : '-';\r\n      let change = data.regularMarketChangePercent ? safeNumber(data.regularMarketChangePercent).toFixed(2) : '0.00';\r\n      let volume = data.regularMarketVolume ? safeNumber(data.regularMarketVolume).toLocaleString() : '-';\r\n      let marketCap = data.marketCap ? safeNumber(data.marketCap).toLocaleString() : '-';\r\n      let range = data.fiftyTwoWeekRange || '-';\r\n\r\n      let color = (parseFloat(change) >= 0) ? 'red' : 'blue';\r\n      let sign = (parseFloat(change) >= 0) ? '▲' : '▼';\r\n\r\n      let html = `\r\n  <h4 style=\"color:black;\">${name}</h4>\r\n  <p style=\"font-size:1.5em; color:${color}; font-weight:bold;\">\r\n    ${price} KRW ${sign}${change}%\r\n  </p>\r\n  <table border=\"1\" width=\"100%\" style=\"text-align:center; border-collapse:collapse; color:black;\">\r\n    <tr><th>거래량</th><td>${volume}</td></tr>\r\n    <tr><th>시가총액</th><td>${marketCap}</td></tr>\r\n    <tr><th>52주 범위</th><td>${range}</td></tr>\r\n  </table>\r\n`;\r\n      $('#result').html(html);\r\n      console.log(\"✅ 화면 HTML:\", html);\r\n\r\n    }\r\n\r\n\r\n  }\r\n\r\n  $(function() {\r\n    stock1.init();\r\n  });\r\n</script>\r\n\r\n<div class=\"col-sm-10\">\r\n  <h2>\uD83D\uDCC8 실시간 주가 정보</h2>\r\n  <input id=\"symbol\" value=\"005930\" placeholder=\"예: 005930\">\r\n  <button id=\"get_btn\">조회</button>\r\n  <div id=\"result\">결과가 여기에 표시됩니다.</div>\r\n</div>\r\n
+===================================================================
+diff --git a/usertest/src/main/webapp/views/stock.jsp b/usertest/src/main/webapp/views/stock.jsp
+--- a/usertest/src/main/webapp/views/stock.jsp	(revision a6b08b2fdab7ed59654dfd25d522dc879b636e34)
++++ b/usertest/src/main/webapp/views/stock.jsp	(date 1760061981209)
+@@ -56,38 +56,44 @@
+         return;
+       }
+ 
+-      // ✅ 안전하게 숫자 처리
+-      const safeNumber = v => (typeof v === 'number' ? v : parseFloat(v));
+-      console.log("price:", data.regularMarketPrice);
+-      console.log("change:", data.regularMarketChangePercent);
+-      console.log("volume:", data.regularMarketVolume);
+-      let name = data.longName || data.shortName || data.symbol;
+-      console.log("name: %s", name);
+-      let price = data.regularMarketPrice ? safeNumber(data.regularMarketPrice).toLocaleString() : '-';
+-      let change = data.regularMarketChangePercent ? safeNumber(data.regularMarketChangePercent).toFixed(2) : '0.00';
+-      let volume = data.regularMarketVolume ? safeNumber(data.regularMarketVolume).toLocaleString() : '-';
+-      let marketCap = data.marketCap ? safeNumber(data.marketCap).toLocaleString() : '-';
+-      let range = data.fiftyTwoWeekRange || '-';
++      // ✅ 안전한 숫자 변환기
++      const safeNumber = v => {
++        if (v === null || v === undefined || v === "" || isNaN(v)) return "-";
++        return Number(v);
++      };
++
++      // ✅ 실제 값 추출
++      let name = data.longName || data.shortName || data.symbol || "-";
++      let price = safeNumber(data.regularMarketPrice);
++      let change = safeNumber(data.regularMarketChangePercent);
++      let volume = safeNumber(data.regularMarketVolume);
++      let marketCap = safeNumber(data.marketCap);
++      let range = data.fiftyTwoWeekRange || "-";
+ 
+-      let color = (parseFloat(change) >= 0) ? 'red' : 'blue';
+-      let sign = (parseFloat(change) >= 0) ? '▲' : '▼';
++      console.log("name:", name, "price:", price, "change:", change, "volume:", volume, "marketCap:", marketCap, "range:", range);
+ 
++      // ✅ 변화율 색상 / 기호
++      let color = (typeof change === "number" && change >= 0) ? "red" : "blue";
++      let sign = (typeof change === "number" && change >= 0) ? "▲" : "▼";
++
++      // ✅ NaN 대비 처리
++      let changeText = (typeof change === "number") ? change.toFixed(2) : change;
++
++      // ✅ 최종 HTML
+       let html = `
+-  <h4 style="color:black;">${name}</h4>
+-  <p style="font-size:1.5em; color:${color}; font-weight:bold;">
+-    ${price} KRW ${sign}${change}%
+-  </p>
+-  <table border="1" width="100%" style="text-align:center; border-collapse:collapse; color:black;">
+-    <tr><th>거래량</th><td>${volume}</td></tr>
+-    <tr><th>시가총액</th><td>${marketCap}</td></tr>
+-    <tr><th>52주 범위</th><td>${range}</td></tr>
+-  </table>
+-`;
++    <h4 style="color:black;">${name}</h4>
++    <p style="font-size:1.5em; color:${color}; font-weight:bold;">
++      ${price != "-" ? price.toLocaleString() : "-"} KRW ${sign}${changeText != "-" ? changeText : ""}%
++    </p>
++    <table border="1" width="100%" style="text-align:center; border-collapse:collapse; color:black;">
++      <tr><th>거래량</th><td>${volume != "-" ? volume.toLocaleString() : "-"}</td></tr>
++      <tr><th>시가총액</th><td>${marketCap != "-" ? marketCap.toLocaleString() : "-"}</td></tr>
++      <tr><th>52주 범위</th><td>${range}</td></tr>
++    </table>
++  `;
++      console.log(html);
+       $('#result').html(html);
+-      console.log("✅ 화면 HTML:", html);
+-
+     }
+-
+ 
+   }
+ 
+@@ -100,5 +106,6 @@
+   <h2>📈 실시간 주가 정보</h2>
+   <input id="symbol" value="005930" placeholder="예: 005930">
+   <button id="get_btn">조회</button>
++  <div></div>
+   <div id="result">결과가 여기에 표시됩니다.</div>
+ </div>
