@@ -17,7 +17,7 @@ import java.util.*;
 public class StockRestController {
 
     // ✅ RapidAPI 키 (개인 키 사용 중)
-    private static final String API_KEY = "37331542c1msh425f23a2ce232d9p170023jsne16f0d955ee5";
+    private static final String API_KEY = "e00490892cmsh481da93a287fe3ep113054jsnaa4e9b11fff6";
     private static final String API_HOST = "apidojo-yahoo-finance-v1.p.rapidapi.com";
     private static final String BASE_URL = "https://" + API_HOST + "/market/v2/get-quotes";
 
@@ -79,3 +79,4 @@ public class StockRestController {
         return getStock("005930");
     }
 }
+
