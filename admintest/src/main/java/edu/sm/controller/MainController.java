@@ -79,6 +79,12 @@ public class MainController {
         return "index";
     }
 
+    @RequestMapping("/stats")
+    public String stats(Model model) {
+        log.info("==== 통계 대시보드 페이지 접근====");
+        return "stats-dashboard";
+    }
+
     @RequestMapping("/operation")
     public String operation(Model model) {
         prepareCommon(model);
