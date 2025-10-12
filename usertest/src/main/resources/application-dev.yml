@@ -40,7 +40,11 @@ logging:
 app:
   url:
     websocketurl: https://192.168.45.41:8443/
-    adminsse: https://192.168.45.41:8444/api/sse/dashboard
+    adminsse: /api/sse/dashboard
+    adminUpstreamSse: https://localhost:8444/api/sse/dashboard
+  sse:
+    timeout: 1800000
+    retryDelaySeconds: 5
   dir:
     imgsdir: file:///C:/smspring/imgs/     # 화면 출력 용
     uploadimgsdir: C:/smspring/imgs/    # 파일 Write 용
