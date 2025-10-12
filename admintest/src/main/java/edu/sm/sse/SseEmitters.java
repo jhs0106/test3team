@@ -1,7 +1,7 @@
 package edu.sm.sse;
 
 import edu.sm.app.dto.AdminMsg;
-
+import edu.sm.app.dto.DashboardMetrics;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -21,6 +21,10 @@ public class SseEmitters {
 
     public void count(int num) {
         sendEvent("count", num);
+    }
+
+    public void sendDashboard(DashboardMetrics metrics) {
+        sendEvent("dashboard", metrics);
     }
 
     private void sendEvent(String eventName, Object payload) {

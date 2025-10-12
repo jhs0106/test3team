@@ -235,7 +235,6 @@
                 clientId: null,
                 reconnectDelay: 5000,
                 productionChart: null,
-                hasDashboardData: false,
                 init: function() {
                     this.initChart();
                     this.connect();
@@ -267,18 +266,11 @@
                             useHTML: true,
                             formatter: function() {
                                 const extra = this.point.custom || {};
-                                let html = '<strong>' + (this.point.name || this.x) + '</strong><br/>';
-                                html += '처리량: <b>' + Highcharts.numberFormat(this.y, 1) + '</b> UPH<br/>';
-                                if (extra.availability) {
-                                    html += '가동률: ' + Highcharts.numberFormat(extra.availability, 1) + '%<br/>';
-                                }
-                                if (extra.quality) {
-                                    html += '품질: ' + Highcharts.numberFormat(extra.quality, 1) + '%<br/>';
-                                }
-                                if (extra.temperature) {
-                                    html += '온도: ' + Highcharts.numberFormat(extra.temperature, 1) + '°C';
-                                }
-                                return html;
+                                return `<strong>${this.point.name || this.x}</strong><br/>` +
+                                    `처리량: <b>${Highcharts.numberFormat(this.y, 1)}</b> UPH<br/>` +
+                                    (extra.availability ? `가동률: ${Highcharts.numberFormat(extra.availability, 1)}%<br/>` : '') +
+                                    (extra.quality ? `품질: ${Highcharts.numberFormat(extra.quality, 1)}%<br/>` : '') +
+                                    (extra.temperature ? `온도: ${Highcharts.numberFormat(extra.temperature, 1)}°C` : '');
                             }
                         },
                         plotOptions: {
@@ -319,21 +311,6 @@
                         } catch (err) {
                             console.warn('connected 이벤트 파싱 실패', err);
                         }
-                        this.updateConnectionStatus('클라이언트 연결됨', 'connected');
-                    });
-
-                    this.eventSource.addEventListener('upstream-status', (event) => {
-                        try {
-                            const status = JSON.parse(event.data);
-                            const message = status.connected ? '업스트림 연결됨' : '업스트림 재연결 중';
-                            const state = status.connected ? 'connected' : 'reconnecting';
-                            this.updateConnectionStatus(message, state);
-                            if (status.lastEventTimestamp && !this.hasDashboardData) {
-                                $('#last-updated').text(new Date(status.lastEventTimestamp).toLocaleString());
-                            }
-                        } catch (err) {
-                            console.warn('upstream-status 이벤트 파싱 실패', err);
-                        }
                         this.updateConnectionStatus('연결됨', 'connected');
                     });
 
@@ -353,7 +330,7 @@
                 buildUrl: function() {
                     try {
                         const url = new URL(baseUrl);
-                        const id = this.clientId || ('dashboard-' + Date.now());
+                        const id = this.clientId || `dashboard-${Date.now()}`;
                         url.searchParams.set('clientId', id);
                         return url.toString();
                     } catch (err) {
@@ -364,7 +341,6 @@
                     if (!payload) {
                         return;
                     }
-                    this.hasDashboardData = true;
                     if (payload.timestamp) {
                         const date = new Date(payload.timestamp);
                         $('#last-updated').text(date.toLocaleString());
@@ -386,7 +362,7 @@
                     $('#metric-quality .value').text(summary.averageQuality.toFixed(1));
                     $('#metric-energy .value').text((summary.energyConsumption/1000).toFixed(2));
                     $('#metric-downtime .value').text(summary.downtimeMinutes.toFixed(1));
-                    $('#metric-alerts .value').text(summary.criticalCount + ' / ' + summary.warningCount);
+                    $('#metric-alerts .value').text(`${summary.criticalCount} / ${summary.warningCount}`);
                 },
                 updateProductionChart: function(facilities) {
                     if (!this.productionChart) {
@@ -411,7 +387,7 @@
                         if (facility.lines) {
                             drilldownSeries.push({
                                 id: facility.name,
-                                name: facility.name + ' 상세',
+                                name: `${facility.name} 상세`,
                                 data: facility.lines.map(line => ({
                                     name: line.name,
                                     y: Number(line.throughput.toFixed(2)),
@@ -437,17 +413,17 @@
                     const rows = [];
                     facilities.forEach(facility => {
                         (facility.lines || []).forEach(line => {
-                            rows.push(
-                                '<tr>' +
-                                '<td>' + facility.name + '</td>' +
-                                '<td>' + line.name + '</td>' +
-                                '<td>' + line.throughput.toFixed(1) + '</td>' +
-                                '<td>' + line.availability.toFixed(1) + '</td>' +
-                                '<td>' + line.quality.toFixed(1) + '</td>' +
-                                '<td>' + line.temperature.toFixed(1) + '</td>' +
-                                '<td>' + this.renderStatusPill(line.status) + '</td>' +
-                                '</tr>'
-                            );
+                            rows.push(`
+                <tr>
+                  <td>${facility.name}</td>
+                  <td>${line.name}</td>
+                  <td>${line.throughput.toFixed(1)}</td>
+                  <td>${line.availability.toFixed(1)}</td>
+                  <td>${line.quality.toFixed(1)}</td>
+                  <td>${line.temperature.toFixed(1)}</td>
+                  <td>${this.renderStatusPill(line.status)}</td>
+                </tr>
+              `);
                         });
                     });
                     $('#line-status-body').html(rows.join('') || '<tr><td colspan="7" style="text-align:center; padding:16px;">표시할 데이터가 없습니다.</td></tr>');
@@ -459,13 +435,14 @@
                     }
                     const items = alerts.map(alert => {
                         const level = alert.level ? alert.level.toLowerCase() : 'info';
-                        return '' +
-                            '<div class="alert-item ' + level + '">' +
-                            '<div>' +
-                            '<strong>[' + alert.level + ']</strong> ' + alert.message +
-                            '</div>' +
-                            '<div>' + (alert.source || '') + '</div>' +
-                            '</div>';
+                        return `
+              <div class="alert-item ${level}">
+                <div>
+                  <strong>[${alert.level}]</strong> ${alert.message}
+                </div>
+                <div>${alert.source || ''}</div>
+              </div>
+            `;
                     });
                     $('#alerts-list').html(items.join(''));
                 },
@@ -483,7 +460,7 @@
                     };
                     const cls = classes[normalized] || classes.normal;
                     const text = label[normalized] || label.normal;
-                    return '<span class="' + cls + '">' + text + '</span>';
+                    return `<span class="${cls}">${text}</span>`;
                 },
                 colorByStatus: function(status) {
                     switch ((status || '').toUpperCase()) {

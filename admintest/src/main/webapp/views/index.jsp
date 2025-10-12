@@ -94,11 +94,6 @@
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Dashboard</span></a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" href="<c:url value="/operations"/>">
-                    <i class="fas fa-fw fa-industry"></i>
-                    <span>Operations</span></a>
-            </li>
             <li class="nav-item active">
                 <a class="nav-link" href="<c:url value="/websocket" />">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
