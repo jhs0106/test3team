@@ -30,4 +30,12 @@ public class ChatController {
         model.addAttribute("left", dir+"left");
         return "index";
     }
+
+    @RequestMapping("/inquiry")
+    public String inquiry(Model model) {
+        model.addAttribute("websocketurl", webSocketUrl);
+        model.addAttribute("center", dir+"inquiry");
+        model.addAttribute("left", dir+"left");
+        return "index";
+    }
 }

@@ -49,7 +49,7 @@
 
         loadWaitingRooms: function() {
             $.ajax({
-                url: 'https://localhost:8443/api/chatroom/waiting',
+                url: 'https://192.168.45.176:8443/api/chatroom/waiting',
                 type: 'GET',
                 dataType: 'json',
                 success: function(data) {
@@ -70,7 +70,7 @@
                             '<h5>⚠️ HTTPS 인증서 오류</h5>' +
                             '<p>다음 단계를 진행하세요:</p>' +
                             '<ol class="text-left" style="display: inline-block;">' +
-                            '<li>새 탭에서 <a href="https://localhost:8443/api/chatroom/waiting" target="_blank"><strong>이 링크</strong></a>를 클릭</li>' +
+                            '<li>새 탭에서 <a href="https://192.168.45.176:8443/api/chatroom/waiting" target="_blank"><strong>이 링크</strong></a>를 클릭</li>' +
                             '<li>"고급" 버튼 클릭</li>' +
                             '<li>"localhost로 이동(안전하지 않음)" 클릭</li>' +
                             '<li>이 페이지를 새로고침</li>' +
