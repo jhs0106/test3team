@@ -109,6 +109,11 @@
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>chat</span></a>
             </li>
+            <li class="nav-item active">
+                <a class="nav-link" href="<c:url value="/chatroom" />">
+                    <i class="fas fa-fw fa-comments"></i>
+                    <span>Chat-List</span></a>
+            </li>
 
             <%-- [수정] 'super' 역할 체크: adminId가 'admin'인지 직접 비교 --%>
             <c:if test="${sessionScope.admin == 'admin'}">
