@@ -4,35 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c5573ccb-e778-4258-b980-fd13f6548239" name="Changes" comment="1012 테스트 중">
-      <change afterPath="$PROJECT_DIR$/admintest/src/main/webapp/views/operations-dashboard.jsp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/usertest/src/main/java/edu/sm/app/dto/DashboardMetrics.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/usertest/src/main/java/edu/sm/app/dto/FacilitySnapshot.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/usertest/src/main/java/edu/sm/app/dto/LineSnapshot.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/usertest/src/main/java/edu/sm/app/dto/ProductionSummary.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/usertest/src/main/java/edu/sm/app/service/AdminDashboardSseBridge.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/usertest/src/main/java/edu/sm/config/AdminSseClientConfig.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/usertest/src/main/java/edu/sm/controller/AdminSseProxyController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+    <list default="true" id="c5573ccb-e778-4258-b980-fd13f6548239" name="Changes" comment="usertest 웹 소켓 구현 1차">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/admintest/src/main/java/edu/sm/app/dto/AlertMessage.java" beforeDir="false" afterPath="$PROJECT_DIR$/usertest/src/main/java/edu/sm/app/dto/AlertMessage.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/admintest/src/main/java/edu/sm/app/dto/DashboardMetrics.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/admintest/src/main/java/edu/sm/app/dto/FacilitySnapshot.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/admintest/src/main/java/edu/sm/app/dto/LineSnapshot.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/admintest/src/main/java/edu/sm/app/dto/ProductionSummary.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/admintest/src/main/java/edu/sm/app/service/DashboardMetricsGenerator.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/admintest/src/main/java/edu/sm/controller/MainController.java" beforeDir="false" afterPath="$PROJECT_DIR$/admintest/src/main/java/edu/sm/controller/MainController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/admintest/src/main/java/edu/sm/scheduler/SSEScheduler.java" beforeDir="false" afterPath="$PROJECT_DIR$/admintest/src/main/java/edu/sm/scheduler/SSEScheduler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/admintest/src/main/java/edu/sm/sse/SseEmitters.java" beforeDir="false" afterPath="$PROJECT_DIR$/admintest/src/main/java/edu/sm/sse/SseEmitters.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/admintest/src/main/webapp/views/index.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/admintest/src/main/webapp/views/index.jsp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/usertest/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/usertest/build.gradle" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/usertest/build/tmp/compileJava/previous-compilation-data.bin" beforeDir="false" afterPath="$PROJECT_DIR$/usertest/build/tmp/compileJava/previous-compilation-data.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/usertest/src/main/java/edu/sm/UsertestApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/usertest/src/main/java/edu/sm/UsertestApplication.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/usertest/src/main/java/edu/sm/controller/DashboardController.java" beforeDir="false" afterPath="$PROJECT_DIR$/usertest/src/main/java/edu/sm/controller/DashboardController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/usertest/src/main/java/edu/sm/sse/SseEmitters.java" beforeDir="false" afterPath="$PROJECT_DIR$/usertest/src/main/java/edu/sm/sse/SseEmitters.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/usertest/src/main/resources/application-dev.yml" beforeDir="false" afterPath="$PROJECT_DIR$/usertest/src/main/resources/application-dev.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/usertest/src/main/webapp/views/dashboard.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/usertest/src/main/webapp/views/dashboard.jsp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/usertest/src/main/java/edu/sm/controller/MsgController.java" beforeDir="false" afterPath="$PROJECT_DIR$/usertest/src/main/java/edu/sm/controller/MsgController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/usertest/src/main/webapp/views/websocket/center.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/usertest/src/main/webapp/views/websocket/center.jsp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -58,7 +34,29 @@
         </task>
         <projects_view>
           <tree_state>
-            <expand />
+            <expand>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="usertest" type="f1a62948:ProjectNode" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="usertest" type="f1a62948:ProjectNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="usertest" type="f1a62948:ProjectNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
+                <item name="application" type="c8890929:TasksNode$1" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="usertest" type="f1a62948:ProjectNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
+                <item name="build" type="c8890929:TasksNode$1" />
+              </path>
+            </expand>
             <select />
           </tree_state>
         </projects_view>
@@ -68,8 +66,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Jsp File" />
         <option value="Class" />
+        <option value="Jsp File" />
       </list>
     </option>
   </component>
@@ -87,29 +85,16 @@
     &quot;assignee&quot;: &quot;lsh030412&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/jhs0106/test3.git",
-    "accountId": "3504a14b-84ff-4fc2-bc95-6566cfe88ad3"
-  },
-  "recentNewPullRequestHead": {
-    "server": {
-      "useHttp": false,
-      "host": "github.com",
-      "port": null,
-      "suffix": null
-    },
-    "owner": "jhs0106",
-    "repository": "test3"
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/jhs0106/test3.git&quot;,
+    &quot;accountId&quot;: &quot;04c35870-ce44-4c28-b6a0-33d5a95d6881&quot;
   }
-}]]></component>
+}</component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 2
 }</component>
   <component name="ProjectId" id="33ovUQDRDnofUSZCOZPlKzznXpr" />
-  <component name="ProjectLevelVcsManager">
-    <ConfirmationsSetting value="2" id="Add" />
-  </component>
   <component name="ProjectViewState">
     <option name="showLibraryContents" value="true" />
   </component>
@@ -119,7 +104,6 @@
     "Gradle.Build usertest.executor": "Run",
     "Gradle.Download Sources.executor": "Run",
     "Gradle.admintest [bootRun].executor": "Run",
-    "Gradle.admintest [build].executor": "Run",
     "Gradle.usertest [bootRun].executor": "Run",
     "Gradle.usertest [build].executor": "Run",
     "Gradle.usertest [clean].executor": "Run",
@@ -128,7 +112,7 @@
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager": "true",
     "RunOnceActivity.git.unshallow": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "#14 on jhs",
+    "git-widget-placeholder": "jms",
     "last_opened_file_path": "C:/java/test3/usertest",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
@@ -158,7 +142,7 @@
       <recent name="edu.sm.controller" />
     </key>
   </component>
-  <component name="RunManager" selected="Gradle.admintest [bootRun]">
+  <component name="RunManager" selected="Gradle.admintest [build]">
     <configuration name="admintest [bootRun]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
@@ -287,10 +271,10 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Gradle.admintest [bootRun]" />
-        <item itemvalue="Gradle.usertest [bootRun]" />
         <item itemvalue="Gradle.admintest [build]" />
         <item itemvalue="Gradle.admintest [clean]" />
+        <item itemvalue="Gradle.admintest [bootRun]" />
+        <item itemvalue="Gradle.usertest [bootRun]" />
         <item itemvalue="Gradle.usertest [build]" />
       </list>
     </recent_temporary>
@@ -370,15 +354,7 @@
       <option name="project" value="LOCAL" />
       <updated>1760087149991</updated>
     </task>
-    <task id="LOCAL-00007" summary="1012 테스트 중">
-      <option name="closed" value="true" />
-      <created>1760278446787</created>
-      <option name="number" value="00007" />
-      <option name="presentableId" value="LOCAL-00007" />
-      <option name="project" value="LOCAL" />
-      <updated>1760278446787</updated>
-    </task>
-    <option name="localTasksCounter" value="8" />
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -399,7 +375,6 @@
     <MESSAGE value="ds" />
     <MESSAGE value="WebSocket 기본 구현 및 Login 하드코딩" />
     <MESSAGE value="usertest 웹 소켓 구현 1차" />
-    <MESSAGE value="1012 테스트 중" />
-    <option name="LAST_COMMIT_MESSAGE" value="1012 테스트 중" />
+    <option name="LAST_COMMIT_MESSAGE" value="usertest 웹 소켓 구현 1차" />
   </component>
 </project>

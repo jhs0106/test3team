@@ -1,7 +1,8 @@
 package edu.sm.scheduler;
 
 import edu.sm.app.dto.AdminMsg;
-
+import edu.sm.app.dto.DashboardMetrics;
+import edu.sm.app.service.DashboardMetricsGenerator;
 import edu.sm.sse.SseEmitters;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +17,7 @@ import java.util.Random;
 public class SSEScheduler {
 
     private final SseEmitters sseEmitters;
-
+    private final DashboardMetricsGenerator dashboardMetricsGenerator;
 
     @Scheduled(cron = "*/5 * * * * *")
     public void cronJobDailyUpdate() {
@@ -45,5 +46,10 @@ public class SSEScheduler {
         sseEmitters.count(count);
     }
 
+    @Scheduled(cron = "*/6 * * * * *")
+    public void publishDashboardMetrics() {
+        DashboardMetrics metrics = dashboardMetricsGenerator.generateSnapshot();
+        sseEmitters.sendDashboard(metrics);
+    }
 
 }
