@@ -129,11 +129,13 @@
             this.$log = $('#admin-message-log');
             this.$messageInput = $('#admin-chat-message');
             this.$sendBtn = $('#admin-send-btn');
+            this.$closeBtn = $('#close-chat-btn');
             this.$connection = $('#admin-connection-status');
             this.$assignStatus = $('#assign-status');
         },
         bindEvents() {
             this.$sendBtn.click(() => this.sendMessage());
+            this.$closeBtn.click(() => this.closeChat())
             this.$messageInput.on('keypress', (e) => {
                 if (e.which === 13) {
                     e.preventDefault();
@@ -241,6 +243,44 @@
         disableInputs(disabled) {
             this.$messageInput.prop('disabled', disabled);
             this.$sendBtn.prop('disabled', disabled);
+            this.$closeBtn.prop('disabled', disabled);
+        },
+        closeChat() {
+            if (!confirm('상담을 종료하시겠습니까?\n종료 후에는 다시 시작할 수 없습니다.')) {
+                return;
+            }
+
+            $.ajax({
+                url: 'https://192.168.45.176:8443/api/chatroom/' + this.roomId + '/close',
+                type: 'POST',
+                success: (response) => {
+                    this.appendSystemMessage('✅ 상담이 종료되었습니다.');
+                    this.$assignStatus
+                        .removeClass('badge-success badge-secondary badge-danger')
+                        .addClass('badge-dark')
+                        .text('종료됨');
+                    this.disableInputs(true);
+
+                    // WebSocket으로 종료 알림 전송
+                    if (this.stompClient && this.isConnected) {
+                        const closePayload = {
+                            sendid: this.adminId,
+                            receiveid: this.custId,
+                            content1: '__CHAT_CLOSED__', // 종료 시그널
+                            type: 'SYSTEM_CLOSE'
+                        };
+                        this.stompClient.send('/adminreceiveto', {}, JSON.stringify(closePayload));
+                    }
+
+                    // 3초 후 채팅방 리스트로 이동
+                    setTimeout(() => {
+                        window.location.href = '/chatroom';
+                    }, 3000);
+                },
+                error: (xhr) => {
+                    alert('채팅방 종료에 실패했습니다: ' + xhr.responseText);
+                }
+            });
         },
         sendMessage() {
             if (!this.stompClient || !this.isConnected || !this.assignCompleted) {
@@ -310,6 +350,13 @@
                 <div class="text-muted">고객에게서 온 메시지는 아래에 표시됩니다.</div>
             </div>
             <div id="admin-message-log"></div>
+
+            <div class="d-flex justify-content-end mb-3">
+                <button id="close-chat-btn" class="btn btn-danger btn-sm" disabled>
+                    <i class="fas fa-times-circle"></i> 상담 종료
+                </button>
+            </div>
+
             <div class="message-input-group">
                 <input type="text" id="admin-chat-message" placeholder="메시지를 입력하세요" disabled>
                 <button id="admin-send-btn" class="btn btn-primary" disabled>전송</button>

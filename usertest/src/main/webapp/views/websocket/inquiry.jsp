@@ -246,9 +246,17 @@
                 this.stompClient.connect({}, (frame) => {
                     console.log('✅ WebSocket 연결 완료:', frame);
                     this.updateConnectionStatus(true);
+
+                    // 메시지 수신 처리
                     this.stompClient.subscribe('/adminsend/to/' + this.custId, (message) => {
                         const payload = JSON.parse(message.body);
-                        this.appendMessage('admin', payload.content1);
+
+                        // 종료 시그널 확인
+                        if (payload.content1 === '__CHAT_CLOSED__') {
+                            this.handleChatClosed();
+                        } else {
+                            this.appendMessage('admin', payload.content1);
+                        }
                     });
                 }, (error) => {
                     console.error('❌ WebSocket 연결 실패:', error);
@@ -265,6 +273,33 @@
                 console.error('WebSocket 초기화 실패:', e);
                 this.updateConnectionStatus(false);
             }
+        },
+
+        handleChatClosed: function() {
+            // 시스템 메시지 표시
+            this.appendMessage('admin', '⚠️ 상담사가 채팅을 종료했습니다. 감사합니다!');
+
+            // UI 업데이트
+            $('#chatConnection').text('상담 종료됨').removeClass('text-success').addClass('text-warning');
+            $('#sendChatBtn').prop('disabled', true);
+            $('#chatMessage').prop('disabled', true);
+
+            // WebSocket 연결 해제
+            if (this.stompClient) {
+                this.stompClient.disconnect();
+                this.stompClient = null;
+            }
+
+            this.isConnected = false;
+            this.activeRoomId = null;
+
+            // 상태 메시지 업데이트
+            $('#statusMessage').html(
+                '<div class="alert alert-warning">' +
+                '<i class="fas fa-check-circle"></i> ' +
+                '상담이 종료되었습니다. 새로운 문의를 시작하려면 페이지를 새로고침하세요.' +
+                '</div>'
+            );
         },
 
         updateConnectionStatus: function(isConnected) {
