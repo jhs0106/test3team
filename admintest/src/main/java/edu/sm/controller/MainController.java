@@ -48,4 +48,10 @@ public class MainController {
         model.addAttribute("center", "websocket");
         return "index";
     }
+
+    @RequestMapping("/chatroom")
+    public String chatroom(Model model) {
+        model.addAttribute("center", "chatroom");
+        return "index";
+    }
 }
