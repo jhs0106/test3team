@@ -6,6 +6,7 @@
     <li class="nav-item">
       <a class="nav-link" href="<c:url value ="/websocket/audio"/>">Audio</a>
       <a class="nav-link" href="<c:url value ="/websocket/video"/>">Video</a>
+      <a class="nav-link" href="<c:url value='/websocket/inquiry'/>">Inquiry</a>
     </li>
   </ul>
   <hr class="d-sm-none">

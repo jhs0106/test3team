@@ -29,6 +29,8 @@ public class SseEmitters {
                     emitter.send(SseEmitter.event().name(eventName).data(data));
                 } catch (IOException e) {
                     log.error("데이터 전송 오류 clientId: {}, error: {}", key, e.getMessage());
+                    emitters.remove(key);
+                    emitter.completeWithError(e);
                 }
             }
         });
