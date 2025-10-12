@@ -105,6 +105,11 @@
                     <span>chart</span></a>
             </li>
             <li class="nav-item active">
+                <a class="nav-link" href="<c:url value="/operation" />">
+                    <i class="fas fa-fw fa-project-diagram"></i>
+                    <span>Operation</span></a>
+            </li>
+            <li class="nav-item active">
                 <a class="nav-link" href="<c:url value="/chat" />">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>chat</span></a>
