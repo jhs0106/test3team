@@ -201,6 +201,51 @@
             this.checkActiveRoom();
         },
 
+        getCurrentLocation: function() {
+            if (!navigator.geolocation) {
+                console.warn('⚠️ Geolocation API를 지원하지 않는 브라우저입니다.');
+                return;
+            }
+
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const lat = position.coords.latitude;
+                    const lng = position.coords.longitude;
+                    console.log('📍 현재 위치:', lat, lng);
+
+                    // 위치 정보를 서버로 전송
+                    if (this.activeRoomId) {
+                        this.sendLocation(lat, lng);
+                    }
+                },
+                (error) => {
+                    console.error('❌ 위치 정보 수집 실패:', error.message);
+                },
+                {
+                    enableHighAccuracy: true,
+                    timeout: 5000,
+                    maximumAge: 0
+                }
+            );
+        },
+
+        sendLocation: function(latitude, longitude) {
+            $.ajax({
+                url: 'https://192.168.45.176:8443/api/chatroom/' + this.activeRoomId + '/location',
+                type: 'POST',
+                data: {
+                    latitude: latitude,
+                    longitude: longitude
+                },
+                success: (response) => {
+                    console.log('✅ 위치 정보 전송 성공:', response);
+                },
+                error: (xhr) => {
+                    console.error('❌ 위치 정보 전송 실패:', xhr.responseText);
+                }
+            });
+        },
+
         bindEvents: function() {
             $('#sendChatBtn').click(() => {
                 this.sendMessage();
@@ -246,6 +291,7 @@
                 this.stompClient.connect({}, (frame) => {
                     console.log('✅ WebSocket 연결 완료:', frame);
                     this.updateConnectionStatus(true);
+                    this.getCurrentLocation();
 
                     // 메시지 수신 처리
                     this.stompClient.subscribe('/adminsend/to/' + this.custId, (message) => {

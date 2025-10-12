@@ -17,4 +17,9 @@ public class ChatRoomDto {
     private String status;
     private LocalDateTime createdAt;
     private LocalDateTime closedAt;
+
+    // 8단계: 위치 정보 추가
+    private Double latitude;
+    private Double longitude;
+    private LocalDateTime locationUpdateAt;
 }
