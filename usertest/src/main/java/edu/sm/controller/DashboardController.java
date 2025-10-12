@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class DashboardController {
 
 
-    @Value("${app.url.adminsse:https://10.20.32.65:8444/api/sse/dashboard}")
+    @Value("${app.url.adminsse:/api/sse/dashboard}")
     private String adminSseUrl;
 
     @RequestMapping ("")

@@ -22,6 +22,9 @@ public class MainController {
     @Value("${app.url.websocketurl}")
     String websocketurl;
 
+    @Value("${app.url.dashboardSse:/api/sse/dashboard}")
+    String dashboardSseUrl;
+
     @RequestMapping("/")
     public String main(Model model) {
         model.addAttribute("sseUrl",sseUrl);
@@ -46,6 +49,13 @@ public class MainController {
     public String websocket(Model model) {
         model.addAttribute("websocketurl",websocketurl);
         model.addAttribute("center", "websocket");
+        return "index";
+    }
+
+    @RequestMapping("/operations")
+    public String operations(Model model) {
+        model.addAttribute("dashboardSseUrl", dashboardSseUrl);
+        model.addAttribute("center", "operations-dashboard");
         return "index";
     }
 }
