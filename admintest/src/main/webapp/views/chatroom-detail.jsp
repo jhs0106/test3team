@@ -2,7 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <!-- ⭐ Kakao Map SDK를 제일 먼저 로드 -->
-<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=15d758eb02a2d0158ff32a94530e3426"></script>
+<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=YOUR_KAKAO_API_KEY"></script>
 
 <style>
     .chatroom-detail-wrapper {
