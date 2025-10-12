@@ -1,6 +1,9 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
+<!-- ⭐ autoload=false 추가 -->
+<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=15d758eb02a2d0158ff32a94530e3426&autoload=false"></script>
+
 <style>
     .chatroom-detail-wrapper {
         max-width: 720px;
@@ -101,6 +104,16 @@
     .assign-alert {
         margin-top: 16px;
     }
+
+    #customer-map {
+        width: 100% !important;
+        height: 300px !important;
+        background-color: #f0f0f0;
+    }
+
+    .card-body {
+        padding: 1rem;
+    }
 </style>
 
 <script>
@@ -111,7 +124,12 @@
         stompClient: null,
         isConnected: false,
         assignCompleted: false,
+        map: null,
+        customerMarker: null,
+
         init() {
+            console.log('🚀 adminChatDetail.init() 시작');
+
             this.cacheElements();
             this.bindEvents();
             this.renderInitialInfo();
@@ -124,7 +142,133 @@
 
             this.assignRoom();
             this.connectWebSocket();
+
+            // ⭐ Kakao Maps SDK 수동 로드
+            this.loadKakaoMaps();
         },
+
+        // ⭐ Kakao Maps 수동 로드 (개선)
+        loadKakaoMaps() {
+            console.log('🗺️ Kakao Maps SDK 로드 시작...');
+
+            // kakao 객체가 로드될 때까지 대기
+            const checkKakao = () => {
+                if (typeof kakao !== 'undefined' && kakao.maps) {
+                    console.log('✅ Kakao 객체 확인됨!');
+
+                    // autoload=false이므로 수동으로 load 호출
+                    kakao.maps.load(() => {
+                        console.log('✅ Kakao Maps SDK 로드 완료!');
+                        console.log('typeof kakao:', typeof kakao);
+                        console.log('typeof kakao.maps:', typeof kakao.maps);
+
+                        // 500ms 후 지도 초기화
+                        setTimeout(() => {
+                            this.initMap();
+                        }, 500);
+                    });
+                } else {
+                    console.log('⏳ Kakao SDK 대기 중... 100ms 후 재시도');
+                    setTimeout(checkKakao, 100);
+                }
+            };
+
+            checkKakao();
+        },
+
+        initMap() {
+            console.log('🗺️ initMap() 시작');
+
+            const container = document.getElementById('customer-map');
+            if (!container) {
+                console.error('❌ 지도 컨테이너를 찾을 수 없습니다.');
+                return;
+            }
+
+            console.log('📦 지도 컨테이너 확인:', container);
+            console.log('📐 컨테이너 크기:', container.offsetWidth + 'x' + container.offsetHeight);
+
+            if (container.offsetWidth === 0 || container.offsetHeight === 0) {
+                console.error('❌ 컨테이너 크기가 0입니다!');
+                return;
+            }
+
+            const options = {
+                center: new kakao.maps.LatLng(37.5665, 126.9780),
+                level: 3
+            };
+
+            try {
+                console.log('🎯 kakao.maps.Map 생성 시도...');
+                this.map = new kakao.maps.Map(container, options);
+                console.log('✅ Kakao Map 객체 생성 완료:', this.map);
+
+                // 고객 위치 마커
+                this.customerMarker = new kakao.maps.Marker({
+                    map: this.map,
+                    position: new kakao.maps.LatLng(37.5665, 126.9780)
+                });
+                console.log('✅ 마커 생성 완료');
+
+                // 지도 크기 재조정
+                setTimeout(() => {
+                    if (this.map) {
+                        this.map.relayout();
+                        console.log('🔄 지도 레이아웃 재조정 완료');
+                    }
+                }, 100);
+
+                this.loadCustomerLocation();
+
+            } catch (error) {
+                console.error('❌ Kakao Map 초기화 오류:', error);
+                console.error('오류 상세:', error.message);
+            }
+        },
+
+        loadCustomerLocation() {
+            console.log('📍 고객 위치 로드 시작...');
+            $.ajax({
+                url: 'https://192.168.45.176:8443/api/chatroom/' + this.roomId,
+                type: 'GET',
+                success: (room) => {
+                    console.log('✅ 채팅방 정보:', room);
+                    if (room.latitude && room.longitude) {
+                        console.log('📍 위치 정보 있음:', room.latitude, room.longitude);
+                        this.updateMapLocation(room.latitude, room.longitude);
+                    } else {
+                        console.log('ℹ️ 고객 위치 정보 없음');
+                    }
+                },
+                error: (xhr) => {
+                    console.error('❌ 채팅방 정보 조회 실패:', xhr.responseText);
+                }
+            });
+        },
+
+        updateMapLocation(lat, lng) {
+            console.log('🔄 지도 위치 업데이트 시도:', lat, lng);
+
+            if (!this.map || !this.customerMarker) {
+                console.warn('⚠️ 지도가 아직 초기화되지 않았습니다.');
+                return;
+            }
+
+            const position = new kakao.maps.LatLng(lat, lng);
+
+            // 지도 중심 이동
+            this.map.setCenter(position);
+
+            // 마커 위치 업데이트
+            this.customerMarker.setPosition(position);
+
+            // 좌표 표시
+            $('#map-latitude').text(lat.toFixed(6));
+            $('#map-longitude').text(lng.toFixed(6));
+
+            console.log('✅ 고객 위치 업데이트 완료');
+        },
+
         cacheElements() {
             this.$log = $('#admin-message-log');
             this.$messageInput = $('#admin-chat-message');
@@ -133,9 +277,10 @@
             this.$connection = $('#admin-connection-status');
             this.$assignStatus = $('#assign-status');
         },
+
         bindEvents() {
             this.$sendBtn.click(() => this.sendMessage());
-            this.$closeBtn.click(() => this.closeChat())
+            this.$closeBtn.click(() => this.closeChat());
             this.$messageInput.on('keypress', (e) => {
                 if (e.which === 13) {
                     e.preventDefault();
@@ -143,16 +288,17 @@
                 }
             });
         },
+
         renderInitialInfo() {
             $('#detail-room-id').text(this.roomId);
             $('#detail-cust-id').text(this.custId);
             $('#detail-admin-id').text(this.adminId || '-');
         },
+
         assignRoom() {
             const adminId = this.adminId;
-            if (!adminId) {
-                return;
-            }
+            if (!adminId) return;
+
             $.ajax({
                 url: 'https://192.168.45.176:8443/api/chatroom/' + this.roomId + '/assign',
                 type: 'POST',
@@ -182,6 +328,7 @@
                 }
             });
         },
+
         fetchRoomInfo() {
             $.ajax({
                 url: 'https://192.168.45.176:8443/api/chatroom/active/' + this.custId,
@@ -203,13 +350,14 @@
                 }
             });
         },
+
         connectWebSocket() {
-            if (!this.adminId) {
-                return;
-            }
+            if (!this.adminId) return;
+
             const socket = new SockJS('${wsurl}adminchat');
             this.stompClient = Stomp.over(socket);
             this.$connection.text('연결 중...').removeClass('text-danger').addClass('text-warning');
+
             this.stompClient.connect({}, (frame) => {
                 console.log('Admin connected:', frame);
                 this.isConnected = true;
@@ -240,11 +388,13 @@
                 this.appendSystemMessage('WebSocket 연결이 종료되었습니다. 새로고침 후 다시 시도해주세요.');
             };
         },
+
         disableInputs(disabled) {
             this.$messageInput.prop('disabled', disabled);
             this.$sendBtn.prop('disabled', disabled);
             this.$closeBtn.prop('disabled', disabled);
         },
+
         closeChat() {
             if (!confirm('상담을 종료하시겠습니까?\n종료 후에는 다시 시작할 수 없습니다.')) {
                 return;
@@ -261,18 +411,16 @@
                         .text('종료됨');
                     this.disableInputs(true);
 
-                    // WebSocket으로 종료 알림 전송
                     if (this.stompClient && this.isConnected) {
                         const closePayload = {
                             sendid: this.adminId,
                             receiveid: this.custId,
-                            content1: '__CHAT_CLOSED__', // 종료 시그널
+                            content1: '__CHAT_CLOSED__',
                             type: 'SYSTEM_CLOSE'
                         };
                         this.stompClient.send('/adminreceiveto', {}, JSON.stringify(closePayload));
                     }
 
-                    // 3초 후 채팅방 리스트로 이동
                     setTimeout(() => {
                         window.location.href = '/chatroom';
                     }, 3000);
@@ -282,15 +430,15 @@
                 }
             });
         },
+
         sendMessage() {
             if (!this.stompClient || !this.isConnected || !this.assignCompleted) {
                 alert('WebSocket 연결 또는 채팅방 배정이 완료되지 않았습니다.');
                 return;
             }
             const content = this.$messageInput.val().trim();
-            if (!content) {
-                return;
-            }
+            if (!content) return;
+
             const payload = {
                 sendid: this.adminId,
                 receiveid: this.custId,
@@ -301,6 +449,7 @@
             this.$messageInput.val('');
             this.$messageInput.focus();
         },
+
         appendMessage(sender, message, type) {
             const sanitized = $('<div>').text(message).html();
             const time = new Date().toLocaleTimeString('ko-KR', { hour12: false });
@@ -313,6 +462,7 @@
             this.$log.append(entry);
             this.$log.scrollTop(this.$log[0].scrollHeight);
         },
+
         appendSystemMessage(message) {
             const time = new Date().toLocaleTimeString('ko-KR', { hour12: false });
             this.$log.append(
@@ -326,6 +476,7 @@
     };
 
     $(function() {
+        console.log('📄 Document Ready');
         adminChatDetail.init();
     });
 </script>
@@ -342,6 +493,23 @@
             </div>
         </div>
         <div class="card-body">
+            <!-- 지도 영역 -->
+            <div class="card mb-3" style="border: 2px solid #17a2b8;">
+                <div class="card-header bg-info text-white">
+                    <i class="fas fa-map-marker-alt"></i> 고객 위치 정보
+                </div>
+                <div class="card-body p-0" style="overflow: hidden;">
+                    <div id="customer-map" style="width:100%; height:300px; display:block;"></div>
+                    <div class="p-3">
+                        <small class="text-muted">
+                            <i class="fas fa-info-circle"></i>
+                            위도: <span id="map-latitude">-</span>,
+                            경도: <span id="map-longitude">-</span>
+                        </small>
+                    </div>
+                </div>
+            </div>
+
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <div>
                     <span class="text-muted">WebSocket 상태:</span>
@@ -349,6 +517,7 @@
                 </div>
                 <div class="text-muted">고객에게서 온 메시지는 아래에 표시됩니다.</div>
             </div>
+
             <div id="admin-message-log"></div>
 
             <div class="d-flex justify-content-end mb-3">
@@ -361,6 +530,7 @@
                 <input type="text" id="admin-chat-message" placeholder="메시지를 입력하세요" disabled>
                 <button id="admin-send-btn" class="btn btn-primary" disabled>전송</button>
             </div>
+
             <div class="alert alert-info assign-alert" role="alert">
                 채팅방에 입장하면 자동으로 상담사로 배정되며, 고객과의 메시지가 실시간으로 표시됩니다.
             </div>

@@ -55,4 +55,11 @@ public class ChatRoomService {
         log.info("고객 활성 채팅방 조회: custId={}", custId);
         return chatRoomRepository.getActiveByCustId(custId);
     }
+
+    @Transactional
+    public boolean updateLocation(Integer roomId, Double latitude, Double longitude) {
+        log.info("위치 정보 업데이트: roomId={}, lat={}, lng={}", roomId, latitude, longitude);
+        int result = chatRoomRepository.updateLocation(roomId, latitude, longitude);
+        return result > 0;
+    }
 }
