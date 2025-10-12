@@ -24,9 +24,8 @@ spring:
   datasource:
 
     #url: jdbc:mysql://127.0.0.1:3306/shopdb?serverTimezone=Asia/Seoul
-    driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
-    url: jdbc:log4jdbc:mysql://127.0.0.1:3306/shopdb?characterEncoding=utf8
-    username: smuser
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
     password: ENC(AZD/oOYNtCPlDC68dabOeA==)
 mybatis:
   type-aliases-package: edu.sm.app.dto
@@ -40,7 +39,8 @@ logging:
 # Application Config
 app:
   url:
-    websocketurl: https://10.20.32.65:8443/
+    websocketurl: https://192.168.45.41:8443/
+    adminsse: https://192.168.45.41:8444/api/sse/dashboard
   dir:
     imgsdir: file:///C:/smspring/imgs/     # 화면 출력 용
     uploadimgsdir: C:/smspring/imgs/    # 파일 Write 용

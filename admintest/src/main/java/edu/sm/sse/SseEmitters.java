@@ -1,6 +1,7 @@
 package edu.sm.sse;
 
 import edu.sm.app.dto.AdminMsg;
+import edu.sm.app.dto.DashboardMetrics;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -14,27 +15,28 @@ import java.util.concurrent.ConcurrentHashMap;
 public class SseEmitters {
     private final Map<String, SseEmitter> emitters = new ConcurrentHashMap<>();
 
-    public void sendData(AdminMsg adminMsg){
-
-        emitters.keySet().stream().filter(s->s.equals("admin") || s.equals("admin2")).forEach(key -> {
-            try {
-                log.info("-------------------------------------"+key.toString());
-                emitters.get(key).send(SseEmitter.event()
-                        .name("adminmsg")
-                        .data(adminMsg));
-            } catch ( IOException e) {
-                throw new RuntimeException(e);
-            }
-        });
+    public void sendData(AdminMsg adminMsg) {
+        sendEvent("adminmsg", adminMsg);
     }
+
     public void count(int num) {
-        emitters.values().forEach(emitter -> {
+        sendEvent("count", num);
+    }
+
+    public void sendDashboard(DashboardMetrics metrics) {
+        sendEvent("dashboard", metrics);
+    }
+
+    private void sendEvent(String eventName, Object payload) {
+        emitters.forEach((clientId, emitter) -> {
             try {
                 emitter.send(SseEmitter.event()
-                        .name("count")
-                        .data(num));
-            } catch ( IOException e) {
-                throw new RuntimeException(e);
+                        .name(eventName)
+                        .data(payload));
+            } catch (IOException e) {
+                log.warn("SSE 전송 실패 - clientId: {}, event: {}, message: {}", clientId, eventName, e.getMessage());
+                emitters.remove(clientId);
+                cleanupEmitter(emitter);
             }
         });
     }
