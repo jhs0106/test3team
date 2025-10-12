@@ -1,8 +1,8 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
-<!-- ⭐ autoload=false 추가 -->
-<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=15d758eb02a2d0158ff32a94530e3426&autoload=false"></script>
+<!-- ⭐ Kakao Map SDK를 제일 먼저 로드 -->
+<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=YOUR_KAKAO_API_KEY"></script>
 
 <style>
     .chatroom-detail-wrapper {
@@ -104,16 +104,6 @@
     .assign-alert {
         margin-top: 16px;
     }
-
-    #customer-map {
-        width: 100% !important;
-        height: 300px !important;
-        background-color: #f0f0f0;
-    }
-
-    .card-body {
-        padding: 1rem;
-    }
 </style>
 
 <script>
@@ -128,11 +118,14 @@
         customerMarker: null,
 
         init() {
-            console.log('🚀 adminChatDetail.init() 시작');
-
             this.cacheElements();
             this.bindEvents();
             this.renderInitialInfo();
+
+            // ⭐ Kakao Maps SDK 로딩 확인 후 지도 초기화
+            this.waitForKakao(() => {
+                this.initMap();
+            });
 
             if (!this.adminId) {
                 this.appendSystemMessage('관리자 로그인이 필요합니다.');
@@ -142,99 +135,46 @@
 
             this.assignRoom();
             this.connectWebSocket();
-
-            // ⭐ Kakao Maps SDK 수동 로드
-            this.loadKakaoMaps();
         },
 
-        // ⭐ Kakao Maps 수동 로드 (개선)
-        loadKakaoMaps() {
-            console.log('🗺️ Kakao Maps SDK 로드 시작...');
-
-            // kakao 객체가 로드될 때까지 대기
-            const checkKakao = () => {
-                if (typeof kakao !== 'undefined' && kakao.maps) {
-                    console.log('✅ Kakao 객체 확인됨!');
-
-                    // autoload=false이므로 수동으로 load 호출
-                    kakao.maps.load(() => {
-                        console.log('✅ Kakao Maps SDK 로드 완료!');
-                        console.log('typeof kakao:', typeof kakao);
-                        console.log('typeof kakao.maps:', typeof kakao.maps);
-
-                        // 500ms 후 지도 초기화
-                        setTimeout(() => {
-                            this.initMap();
-                        }, 500);
-                    });
-                } else {
-                    console.log('⏳ Kakao SDK 대기 중... 100ms 후 재시도');
-                    setTimeout(checkKakao, 100);
-                }
-            };
-
-            checkKakao();
+        // ⭐ Kakao SDK 로딩 대기 함수
+        waitForKakao(callback) {
+            if (typeof kakao !== 'undefined' && kakao.maps) {
+                callback();
+            } else {
+                setTimeout(() => this.waitForKakao(callback), 100);
+            }
         },
 
-        initMap() {
-            console.log('🗺️ initMap() 시작');
-
+        initMap: function() {
             const container = document.getElementById('customer-map');
             if (!container) {
                 console.error('❌ 지도 컨테이너를 찾을 수 없습니다.');
                 return;
             }
 
-            console.log('📦 지도 컨테이너 확인:', container);
-            console.log('📐 컨테이너 크기:', container.offsetWidth + 'x' + container.offsetHeight);
-
-            if (container.offsetWidth === 0 || container.offsetHeight === 0) {
-                console.error('❌ 컨테이너 크기가 0입니다!');
-                return;
-            }
-
             const options = {
-                center: new kakao.maps.LatLng(37.5665, 126.9780),
+                center: new kakao.maps.LatLng(37.5665, 126.9780), // 서울 시청 기본값
                 level: 3
             };
 
-            try {
-                console.log('🎯 kakao.maps.Map 생성 시도...');
-                this.map = new kakao.maps.Map(container, options);
-                console.log('✅ Kakao Map 객체 생성 완료:', this.map);
+            this.map = new kakao.maps.Map(container, options);
 
-                // 고객 위치 마커
-                this.customerMarker = new kakao.maps.Marker({
-                    map: this.map,
-                    position: new kakao.maps.LatLng(37.5665, 126.9780)
-                });
-                console.log('✅ 마커 생성 완료');
+            // 고객 위치 마커
+            this.customerMarker = new kakao.maps.Marker({
+                map: this.map
+            });
 
-                // 지도 크기 재조정
-                setTimeout(() => {
-                    if (this.map) {
-                        this.map.relayout();
-                        console.log('🔄 지도 레이아웃 재조정 완료');
-                    }
-                }, 100);
-
-                this.loadCustomerLocation();
-
-            } catch (error) {
-                console.error('❌ Kakao Map 초기화 오류:', error);
-                console.error('오류 상세:', error.message);
-            }
+            console.log('✅ Kakao Map 초기화 완료');
+            this.loadCustomerLocation();
         },
 
-        loadCustomerLocation() {
-            console.log('📍 고객 위치 로드 시작...');
+        loadCustomerLocation: function() {
             $.ajax({
                 url: 'https://192.168.45.176:8443/api/chatroom/' + this.roomId,
                 type: 'GET',
                 success: (room) => {
-                    console.log('✅ 채팅방 정보:', room);
                     if (room.latitude && room.longitude) {
-                        console.log('📍 위치 정보 있음:', room.latitude, room.longitude);
                         this.updateMapLocation(room.latitude, room.longitude);
                     } else {
                         console.log('ℹ️ 고객 위치 정보 없음');
@@ -246,9 +186,7 @@
             });
         },
 
-        updateMapLocation(lat, lng) {
-            console.log('🔄 지도 위치 업데이트 시도:', lat, lng);
-
+        updateMapLocation: function(lat, lng) {
             if (!this.map || !this.customerMarker) {
                 console.warn('⚠️ 지도가 아직 초기화되지 않았습니다.');
                 return;
@@ -266,7 +204,7 @@
             $('#map-latitude').text(lat.toFixed(6));
             $('#map-longitude').text(lng.toFixed(6));
 
-            console.log('✅ 고객 위치 업데이트 완료');
+            console.log('📍 고객 위치 업데이트:', lat, lng);
         },
 
         cacheElements() {
@@ -297,8 +235,9 @@
 
         assignRoom() {
             const adminId = this.adminId;
-            if (!adminId) return;
-
+            if (!adminId) {
+                return;
+            }
             $.ajax({
                 url: 'https://192.168.45.176:8443/api/chatroom/' + this.roomId + '/assign',
                 type: 'POST',
@@ -352,12 +291,12 @@
         },
 
         connectWebSocket() {
-            if (!this.adminId) return;
-
+            if (!this.adminId) {
+                return;
+            }
             const socket = new SockJS('${wsurl}adminchat');
             this.stompClient = Stomp.over(socket);
             this.$connection.text('연결 중...').removeClass('text-danger').addClass('text-warning');
-
             this.stompClient.connect({}, (frame) => {
                 console.log('Admin connected:', frame);
                 this.isConnected = true;
@@ -411,6 +350,7 @@
                         .text('종료됨');
                     this.disableInputs(true);
 
+                    // WebSocket으로 종료 알림 전송
                     if (this.stompClient && this.isConnected) {
                         const closePayload = {
                             sendid: this.adminId,
@@ -421,6 +361,7 @@
                         this.stompClient.send('/adminreceiveto', {}, JSON.stringify(closePayload));
                     }
 
+                    // 3초 후 채팅방 리스트로 이동
                     setTimeout(() => {
                         window.location.href = '/chatroom';
                     }, 3000);
@@ -437,8 +378,9 @@
                 return;
             }
             const content = this.$messageInput.val().trim();
-            if (!content) return;
-
+            if (!content) {
+                return;
+            }
             const payload = {
                 sendid: this.adminId,
                 receiveid: this.custId,
@@ -476,7 +418,6 @@
     };
 
     $(function() {
-        console.log('📄 Document Ready');
         adminChatDetail.init();
     });
 </script>
@@ -494,12 +435,12 @@
         </div>
         <div class="card-body">
             <!-- 지도 영역 -->
-            <div class="card mb-3" style="border: 2px solid #17a2b8;">
+            <div class="card mb-3">
                 <div class="card-header bg-info text-white">
                     <i class="fas fa-map-marker-alt"></i> 고객 위치 정보
                 </div>
-                <div class="card-body p-0" style="overflow: hidden;">
-                    <div id="customer-map" style="width:100%; height:300px; display:block;"></div>
+                <div class="card-body p-0">
+                    <div id="customer-map" style="width:100%; height:300px;"></div>
                     <div class="p-3">
                         <small class="text-muted">
                             <i class="fas fa-info-circle"></i>
