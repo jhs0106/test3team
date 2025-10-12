@@ -22,14 +22,23 @@ public class MainController {
     @Value("${app.url.websocketurl}")
     String websocketurl;
 
+    @Value("${app.url.operationbase}")
+    String operationBaseUrl;
+
+    private void prepareCommon(Model model) {
+        model.addAttribute("sseUrl", sseUrl);
+        model.addAttribute("operationBaseUrl", operationBaseUrl);
+    }
+
     @RequestMapping("/")
     public String main(Model model) {
-        model.addAttribute("sseUrl",sseUrl);
+        prepareCommon(model);
         return "index";
     }
 
     @RequestMapping("/chart")
     public String chart(Model model) {
+        prepareCommon(model);
         model.addAttribute("mainsseUrl",mainsseUrl);
         model.addAttribute("center", "chart");
         return "index";
@@ -37,6 +46,7 @@ public class MainController {
 
     @RequestMapping("/chat")
     public String chat(Model model) {
+        prepareCommon(model);
         model.addAttribute("wsurl",wsurl);
         model.addAttribute("center", "chat");
         return "index";
@@ -44,6 +54,7 @@ public class MainController {
 
     @RequestMapping("/websocket")
     public String websocket(Model model) {
+        prepareCommon(model);
         model.addAttribute("websocketurl",websocketurl);
         model.addAttribute("center", "websocket");
         return "index";
@@ -54,4 +65,13 @@ public class MainController {
         model.addAttribute("center", "chatroom");
         return "index";
     }
+
+    @RequestMapping("/operation")
+    public String operation(Model model) {
+        prepareCommon(model);
+        model.addAttribute("center", "operation");
+        return "index";
+    }
+
+
 }
