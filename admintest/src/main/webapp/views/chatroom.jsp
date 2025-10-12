@@ -68,31 +68,29 @@
             $.ajax({
                 url: 'https://192.168.45.176:8443/api/chatroom/all',
                 type: 'GET',
-                dataType: 'json',
-                success: function(data) {
-                    console.log('✅ API 호출 성공:', data);
-                    chatRoomList.displayRooms(data);
+                success: (data) => {
+                    console.log("✅ 채팅방 리스트 조회 성공:", data);
+                    this.displayRooms(data);
                 },
-                error: function(xhr, status, error) {
-                    console.error('❌ API 호출 실패');
-                    console.error('Status:', xhr.status);
-                    console.error('Error:', error);
-                    console.error('Response:', xhr.responseText);
-
+                error: (xhr, status, error) => {
+                    console.error("❌ 채팅방 리스트 조회 실패:", xhr);
                     const waitingErrorTarget = $('#waitingRoomListBody');
                     const activeErrorTarget = $('#activeRoomListBody');
                     const closedErrorTarget = $('#closedRoomListBody');
 
-                    const errorRow = function(colspan, message) {
-                        return '<tr><td colspan="' + colspan + '" class="text-center text-danger" style="padding: 30px;">' + message + '</td></tr>';
+                    const errorRow = (colspan, message) => {
+                        return '<tr><td colspan="' + colspan + '" class="text-center text-danger">' +
+                            '<i class="fas fa-exclamation-triangle"></i> ' + message + '</td></tr>';
                     };
 
                     if (xhr.status === 0) {
-                        const certificateGuide = '<i class="fas fa-exclamation-triangle fa-3x mb-3"></i><br>' +
-                            '<h5>⚠️ HTTPS 인증서 오류</h5>' +
-                            '<p>다음 단계를 진행하세요:</p>' +
-                            '<ol class="text-left" style="display: inline-block;">' +
-                            '<li>새 탭에서 <a href="https://192.168.45.176:8443/api/chatroom/all" target="_blank"><strong>이 링크</strong></a>를 클릭</li>' +
+                        const certificateGuide =
+                            '⚠️ <strong>인증서 오류입니다.</strong><br>' +
+                            '다음 URL을 새 탭에서 열어 인증서를 승인해주세요:<br>' +
+                            '<a href="https://192.168.45.176:8443/api/chatroom/all" target="_blank" ' +
+                            'style="color:#e74a3b; font-weight:bold;">https://192.168.45.176:8443/api/chatroom/all</a><br>' +
+                            '<ol style="text-align: left; margin-top: 10px;">' +
+                            '<li>위 링크를 클릭하여 새 탭에서 열기</li>' +
                             '<li>"고급" 버튼 클릭</li>' +
                             '<li>"localhost로 이동(안전하지 않음)" 클릭</li>' +
                             '<li>이 페이지를 새로고침</li>' +
@@ -156,38 +154,27 @@
                 const statusBadge = '<span class="' + badgeClass + '">' + badgeLabel + '</span>';
                 const createdAt = room.createdAt ? new Date(room.createdAt).toLocaleString('ko-KR') : '-';
                 const closedAt = room.closedAt ? new Date(room.closedAt).toLocaleString('ko-KR') : '-';
-                let rowHtml = '';
 
+                let row = '<tr class="clickable-row" data-room-id="' + room.roomId + '" data-cust-id="' + room.custId + '">';
+                row += '<td>' + room.roomId + '</td>';
+                row += '<td>' + room.custId + '</td>';
+                row += '<td>' + adminLabel + '</td>';
+                row += '<td>' + statusBadge + '</td>';
+                row += '<td>' + createdAt + '</td>';
                 if (status === 'closed') {
-                    rowHtml = '' +
-                        '<tr>' +
-                        '<td><strong>' + room.roomId + '</strong></td>' +
-                        '<td>' + room.custId + '</td>' +
-                        '<td>' + adminLabel + '</td>' +
-                        '<td>' + statusBadge + '</td>' +
-                        '<td>' + createdAt + '</td>' +
-                        '<td>' + closedAt + '</td>' +
-                        '</tr>';
-                } else {
-                    rowHtml = '' +
-                        '<tr class="clickable-row" data-room-id="' + room.roomId + '" data-cust-id="' + room.custId + '">' +
-                        '<td><strong>' + room.roomId + '</strong></td>' +
-                        '<td>' + room.custId + '</td>' +
-                        '<td>' + adminLabel + '</td>' +
-                        '<td>' + statusBadge + '</td>' +
-                        '<td>' + createdAt + '</td>' +
-                        '</tr>';
+                    row += '<td>' + closedAt + '</td>';
                 }
+                row += '</tr>';
 
-                target.append(rowHtml);
+                target.append(row);
             });
 
-            if (status !== 'closed') {
-                target.find('.clickable-row').off('click').on('click', function() {
+            if (status === 'waiting' || status === 'active') {
+                target.find('.clickable-row').on('click', function() {
                     const roomId = $(this).data('room-id');
                     const custId = $(this).data('cust-id');
-                    if (!custId) {
-                        alert('고객 ID가 확인되지 않습니다.');
+                    if (!roomId || !custId) {
+                        alert('채팅방 정보가 올바르지 않습니다.');
                         return;
                     }
                     window.location.href = chatRoomDetailUrl + '?roomId=' + roomId + '&custId=' + encodeURIComponent(custId);
@@ -207,9 +194,15 @@
         <h1 class="h3 mb-0 text-gray-800">
             <i class="fas fa-comments"></i> 채팅방 현황
         </h1>
-        <button class="btn btn-primary btn-sm shadow-sm" onclick="chatRoomList.loadRooms()">
-            <i class="fas fa-sync-alt"></i> 새로고침
-        </button>
+        <div>
+            <!-- ⭐ 통계 대시보드 버튼 추가 -->
+            <a href="<c:url value="/stats"/>" class="btn btn-info btn-sm shadow-sm mr-2">
+                <i class="fas fa-chart-line"></i> 사용량 통계
+            </a>
+            <button class="btn btn-primary btn-sm shadow-sm" onclick="chatRoomList.loadRooms()">
+                <i class="fas fa-sync-alt"></i> 새로고침
+            </button>
+        </div>
     </div>
 
     <!-- 대기 중인 채팅방 -->
@@ -232,13 +225,13 @@
                                 <th width="10%">방 번호</th>
                                 <th width="20%">고객 ID</th>
                                 <th width="20%">담당 Admin</th>
-                                <th width="15%">상태</th>
-                                <th width="35%">생성 시간</th>
+                                <th width="10%">상태</th>
+                                <th width="40%">생성 시간</th>
                             </tr>
                             </thead>
                             <tbody id="waitingRoomListBody">
                             <tr>
-                                <td colspan="5" class="text-center text-muted" style="padding: 30px;">
+                                <td colspan="5" class="text-center text-muted" style="padding: 24px;">
                                     <i class="fas fa-spinner fa-spin fa-2x mb-3"></i><br>
                                     로딩 중...
                                 </td>
@@ -255,9 +248,9 @@
     <div class="row">
         <div class="col-xl-12">
             <div class="card shadow mb-4">
-                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <div class="card-header py-3">
                     <h6 class="m-0 font-weight-bold text-success">
-                        <i class="fas fa-comments"></i> 진행 중인 채팅방
+                        <i class="fas fa-comment-dots"></i> 진행 중인 채팅방
                     </h6>
                 </div>
                 <div class="card-body">
@@ -268,8 +261,8 @@
                                 <th width="10%">방 번호</th>
                                 <th width="20%">고객 ID</th>
                                 <th width="20%">담당 Admin</th>
-                                <th width="15%">상태</th>
-                                <th width="35%">생성 시간</th>
+                                <th width="10%">상태</th>
+                                <th width="40%">생성 시간</th>
                             </tr>
                             </thead>
                             <tbody id="activeRoomListBody">
@@ -291,9 +284,9 @@
     <div class="row">
         <div class="col-xl-12">
             <div class="card shadow mb-4">
-                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <div class="card-header py-3">
                     <h6 class="m-0 font-weight-bold text-secondary">
-                        <i class="fas fa-check-circle"></i> 상담 종료된 채팅방
+                        <i class="fas fa-archive"></i> 종료된 채팅방
                     </h6>
                 </div>
                 <div class="card-body">
@@ -334,6 +327,7 @@
                     <li>대기/진행/종료 상태별로 채팅방이 구분되어 표시됩니다</li>
                     <li>대기 또는 진행 중인 채팅방을 클릭하면 상세 콘솔로 이동합니다</li>
                     <li>5초마다 자동으로 새로고침되며 상단 버튼으로 즉시 새로고침할 수 있습니다</li>
+                    <li><strong>📊 사용량 통계 버튼을 클릭하면 고객 통계 대시보드를 확인할 수 있습니다</strong></li>
                 </ul>
             </div>
         </div>
