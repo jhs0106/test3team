@@ -2,7 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <!-- ⭐ Kakao Map SDK를 제일 먼저 로드 -->
-<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=15d758eb02a2d0158ff32a94530e3426"></script>
+<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=YOUR_KAKAO_API_KEY"></script>
 
 <style>
     .chatroom-detail-wrapper {
@@ -171,7 +171,7 @@
 
         loadCustomerLocation: function() {
             $.ajax({
-                url: 'https://192.168.45.176:8443/api/chatroom/' + this.roomId,
+                url: 'https://10.20.33.248:8443/api/chatroom/' + this.roomId,
                 type: 'GET',
                 success: (room) => {
                     if (room.latitude && room.longitude) {
@@ -239,7 +239,7 @@
                 return;
             }
             $.ajax({
-                url: 'https://192.168.45.176:8443/api/chatroom/' + this.roomId + '/assign',
+                url: 'https://10.20.33.248:8443/api/chatroom/' + this.roomId + '/assign',
                 type: 'POST',
                 data: { adminId },
                 success: (response) => {
@@ -270,7 +270,7 @@
 
         fetchRoomInfo() {
             $.ajax({
-                url: 'https://192.168.45.176:8443/api/chatroom/active/' + this.custId,
+                url: 'https://10.20.33.248:8443/api/chatroom/active/' + this.custId,
                 type: 'GET',
                 dataType: 'json',
                 success: (data) => {
@@ -340,7 +340,7 @@
             }
 
             $.ajax({
-                url: 'https://192.168.45.176:8443/api/chatroom/' + this.roomId + '/close',
+                url: 'https://10.20.33.248:8443/api/chatroom/' + this.roomId + '/close',
                 type: 'POST',
                 success: (response) => {
                     this.appendSystemMessage('✅ 상담이 종료되었습니다.');
