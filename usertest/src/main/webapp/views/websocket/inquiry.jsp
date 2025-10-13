@@ -69,73 +69,47 @@
         color: #666;
     }
     .chat-status .room-info {
-        margin-top: 15px;
-        padding-top: 15px;
-        border-top: 1px solid #e9ecef;
-        color: #999;
+        margin-top: 10px;
         font-size: 13px;
+        color: #999;
     }
     .btn-start-chat {
-        width: 100%;
-        padding: 15px;
-        font-size: 18px;
-        font-weight: bold;
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        border: none;
-        border-radius: 8px;
         color: white;
+        border: none;
+        padding: 15px 40px;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 600;
         cursor: pointer;
-        transition: all 0.3s;
-        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-    }
-    .btn-start-chat:hover:not(:disabled) {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        margin-top: 15px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
     .btn-start-chat:disabled {
         background: #6c757d;
         cursor: not-allowed;
-        transform: none;
-        box-shadow: none;
-    }
-    .alert {
-        border-radius: 8px;
-        padding: 15px;
-        margin-bottom: 20px;
-        border: none;
-    }
-    .alert-success {
-        background: #d4edda;
-        color: #155724;
-    }
-    .alert-danger {
-        background: #f8d7da;
-        color: #721c24;
     }
     .chat-panel {
-        margin-top: 30px;
-        border: 1px solid #e9ecef;
-        border-radius: 12px;
         background: white;
+        border-radius: 12px;
         padding: 20px;
-        box-shadow: 0 10px 30px rgba(31, 45, 61, 0.1);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     }
     .chat-panel h4 {
-        margin-bottom: 15px;
-        font-weight: 600;
-        color: #4a4a4a;
+        margin: 0 0 15px 0;
+        color: #333;
     }
     .chat-status-indicator {
+        margin-bottom: 15px;
         font-size: 14px;
-        color: #6c757d;
-        margin-bottom: 10px;
+        color: #666;
     }
     .chat-messages {
-        height: 280px;
+        height: 300px;
         overflow-y: auto;
         border: 1px solid #e9ecef;
-        border-radius: 10px;
         padding: 15px;
+        border-radius: 8px;
         margin-bottom: 15px;
         background: #f8f9fb;
     }
@@ -174,6 +148,22 @@
     .chat-input-group button:disabled {
         background: #6c757d;
     }
+    /* ⭐ 영상 통화 버튼 스타일 */
+    .btn-video-call {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        border: none;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-weight: 600;
+        margin-top: 10px;
+        width: 100%;
+        cursor: pointer;
+    }
+    .btn-video-call:disabled {
+        background: #6c757d;
+        cursor: not-allowed;
+    }
 </style>
 
 <script>
@@ -184,7 +174,6 @@
         isConnected: false,
 
         init: function() {
-            // 세션에서 사용자 ID 가져오기
             this.custId = '${sessionScope.cust}';
 
             if (!this.custId || this.custId === '') {
@@ -197,7 +186,6 @@
             this.bindEvents();
             this.updateConnectionStatus(false);
             this.connectWebSocket();
-            // 활성 채팅방 확인
             this.checkActiveRoom();
         },
 
@@ -208,24 +196,23 @@
             }
 
             navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    const lat = position.coords.latitude;
-                    const lng = position.coords.longitude;
-                    console.log('📍 현재 위치:', lat, lng);
+                    (position) => {
+                        const lat = position.coords.latitude;
+                        const lng = position.coords.longitude;
+                        console.log('📍 현재 위치:', lat, lng);
 
-                    // 위치 정보를 서버로 전송
-                    if (this.activeRoomId) {
-                        this.sendLocation(lat, lng);
+                        if (this.activeRoomId) {
+                            this.sendLocation(lat, lng);
+                        }
+                    },
+                    (error) => {
+                        console.error('❌ 위치 정보 수집 실패:', error.message);
+                    },
+                    {
+                        enableHighAccuracy: true,
+                        timeout: 5000,
+                        maximumAge: 0
                     }
-                },
-                (error) => {
-                    console.error('❌ 위치 정보 수집 실패:', error.message);
-                },
-                {
-                    enableHighAccuracy: true,
-                    timeout: 5000,
-                    maximumAge: 0
-                }
             );
         },
 
@@ -256,6 +243,10 @@
                     this.sendMessage();
                 }
             });
+            // ⭐ 영상 통화 버튼 이벤트
+            $('#videoCallBtn').click(() => {
+                this.startVideoCall();
+            });
         },
 
         checkActiveRoom: function() {
@@ -268,6 +259,7 @@
                         console.log('✅ 활성 채팅방 존재:', data);
                         this.activeRoomId = data.roomId;
                         this.showActiveRoomStatus(data);
+                        $('#videoCallBtn').prop('disabled', false); // ⭐ 영상 통화 버튼 활성화
                     } else {
                         console.log('ℹ️ 활성 채팅방 없음');
                         this.showReadyStatus();
@@ -293,11 +285,9 @@
                     this.updateConnectionStatus(true);
                     this.getCurrentLocation();
 
-                    // 메시지 수신 처리
                     this.stompClient.subscribe('/adminsend/to/' + this.custId, (message) => {
                         const payload = JSON.parse(message.body);
 
-                        // 종료 시그널 확인
                         if (payload.content1 === '__CHAT_CLOSED__') {
                             this.handleChatClosed();
                         } else {
@@ -322,15 +312,13 @@
         },
 
         handleChatClosed: function() {
-            // 시스템 메시지 표시
             this.appendMessage('admin', '⚠️ 상담사가 채팅을 종료했습니다. 감사합니다!');
 
-            // UI 업데이트
             $('#chatConnection').text('상담 종료됨').removeClass('text-success').addClass('text-warning');
             $('#sendChatBtn').prop('disabled', true);
             $('#chatMessage').prop('disabled', true);
+            $('#videoCallBtn').prop('disabled', true); // ⭐ 영상 통화 버튼 비활성화
 
-            // WebSocket 연결 해제
             if (this.stompClient) {
                 this.stompClient.disconnect();
                 this.stompClient = null;
@@ -339,12 +327,11 @@
             this.isConnected = false;
             this.activeRoomId = null;
 
-            // 상태 메시지 업데이트
             $('#statusMessage').html(
-                '<div class="alert alert-warning">' +
-                '<i class="fas fa-check-circle"></i> ' +
-                '상담이 종료되었습니다. 새로운 문의를 시작하려면 페이지를 새로고침하세요.' +
-                '</div>'
+                    '<div class="alert alert-warning">' +
+                    '<i class="fas fa-check-circle"></i> ' +
+                    '상담이 종료되었습니다. 새로운 문의를 시작하려면 페이지를 새로고침하세요.' +
+                    '</div>'
             );
         },
 
@@ -369,10 +356,10 @@
             const messageClass = sender === 'user' ? 'user' : 'admin';
 
             $('#chatMessages').append(
-                '<div class="chat-message ' + messageClass + '">' +
-                '<span class="sender">[' + time + '] ' + senderLabel + '</span>' +
-                '<span class="text">' + sanitized + '</span>' +
-                '</div>'
+                    '<div class="chat-message ' + messageClass + '">' +
+                    '<span class="sender">[' + time + '] ' + senderLabel + '</span>' +
+                    '<span class="text">' + sanitized + '</span>' +
+                    '</div>'
             );
             $('#chatMessages').scrollTop($('#chatMessages')[0].scrollHeight);
         },
@@ -415,71 +402,72 @@
                     console.log('✅ 채팅방 생성 성공:', response);
 
                     $('#statusMessage').html(
-                        '<div class="alert alert-success">' +
-                        '<i class="fas fa-check-circle"></i> ' +
-                        '채팅방이 생성되었습니다! 상담사 연결 대기 중...' +
-                        '</div>'
+                            '<div class="alert alert-success">' +
+                            '<i class="fas fa-check-circle"></i> ' +
+                            '채팅방이 생성되었습니다! 상담사가 곧 연결됩니다.' +
+                            '</div>'
                     );
 
-                    // 활성 채팅방 다시 확인
                     setTimeout(() => {
                         this.checkActiveRoom();
                     }, 1000);
                 },
-                error: (xhr, status, error) => {
-                    console.error('❌ 채팅방 생성 실패:', error);
-                    console.error('Response:', xhr.responseText);
-
+                error: (xhr) => {
+                    console.error('❌ 채팅방 생성 실패:', xhr);
                     $('#statusMessage').html(
-                        '<div class="alert alert-danger">' +
-                        '<i class="fas fa-exclamation-circle"></i> ' +
-                        '채팅방 생성에 실패했습니다. 다시 시도해주세요.' +
-                        '</div>'
+                            '<div class="alert alert-danger">' +
+                            '<i class="fas fa-exclamation-circle"></i> ' +
+                            '채팅방 생성에 실패했습니다. 다시 시도해주세요.' +
+                            '</div>'
                     );
-
-                    $('#startChatBtn').prop('disabled', false).html('<i class="fas fa-comments"></i> 채팅 시작하기');
+                    $('#startChatBtn').prop('disabled', false).html('<i class="fas fa-comments"></i> 상담 시작하기');
                 }
             });
         },
 
         showReadyStatus: function() {
-            this.activeRoomId = null;
             $('#chatStatus').html(
-                '<div class="chat-status">' +
-                '<div class="status-icon">💬</div>' +
-                '<div class="status-message">상담을 시작할 준비가 되었습니다</div>' +
-                '<div class="status-detail">아래 버튼을 클릭하여 상담을 시작하세요</div>' +
-                '</div>' +
-                '<button id="startChatBtn" class="btn-start-chat">' +
-                '<i class="fas fa-comments"></i> 채팅 시작하기' +
-                '</button>'
+                    '<div class="chat-status">' +
+                    '<div class="status-icon">💬</div>' +
+                    '<div class="status-message">상담 준비 완료</div>' +
+                    '<div class="status-detail">아래 버튼을 클릭하여 상담을 시작하세요</div>' +
+                    '</div>' +
+                    '<button id="startChatBtn" class="btn-start-chat" onclick="inquiryPage.createChatRoom()">' +
+                    '<i class="fas fa-comments"></i> 상담 시작하기' +
+                    '</button>'
             );
-
-            $('#startChatBtn').click(() => {
-                this.createChatRoom();
-            });
-            this.updateConnectionStatus(this.isConnected);
         },
 
         showActiveRoomStatus: function(room) {
             let statusIcon = room.status === 'waiting' ? '⏳' : '✅';
             let statusText = room.status === 'waiting' ? '상담사 연결 대기 중' : '상담 진행 중';
             let statusDetail = room.status === 'waiting' ?
-                '상담사가 곧 연결됩니다. 잠시만 기다려주세요.' :
-                '상담사와 연결되었습니다.';
+                    '상담사가 곧 연결됩니다. 잠시만 기다려주세요.' :
+                    '상담사와 연결되었습니다.';
 
             $('#chatStatus').html(
-                '<div class="chat-status">' +
-                '<div class="status-icon">' + statusIcon + '</div>' +
-                '<div class="status-message">' + statusText + '</div>' +
-                '<div class="status-detail">' + statusDetail + '</div>' +
-                '<div class="room-info">채팅방 번호: ' + room.roomId + ' | 고객 ID: ' + room.custId + '</div>' +
-                '</div>' +
-                '<button class="btn-start-chat" disabled>' +
-                '<i class="fas fa-check-circle"></i> 채팅방 생성됨' +
-                '</button>'
+                    '<div class="chat-status">' +
+                    '<div class="status-icon">' + statusIcon + '</div>' +
+                    '<div class="status-message">' + statusText + '</div>' +
+                    '<div class="status-detail">' + statusDetail + '</div>' +
+                    '<div class="room-info">채팅방 번호: ' + room.roomId + ' | 고객 ID: ' + room.custId + '</div>' +
+                    '</div>' +
+                    '<button class="btn-start-chat" disabled>' +
+                    '<i class="fas fa-check-circle"></i> 채팅방 생성됨' +
+                    '</button>'
             );
             this.updateConnectionStatus(this.isConnected);
+        },
+
+        // ⭐ 영상 통화 시작 함수
+        startVideoCall: function() {
+            if (!this.activeRoomId) {
+                alert('먼저 채팅방을 생성해주세요.');
+                return;
+            }
+
+            const videoCallUrl = '/websocket/videocall?roomId=' + this.activeRoomId + '&custId=' + this.custId;
+            window.location.href = videoCallUrl;
         }
     };
 
@@ -522,7 +510,11 @@
                 <input type="text" id="chatMessage" placeholder="상담사에게 메시지를 입력하세요" disabled>
                 <button id="sendChatBtn" disabled>전송</button>
             </div>
+
+            <!-- ⭐ 영상 통화 버튼 추가 -->
+            <button id="videoCallBtn" class="btn-video-call" disabled>
+                <i class="fas fa-video"></i> 영상 통화 시작
+            </button>
         </div>
     </div>
 </div>
-

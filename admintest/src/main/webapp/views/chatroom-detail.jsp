@@ -212,19 +212,18 @@
             this.$messageInput = $('#admin-chat-message');
             this.$sendBtn = $('#admin-send-btn');
             this.$closeBtn = $('#close-chat-btn');
+            this.$videoCallBtn = $('#videoCallBtn'); // ⭐ 추가
             this.$connection = $('#admin-connection-status');
             this.$assignStatus = $('#assign-status');
         },
 
-        bindEvents() {
-            this.$sendBtn.click(() => this.sendMessage());
-            this.$closeBtn.click(() => this.closeChat());
+        bindEvents: function() {
+            this.$sendBtn.on('click', () => this.sendMessage());
             this.$messageInput.on('keypress', (e) => {
-                if (e.which === 13) {
-                    e.preventDefault();
-                    this.sendMessage();
-                }
+                if (e.which === 13) this.sendMessage();
             });
+            this.$closeBtn.on('click', () => this.closeChat());
+            this.$videoCallBtn.on('click', () => this.startVideoCall()); // ⭐ 추가
         },
 
         renderInitialInfo() {
@@ -246,9 +245,9 @@
                     this.assignCompleted = true;
                     $('#detail-admin-id').text(adminId);
                     this.$assignStatus
-                        .removeClass('badge-secondary badge-danger')
-                        .addClass('badge-success')
-                        .text('상담 진행 중');
+                            .removeClass('badge-secondary badge-danger')
+                            .addClass('badge-success')
+                            .text('상담 진행 중');
                     this.appendSystemMessage('채팅방이 배정되었습니다. 고객과의 상담을 시작하세요.');
                     this.disableInputs(!(this.isConnected && this.assignCompleted));
                 },
@@ -259,9 +258,9 @@
                         this.fetchRoomInfo();
                     }
                     this.$assignStatus
-                        .removeClass('badge-success badge-secondary')
-                        .addClass('badge-danger')
-                        .text('배정 실패');
+                            .removeClass('badge-success badge-secondary')
+                            .addClass('badge-danger')
+                            .text('배정 실패');
                     this.appendSystemMessage(message);
                     this.disableInputs(true);
                 }
@@ -280,9 +279,9 @@
                         if (data.adminId === this.adminId) {
                             this.assignCompleted = true;
                             this.$assignStatus
-                                .removeClass('badge-secondary badge-danger')
-                                .addClass('badge-success')
-                                .text('상담 진행 중');
+                                    .removeClass('badge-secondary badge-danger')
+                                    .addClass('badge-success')
+                                    .text('상담 진행 중');
                             this.disableInputs(!(this.isConnected && this.assignCompleted));
                         }
                     }
@@ -332,6 +331,7 @@
             this.$messageInput.prop('disabled', disabled);
             this.$sendBtn.prop('disabled', disabled);
             this.$closeBtn.prop('disabled', disabled);
+            this.$videoCallBtn.prop('disabled', disabled); // ⭐ 추가
         },
 
         closeChat() {
@@ -345,9 +345,9 @@
                 success: (response) => {
                     this.appendSystemMessage('✅ 상담이 종료되었습니다.');
                     this.$assignStatus
-                        .removeClass('badge-success badge-secondary badge-danger')
-                        .addClass('badge-dark')
-                        .text('종료됨');
+                            .removeClass('badge-success badge-secondary badge-danger')
+                            .addClass('badge-dark')
+                            .text('종료됨');
                     this.disableInputs(true);
 
                     // WebSocket으로 종료 알림 전송
@@ -408,12 +408,23 @@
         appendSystemMessage(message) {
             const time = new Date().toLocaleTimeString('ko-KR', { hour12: false });
             this.$log.append(
-                '<div class="message-entry">' +
-                '<div class="sender">[' + time + '] 시스템</div>' +
-                '<div class="body">' + $('<div>').text(message).html() + '</div>' +
-                '</div>'
+                    '<div class="message-entry">' +
+                    '<div class="sender">[' + time + '] 시스템</div>' +
+                    '<div class="body">' + $('<div>').text(message).html() + '</div>' +
+                    '</div>'
             );
             this.$log.scrollTop(this.$log[0].scrollHeight);
+        },
+
+        // ⭐ 영상 통화 시작 함수
+        startVideoCall: function() {
+            if (!this.assignCompleted) {
+                alert('먼저 채팅방에 배정되어야 합니다.');
+                return;
+            }
+
+            const videoCallUrl = '/videocall?roomId=' + this.roomId + '&custId=' + this.custId;
+            window.open(videoCallUrl, '_blank', 'width=1200,height=800');
         }
     };
 
@@ -461,7 +472,11 @@
 
             <div id="admin-message-log"></div>
 
+            <!-- ⭐ 버튼 영역 수정 -->
             <div class="d-flex justify-content-end mb-3">
+                <button id="videoCallBtn" class="btn btn-success btn-sm mr-2" disabled>
+                    <i class="fas fa-video"></i> 영상 통화
+                </button>
                 <button id="close-chat-btn" class="btn btn-danger btn-sm" disabled>
                     <i class="fas fa-times-circle"></i> 상담 종료
                 </button>

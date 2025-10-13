@@ -63,6 +63,7 @@ public class MainController {
 
     @RequestMapping("/chatroom")
     public String chatroom(Model model) {
+        prepareCommon(model);
         model.addAttribute("center", "chatroom");
         return "index";
     }
@@ -76,6 +77,18 @@ public class MainController {
         model.addAttribute("roomId", roomId);
         model.addAttribute("custId", custId);
         model.addAttribute("center", "chatroom-detail");
+        return "index";
+    }
+
+    @RequestMapping("/videocall")
+    public String videocall(@RequestParam("roomId") Long roomId,
+                            @RequestParam("custId") String custId,
+                            Model model) {
+        prepareCommon(model);
+        model.addAttribute("websocketurl", websocketurl);
+        model.addAttribute("roomId", roomId);
+        model.addAttribute("custId", custId);
+        model.addAttribute("center", "websocket");  // 기존 websocket.jsp 재사용
         return "index";
     }
 
