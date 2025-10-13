@@ -31,7 +31,7 @@ import java.util.Objects;
 public class ChartRestController {
 
     //  RapidAPI 키 (개인 키 사용 중)
-    private static final String API_KEY = "42785f2fb6mshb86620cf37e75f4p1ede36jsne103bcbc6892";
+    private static final String API_KEY = "a3258fbaa5msh4aa92df73eafc25p1235e9jsne271b2011ad9";
     private static final String API_HOST = "apidojo-yahoo-finance-v1.p.rapidapi.com";
     private static final String BASE_URL = "https://" + API_HOST + "/market/v2/get-quotes";
 

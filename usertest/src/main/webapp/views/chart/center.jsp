@@ -64,42 +64,122 @@
 
             createChart: function() {
                 this.chart = Highcharts.chart('chart-container', {
-                    chart: { type: 'areaspline', animation: Highcharts.svg },
-                    title: { text: '실시간 주가 변화' },
-                    xAxis: { type: 'datetime' },
-                    yAxis: { title: { text: '가격 (KRW)' } },
-                    series: [{ name: '주가', data: [] }],
+                    chart: {
+                        zoomType: 'x',
+                        animation: Highcharts.svg,
+                        backgroundColor: '#ffffff',
+                        panning: true,
+                        panKey: 'shift'
+                    },
+                    title: { text: '📈 실시간 주가 변화' },
+                    subtitle: { text: '드래그로 확대 / Shift + 드래그로 이동' },
+                    time: { timezone: 'Asia/Seoul' },
+
+                    rangeSelector: {
+                        enabled: true,
+                        buttons: [
+                            { type: 'minute', count: 1, text: '1분' },
+                            { type: 'minute', count: 5, text: '5분' },
+                            { type: 'hour', count: 1, text: '1시간' },
+                            { type: 'day', count: 1, text: '1일' },
+                            { type: 'all', text: '전체' }
+                        ],
+                        selected: 2
+                    },
+
+                    xAxis: {
+                        type: 'datetime',
+                        labels: {
+                            formatter: function() {
+                                return Highcharts.dateFormat('%H:%M:%S', this.value);
+                            }
+                        }
+                    },
+
+                    yAxis: [{
+                        title: { text: '가격 (KRW)' },
+                        labels: { format: '{value}원' },
+                        opposite: false
+                    }, {
+                        title: { text: '거래량 (주)' },
+                        labels: { format: '{value}' },
+                        opposite: true,
+                        gridLineWidth: 0
+                    }],
+
+                    tooltip: {
+                        shared: true,
+                        backgroundColor: 'rgba(255,255,255,0.9)',
+                        borderColor: '#ccc',
+                        borderRadius: 8,
+                        formatter: function() {
+                            const point = this.points[0];
+                            const price = point.y.toLocaleString();
+                            const volume = point.point.volume ? point.point.volume.toLocaleString() : '-';
+                            const change = point.point.change ? point.point.change.toFixed(2) : 0;
+                            const color = change >= 0 ? 'red' : 'blue';
+
+                            return `
+                    <b>${Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', this.x)}</b><br/>
+                    가격: <b style="color:${color};">${price} KRW</b><br/>
+                    변동률: <b style="color:${color};">${change}%</b><br/>
+                    거래량: <b>${volume}</b>
+                `;
+                        }
+                    },
+
                     plotOptions: {
+                        series: { animation: { duration: 400 }, lineWidth: 2 },
                         areaspline: {
                             color: '#32CD32',
                             fillColor: {
                                 linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
                                 stops: [
-                                    [0, '#32CD32'],
+                                    [0, 'rgba(50,205,50,0.7)'],
                                     [1, 'rgba(50,205,50,0)']
                                 ]
                             },
                             threshold: null,
-                            marker: { lineWidth: 1, fillColor: 'white' }
+                            marker: { enabled: false }
+                        },
+                        column: {
+                            color: 'rgba(30,144,255,0.5)',
+                            borderWidth: 0,
+                            yAxis: 1
                         }
-                    }
+                    },
+
+                    series: [
+                        {
+                            name: '주가',
+                            type: 'areaspline',
+                            data: [],
+                            tooltip: { valueSuffix: ' KRW' }
+                        },
+                        {
+                            name: '거래량',
+                            type: 'column',
+                            data: [],
+                            yAxis: 1,
+                            tooltip: { valueSuffix: ' 주' }
+                        }
+                    ],
+
+                    exporting: { enabled: false },
+                    credits: { enabled: false }
                 });
             },
+
 
             updateData: function() {
                 const apiUrl = `${apiOrigin}/api/stocks/${this.symbol}`;
                 $.getJSON(apiUrl, (data) => {
-                    if (!data || data.error) {
-                        $('#result').html("<div style='color:red;'>" + (data?.error || "데이터를 불러오지 못했습니다.") + "</div>");
-                        return;
-                    }
+                    if (!data || data.error) return;
 
                     const now = (new Date()).getTime();
                     const price = data.regularMarketPrice || 0;
                     const change = data.regularMarketChangePercent || 0;
-                    const volume = data.regularMarketVolume || '-';
-                    const marketCap = data.marketCap || '-';
-                    const range = data.fiftyTwoWeekRange || '-';
+                    const volume = data.regularMarketVolume || 0;
                     const name = data.longName || data.symbol;
 
                     const color = (change >= 0) ? 'red' : 'blue';
@@ -107,24 +187,24 @@
 
                     $('#name').text(name);
                     $('#price-info').html(`<span style="color:${color}; font-weight:bold;">${price.toLocaleString()} KRW ${sign}${change.toFixed(2)}%</span>`);
-                    $('#extra-info').html(`
-            거래량: ${volume.toLocaleString()}<br>
-            시가총액: ${marketCap.toLocaleString()}<br>
-            52주 범위: ${range}
-          `);
+                    $('#extra-info').html(`거래량: ${volume.toLocaleString()}`);
 
                     if (this.chart) {
-                        if (this.chart.series[0].data.length === 0) {
-                            this.chart.series[0].setData([[now, price]]);
+                        const priceSeries = this.chart.series[0];
+                        const volumeSeries = this.chart.series[1];
+                        const pointData = { x: now, y: price, volume, change };
+
+                        if (priceSeries.data.length === 0) {
+                            priceSeries.setData([pointData]);
+                            volumeSeries.setData([[now, volume]]);
                         } else {
-                            this.chart.series[0].addPoint([now, price], true, this.chart.series[0].data.length > 30);
+                            priceSeries.addPoint(pointData, true, priceSeries.data.length > 50);
+                            volumeSeries.addPoint([now, volume], true, volumeSeries.data.length > 50);
                         }
                     }
-                }).fail((err) => {
-                    console.error("API 요청 실패:", err);
-                    $('#result').html("<div style='color:red;'>API 요청 중 오류 발생</div>");
-                });
+                }).fail(err => console.error("API 요청 실패:", err));
             }
+
         };
         $(() => stockLive.init());
     </script>
