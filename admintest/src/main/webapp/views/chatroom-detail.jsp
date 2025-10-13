@@ -1,7 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
-<!-- ⭐ Kakao Map SDK를 제일 먼저 로드 -->
 <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=15d758eb02a2d0158ff32a94530e3426"></script>
 
 <style>
@@ -224,14 +223,6 @@
         display: flex;
         align-items: center;
         gap: 8px;
-    }
-
-    .video-control-btn.start {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-    }
-
-    .video-control-btn.end {
         background: #dc3545;
         color: white;
     }
@@ -239,12 +230,6 @@
     .video-control-btn:hover {
         transform: translateY(-2px);
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    }
-
-    .video-control-btn:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-        transform: none;
     }
 
     .connection-status {
@@ -279,7 +264,6 @@
         assignCompleted: false,
         map: null,
         customerMarker: null,
-        // ⭐ WebRTC 변수 추가
         rtcConnection: null,
         rtcSocket: null,
         localStream: null,
@@ -289,7 +273,6 @@
             this.bindEvents();
             this.renderInitialInfo();
 
-            // ⭐ Kakao Maps SDK 로딩 확인 후 지도 초기화
             this.waitForKakao(() => {
                 this.initMap();
             });
@@ -304,7 +287,6 @@
             this.connectWebSocket();
         },
 
-        // ⭐ Kakao SDK 로딩 대기 함수
         waitForKakao(callback) {
             if (typeof kakao !== 'undefined' && kakao.maps) {
                 callback();
@@ -321,13 +303,12 @@
             }
 
             const options = {
-                center: new kakao.maps.LatLng(37.5665, 126.9780), // 서울 시청 기본값
+                center: new kakao.maps.LatLng(37.5665, 126.9780),
                 level: 3
             };
 
             this.map = new kakao.maps.Map(container, options);
 
-            // 고객 위치 마커
             this.customerMarker = new kakao.maps.Marker({
                 map: this.map
             });
@@ -360,14 +341,9 @@
             }
 
             const position = new kakao.maps.LatLng(lat, lng);
-
-            // 지도 중심 이동
             this.map.setCenter(position);
-
-            // 마커 위치 업데이트
             this.customerMarker.setPosition(position);
 
-            // 좌표 표시
             $('#map-latitude').text(lat.toFixed(6));
             $('#map-longitude').text(lng.toFixed(6));
 
@@ -379,7 +355,7 @@
             this.$messageInput = $('#admin-chat-message');
             this.$sendBtn = $('#admin-send-btn');
             this.$closeBtn = $('#close-chat-btn');
-            this.$videoCallBtn = $('#videoCallBtn'); // ⭐ 추가
+            this.$videoCallBtn = $('#videoCallBtn');
             this.$connection = $('#admin-connection-status');
             this.$assignStatus = $('#assign-status');
         },
@@ -390,20 +366,13 @@
                 if (e.which === 13) this.sendMessage();
             });
             this.$closeBtn.on('click', () => this.closeChat());
-            // ⭐ 영상통화 버튼
+
+            // ⭐ 영상통화 버튼 - 바로 시작
             this.$videoCallBtn.on('click', () => this.startVideoCall());
 
             // ⭐ 모달 관련
             $('#closeVideoModal').on('click', () => this.closeVideoModal());
-            $('#adminStartCallBtn').on('click', () => this.startAdminVideoCall());
             $('#adminEndCallBtn').on('click', () => this.endAdminVideoCall());
-
-            // ⭐ 모달 외부 클릭
-            $(window).on('click', (e) => {
-                if (e.target.id === 'videoModal') {
-                    this.closeVideoModal();
-                }
-            });
         },
 
         renderInitialInfo() {
@@ -483,10 +452,18 @@
                 this.disableInputs(!(this.assignCompleted));
                 this.appendSystemMessage('WebSocket 연결이 완료되었습니다.');
 
+                // ⭐ 일반 채팅 + 영상통화 신호 수신
                 this.stompClient.subscribe('/send/to/' + this.adminId, (msg) => {
                     try {
                         const payload = JSON.parse(msg.body);
-                        this.appendMessage(payload.sendid || '고객', payload.content1, 'customer');
+
+                        if (payload.content1 === '__VIDEO_CALL_START__') {
+                            // ⭐ User가 영상통화 시작 신호를 보냄
+                            console.log('📞 User가 영상통화를 시작했습니다!');
+                            this.receiveVideoCallStart();
+                        } else {
+                            this.appendMessage(payload.sendid || '고객', payload.content1, 'customer');
+                        }
                     } catch (error) {
                         console.error('메시지 파싱 오류', error);
                     }
@@ -511,7 +488,7 @@
             this.$messageInput.prop('disabled', disabled);
             this.$sendBtn.prop('disabled', disabled);
             this.$closeBtn.prop('disabled', disabled);
-            this.$videoCallBtn.prop('disabled', disabled); // ⭐ 추가
+            this.$videoCallBtn.prop('disabled', disabled);
         },
 
         closeChat() {
@@ -530,7 +507,6 @@
                             .text('종료됨');
                     this.disableInputs(true);
 
-                    // WebSocket으로 종료 알림 전송
                     if (this.stompClient && this.isConnected) {
                         const closePayload = {
                             sendid: this.adminId,
@@ -541,7 +517,6 @@
                         this.stompClient.send('/adminreceiveto', {}, JSON.stringify(closePayload));
                     }
 
-                    // 3초 후 채팅방 리스트로 이동
                     setTimeout(() => {
                         window.location.href = '/chatroom';
                     }, 3000);
@@ -597,52 +572,59 @@
             this.$log.scrollTop(this.$log[0].scrollHeight);
         },
 
-        // ⭐ 영상 통화 시작 함수
+        // ⭐ Admin이 영상통화 시작 (User에게 알림 전송)
         startVideoCall: function() {
             if (!this.assignCompleted) {
                 alert('먼저 채팅방에 배정되어야 합니다.');
                 return;
             }
-            $('#videoModal').fadeIn(300);
-        },
 
-// ⭐ 모달 닫기
-        closeVideoModal: function() {
-            if (this.rtcConnection) {
-                if (confirm('통화 중입니다. 종료하시겠습니까?')) {
-                    this.endAdminVideoCall();
-                    $('#videoModal').fadeOut(300);
-                }
-            } else {
-                $('#videoModal').fadeOut(300);
+            console.log('📞 Admin이 영상통화를 시작합니다...');
+
+            // ⭐ User에게 영상통화 시작 신호 전송
+            if (this.stompClient && this.isConnected) {
+                const payload = {
+                    sendid: this.adminId,
+                    receiveid: this.custId,
+                    content1: '__VIDEO_CALL_START__',
+                    roomId: this.roomId
+                };
+                this.stompClient.send('/adminreceiveto', {}, JSON.stringify(payload));
             }
+
+            // 모달 열고 자동으로 통화 시작
+            $('#videoModal').fadeIn(300);
+            this.initializeVideoCall();
         },
 
-// ⭐ Admin 영상통화 시작
-        startAdminVideoCall: function() {
-            console.log('🎥 Admin 영상통화 시작');
+        // ⭐ User가 영상통화를 시작했을 때 (수신)
+        receiveVideoCallStart: function() {
+            console.log('📞 User의 영상통화 요청을 받았습니다!');
+
+            // 모달 자동 열림
+            $('#videoModal').fadeIn(300);
+
+            // 자동으로 통화 시작
+            this.initializeVideoCall();
+        },
+
+        // ⭐ 실제 영상통화 초기화 (WebRTC)
+        initializeVideoCall: function() {
             $('#adminVideoConnectionStatus').removeClass('disconnected').addClass('connecting').text('연결 중...');
 
             navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-                    .then(stream => {
+                    .then((stream) => {
                         this.localStream = stream;
-                        const localVideo = document.getElementById('adminLocalVideo');
-                        localVideo.srcObject = stream;
-                        localVideo.play().catch(err => console.warn('⚠️ 로컬 영상 자동재생 실패:', err));
-
+                        document.getElementById('adminLocalVideo').srcObject = stream;
                         this.setupAdminWebRTC();
-
-                        $('#adminStartCallBtn').hide();
-                        $('#adminEndCallBtn').show();
                     })
-                    .catch(error => {
+                    .catch((error) => {
                         console.error('❌ Admin 미디어 접근 실패:', error);
-                        alert('카메라/마이크 접근에 실패했습니다.');
+                        alert('카메라/마이크 접근 권한이 필요합니다.');
                         $('#adminVideoConnectionStatus').removeClass('connecting').addClass('disconnected').text('연결 실패');
                     });
         },
 
-// ⭐ Admin WebRTC 설정
         setupAdminWebRTC: function() {
             this.rtcSocket = new WebSocket('wss://10.20.33.248:8443/signal');
 
@@ -666,6 +648,10 @@
                 $('#adminVideoConnectionStatus').removeClass('connecting').addClass('disconnected').text('연결 실패');
             };
 
+            this.rtcSocket.onclose = (event) => {
+                console.log('ℹ️ Admin Signaling WebSocket 연결 종료');
+            };
+
             const configuration = {
                 iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
             };
@@ -676,37 +662,64 @@
                 this.rtcConnection.addTrack(track, this.localStream);
             });
 
+            this.rtcConnection.onconnectionstatechange = () => {
+                console.log('🔄 Admin RTC 연결 상태:', this.rtcConnection.connectionState);
+
+                switch (this.rtcConnection.connectionState) {
+                    case 'connected':
+                        $('#adminVideoConnectionStatus').removeClass('connecting disconnected').addClass('connected').text('통화 연결됨');
+                        break;
+                    case 'disconnected':
+                        $('#adminVideoConnectionStatus').removeClass('connecting connected').addClass('disconnected').text('연결 끊김');
+                        break;
+                    case 'failed':
+                        $('#adminVideoConnectionStatus').removeClass('connecting connected').addClass('disconnected').text('연결 실패');
+                        break;
+                    case 'closed':
+                        $('#adminVideoConnectionStatus').removeClass('connecting connected').addClass('disconnected').text('연결 종료됨');
+                        break;
+                }
+            };
+
             this.rtcConnection.ontrack = (event) => {
                 console.log('📹 Admin 원격 스트림 수신');
                 const remoteVideo = document.getElementById('adminRemoteVideo');
                 remoteVideo.srcObject = event.streams[0];
                 remoteVideo.play().catch(err => console.warn('⚠️ 원격 영상 자동재생 실패:', err));
-                $('#adminVideoConnectionStatus').removeClass('connecting disconnected').addClass('connected').text('통화 연결됨');
             };
 
             this.rtcConnection.onicecandidate = (event) => {
-                if (event.candidate) {
+                if (event.candidate && this.rtcSocket && this.rtcSocket.readyState === WebSocket.OPEN) {
                     this.rtcSocket.send(JSON.stringify({
                         type: 'ice-candidate',
                         roomId: this.roomId.toString(),
-                        data: event.candidate,
-                        candidate: event.candidate
+                        data: event.candidate
                     }));
                 }
             };
         },
 
-// ⭐ Admin Signaling 메시지 처리
         handleAdminSignalingMessage: function(message) {
             console.log('📨 Admin Signaling 메시지:', message.type);
 
             switch (message.type) {
-                case 'offer': {
+                case 'user-joined':
+                    // User가 나중에 들어왔을 때 Admin이 Offer 생성
+                    this.rtcConnection.createOffer()
+                            .then(offer => this.rtcConnection.setLocalDescription(offer))
+                            .then(() => {
+                                this.rtcSocket.send(JSON.stringify({
+                                    type: 'offer',
+                                    roomId: this.roomId.toString(),
+                                    data: this.rtcConnection.localDescription
+                                }));
+                            });
+                    break;
+
+                case 'offer':
                     const offer = message.offer || message.data;
-                    if (!offer) {
-                        console.warn('⚠️ 수신한 Offer 정보가 없습니다.', message);
-                        return;
-                    }
+                    if (!offer) return;
+
                     this.rtcConnection.setRemoteDescription(new RTCSessionDescription(offer))
                             .then(() => this.rtcConnection.createAnswer())
                             .then(answer => this.rtcConnection.setLocalDescription(answer))
@@ -714,55 +727,34 @@
                                 this.rtcSocket.send(JSON.stringify({
                                     type: 'answer',
                                     roomId: this.roomId.toString(),
-                                    data: this.rtcConnection.localDescription,
-                                    answer: this.rtcConnection.localDescription
+                                    data: this.rtcConnection.localDescription
                                 }));
-                            })
-                            .catch(error => console.error('❌ Admin Offer 처리 실패:', error));
+                            });
                     break;
-                }
 
-                case 'answer': {
+                case 'answer':
                     const answer = message.answer || message.data;
-                    if (!answer) {
-                        console.warn('⚠️ 수신한 Answer 정보가 없습니다.', message);
-                        return;
-                    }
-                    this.rtcConnection.setRemoteDescription(new RTCSessionDescription(answer))
-                            .catch(error => console.error('❌ Admin Answer 처리 실패:', error));
-                    break;
-                }
+                    if (!answer) return;
 
-                case 'ice-candidate': {
+                    this.rtcConnection.setRemoteDescription(new RTCSessionDescription(answer));
+                    break;
+
+                case 'ice-candidate':
                     const candidate = message.candidate || message.data;
-                    if (!candidate) {
-                        console.warn('⚠️ 수신한 ICE 후보가 없습니다.', message);
-                        return;
-                    }
-                    this.rtcConnection.addIceCandidate(new RTCIceCandidate(candidate))
-                            .catch(error => console.error('❌ Admin ICE 후보 처리 실패:', error));
-                    break;
-                }
+                    if (!candidate) return;
 
-                case 'user-joined':
-                    // User가 참가하면 Offer 생성 (Admin이 먼저 시작한 경우)
-                    this.rtcConnection.createOffer()
-                            .then(offer => this.rtcConnection.setLocalDescription(offer))
-                            .then(() => {
-                                this.rtcSocket.send(JSON.stringify({
-                                    type: 'offer',
-                                    roomId: this.roomId.toString(),
-                                    data: this.rtcConnection.localDescription,
-                                    offer: this.rtcConnection.localDescription
-                                }));
-                            })
-                            .catch(error => console.error('❌ Admin Offer 생성 실패:', error));
+                    this.rtcConnection.addIceCandidate(new RTCIceCandidate(candidate));
                     break;
             }
         },
 
+        closeVideoModal: function() {
+            if (confirm('통화를 종료하시겠습니까?')) {
+                this.endAdminVideoCall();
+                $('#videoModal').fadeOut(300);
+            }
+        },
 
-// ⭐ Admin 영상통화 종료
         endAdminVideoCall: function() {
             console.log('📴 Admin 영상통화 종료');
 
@@ -783,8 +775,6 @@
 
             document.getElementById('adminLocalVideo').srcObject = null;
             document.getElementById('adminRemoteVideo').srcObject = null;
-            $('#adminStartCallBtn').show();
-            $('#adminEndCallBtn').hide();
             $('#adminVideoConnectionStatus').removeClass('connected connecting').addClass('disconnected').text('연결 대기 중');
         }
     };
@@ -806,7 +796,6 @@
             </div>
         </div>
         <div class="card-body">
-            <!-- 지도 영역 -->
             <div class="card mb-3">
                 <div class="card-header bg-info text-white">
                     <i class="fas fa-map-marker-alt"></i> 고객 위치 정보
@@ -833,7 +822,6 @@
 
             <div id="admin-message-log"></div>
 
-            <!-- ⭐ 버튼 영역 수정 -->
             <div class="d-flex justify-content-end mb-3">
                 <button id="videoCallBtn" class="btn btn-success btn-sm mr-2" disabled>
                     <i class="fas fa-video"></i> 영상 통화
@@ -848,7 +836,7 @@
                 <div class="video-modal-content">
                     <div class="video-modal-header">
                         <h3><i class="fas fa-video"></i> 영상 상담 (Admin)</h3>
-                        <button class="video-modal-close" id="closeVideoModal">&times;</button>
+                        <button class="video-modal-close" id="closeVideoModal">×</button>
                     </div>
                     <div class="video-modal-body">
                         <div class="video-container">
@@ -862,10 +850,7 @@
                             </div>
                         </div>
                         <div class="video-controls">
-                            <button id="adminStartCallBtn" class="video-control-btn start">
-                                <i class="fas fa-phone"></i> 통화 시작
-                            </button>
-                            <button id="adminEndCallBtn" class="video-control-btn end" style="display: none;">
+                            <button id="adminEndCallBtn" class="video-control-btn">
                                 <i class="fas fa-phone-slash"></i> 통화 종료
                             </button>
                         </div>
@@ -875,7 +860,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="message-input-group">
                 <input type="text" id="admin-chat-message" placeholder="메시지를 입력하세요" disabled>
                 <button id="admin-send-btn" class="btn btn-primary" disabled>전송</button>
