@@ -16,7 +16,7 @@ public class SseEmitters2 {
 
     public SseEmitter add(String clientId, SseEmitter emitter) {
         emitters.put(clientId, emitter);
-        log.info("[SSE2] 새 연결 추가: {}, 현재 연결 수: {}", clientId, emitters.size());
+        log.info("[SSE2] 새 연결 추가 : {}, 현재 연결 수: {}", clientId, emitters.size());
 
         emitter.onCompletion(() -> remove(clientId));
         emitter.onTimeout(() -> remove(clientId));

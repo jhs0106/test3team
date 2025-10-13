@@ -22,7 +22,7 @@ public class SSEScheduler2 {
     // 5초마다 임의의 센서 데이터 전송
     @Scheduled(cron = "*/5 * * * * *")
     public void sendSensorData() {
-//        log.info("[SSE2] 스케줄러 실행됨"); // 확인용
+//        log.info("[SSE2] 스케줄러 실행됨"); // 확인용h
 
         Map<String, Object> data = new HashMap<>();
         data.put("temperature", 20 + random.nextInt(10));  // 20~29℃

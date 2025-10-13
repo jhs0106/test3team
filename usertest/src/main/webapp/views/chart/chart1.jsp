@@ -26,7 +26,7 @@
                 data: {
                     labels: [],
                     datasets: [
-                        { label: '온도 (°C)', borderColor: 'red', data: [], tension: 0.3 },
+                        { label: '온도  (°C)', borderColor: 'red', data: [], tension: 0.3 },
                         { label: '습도 (%)', borderColor: 'blue', data: [], tension: 0.3 },
                         { label: '조도 (lux)', borderColor: 'green', data: [], tension: 0.3 }
                     ]

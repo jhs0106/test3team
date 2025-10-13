@@ -12,11 +12,11 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 @RequiredArgsConstructor
 public class SseController {
 
-    private final SseEmitters2 sseEmitters2; // ✅ 핵심: 2번 클래스 주입
+    private final SseEmitters2 sseEmitters2; //  핵심: 2번 클래스 주입g
 
     @GetMapping(value = "/sse2/connect/{id}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public ResponseEntity<SseEmitter> connect(@PathVariable("id") String clientId) {
-        SseEmitter emitter = new SseEmitter(0L); // 무제한 유지
+        SseEmitter emitter = new SseEmitter(0L);
         sseEmitters2.add(clientId, emitter);
 
         try {
