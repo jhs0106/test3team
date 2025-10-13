@@ -10,21 +10,21 @@
     }
 
     .chatroom-detail-card {
-        border-radius: 12px;
-        box-shadow: 0 10px 30px rgba(15, 23, 42, 0.12);
-        border: none;
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
     }
 
     .chatroom-detail-header {
-        background: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%);
+        background: #2563eb;
         color: #fff;
         padding: 24px;
-        border-radius: 12px 12px 0 0;
+        border-radius: 8px 8px 0 0;
     }
 
     .chatroom-detail-header h4 {
         margin: 0;
-        font-weight: 700;
+        font-weight: 600;
+        font-size: 20px;
     }
 
     .chatroom-meta {
@@ -33,7 +33,6 @@
         gap: 12px 24px;
         margin-top: 12px;
         font-size: 14px;
-        opacity: 0.9;
     }
 
     .chatroom-meta span {
@@ -45,7 +44,8 @@
     .badge-status {
         font-size: 13px;
         padding: 6px 12px;
-        border-radius: 999px;
+        border-radius: 4px;
+        font-weight: 500;
     }
 
     #admin-connection-status {
@@ -57,7 +57,7 @@
         overflow-y: auto;
         background: #f8fafc;
         border: 1px solid #e2e8f0;
-        border-radius: 12px;
+        border-radius: 6px;
         padding: 16px;
         margin-bottom: 16px;
     }
@@ -69,17 +69,18 @@
 
     .message-entry .sender {
         font-weight: 600;
-        color: #1d4ed8;
+        color: #2563eb;
+        font-size: 13px;
     }
 
     .message-entry .sender.customer {
-        color: #dc2626;
+        color: #0ea5e9;
     }
 
     .message-entry time {
         display: block;
         font-size: 12px;
-        color: #6b7280;
+        color: #94a3b8;
         margin-top: 4px;
     }
 
@@ -90,14 +91,20 @@
 
     .message-input-group input {
         flex: 1;
-        border-radius: 10px;
-        border: 1px solid #cbd5f5;
+        border-radius: 6px;
+        border: 1px solid #e2e8f0;
         padding: 12px;
+        font-size: 14px;
+    }
+
+    .message-input-group input:focus {
+        outline: none;
+        border-color: #2563eb;
     }
 
     .message-input-group button {
         padding: 0 24px;
-        border-radius: 10px;
+        border-radius: 6px;
     }
 
     .assign-alert {
@@ -112,25 +119,24 @@
         top: 0;
         width: 100%;
         height: 100%;
-        background-color: rgba(0, 0, 0, 0.8);
+        background-color: rgba(0, 0, 0, 0.85);
     }
 
     .video-modal-content {
         position: relative;
-        background-color: #1a1a1a;
+        background-color: #1e293b;
         margin: 2% auto;
         padding: 0;
         width: 90%;
         max-width: 1200px;
         height: 90%;
         border-radius: 12px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
         display: flex;
         flex-direction: column;
     }
 
     .video-modal-header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: #334155;
         color: white;
         padding: 20px;
         border-radius: 12px 12px 0 0;
@@ -139,25 +145,31 @@
         align-items: center;
     }
 
+    .video-modal-header h3 {
+        margin: 0;
+        font-size: 18px;
+        font-weight: 600;
+    }
+
     .video-modal-close {
         color: white;
-        font-size: 32px;
-        font-weight: bold;
+        font-size: 28px;
+        font-weight: normal;
         cursor: pointer;
         background: none;
         border: none;
         padding: 0;
-        width: 40px;
-        height: 40px;
+        width: 36px;
+        height: 36px;
         display: flex;
         align-items: center;
         justify-content: center;
-        border-radius: 50%;
-        transition: background-color 0.3s;
+        border-radius: 6px;
+        transition: background-color 0.2s;
     }
 
     .video-modal-close:hover {
-        background-color: rgba(255, 255, 255, 0.2);
+        background-color: rgba(255, 255, 255, 0.1);
     }
 
     .video-modal-body {
@@ -177,7 +189,7 @@
 
     .video-wrapper {
         position: relative;
-        background: #000;
+        background: #0f172a;
         border-radius: 8px;
         overflow: hidden;
         display: flex;
@@ -193,14 +205,14 @@
 
     .video-label {
         position: absolute;
-        top: 10px;
-        left: 10px;
-        background: rgba(0, 0, 0, 0.7);
+        top: 12px;
+        left: 12px;
+        background: rgba(0, 0, 0, 0.6);
         color: white;
-        padding: 5px 15px;
-        border-radius: 20px;
-        font-size: 14px;
-        font-weight: 600;
+        padding: 6px 12px;
+        border-radius: 4px;
+        font-size: 13px;
+        font-weight: 500;
     }
 
     .video-controls {
@@ -208,49 +220,51 @@
         justify-content: center;
         gap: 15px;
         padding: 15px;
-        background: #2a2a2a;
+        background: #334155;
         border-radius: 8px;
     }
 
     .video-control-btn {
         padding: 12px 24px;
         border: none;
-        border-radius: 8px;
-        font-size: 16px;
-        font-weight: 600;
+        border-radius: 6px;
+        font-size: 15px;
+        font-weight: 500;
         cursor: pointer;
-        transition: all 0.3s;
+        transition: all 0.2s;
         display: flex;
         align-items: center;
         gap: 8px;
-        background: #dc3545;
+        background: #dc2626;
         color: white;
     }
 
     .video-control-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        background: #b91c1c;
     }
 
     .connection-status {
         text-align: center;
         padding: 10px;
-        background: #2a2a2a;
-        border-radius: 8px;
-        color: #fff;
+        background: #334155;
+        border-radius: 6px;
+        color: #e2e8f0;
+        font-size: 14px;
     }
 
     .connection-status.connected {
-        background: #28a745;
+        background: #10b981;
+        color: white;
     }
 
     .connection-status.disconnected {
-        background: #6c757d;
+        background: #64748b;
+        color: white;
     }
 
     .connection-status.connecting {
-        background: #ffc107;
-        color: #000;
+        background: #f59e0b;
+        color: white;
     }
 </style>
 
