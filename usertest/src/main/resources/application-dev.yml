@@ -52,3 +52,5 @@ app:
     algo: PBEWithMD5AndDES
     wkey: ENC(34dLUJrGGnsDntd5cJlWzClgQg9sE4CzeMZNzIKOkR+NYVGuc3xeEBJvAqqI2ge0S5wlqnSXZ7xEu8xhJYpC+XRqENbH7xTKznIFOLpWsDo=)
     owkey: ENC(PizbdAKnytpOVEjldzf4NRRapWa1ofzFIVESDA0bAejHF9UvCp/kH5g8hw/MCEKx)
+  yahoo:
+    key: ENC(Dt8tlnAD2bjXqyF3bTz7WxDVbEDfqDouZurbtJtE43gY6xOLfm56L+zhxGcByODRop2ROx7APinYu8gskSLJrg==)

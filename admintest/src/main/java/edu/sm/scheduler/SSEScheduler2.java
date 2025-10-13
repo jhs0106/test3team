@@ -31,6 +31,7 @@ public class SSEScheduler2 {
 
         log.info("[SSE2] 전송 데이터: {}", data);
         sseEmitters2.broadcast("sensorData", data);
+/**/
     }
 
 }
