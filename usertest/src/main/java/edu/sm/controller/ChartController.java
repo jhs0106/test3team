@@ -37,5 +37,4 @@ public class ChartController {
         model.addAttribute("left", dir+"left");
         return "index";
     }
-   
 }

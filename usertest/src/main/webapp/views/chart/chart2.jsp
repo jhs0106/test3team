@@ -117,7 +117,7 @@
                 const avgTemp = parseFloat(this.calcAvg(this.dataList.temp));
                 const avgHumi = parseFloat(this.calcAvg(this.dataList.humi));
                 const avgLight = parseFloat(this.calcAvg(this.dataList.light));
-
+//
                 $('#avg-temp').text(avgTemp);
                 $('#avg-humi').text(avgHumi);
                 $('#avg-light').text(avgLight);
