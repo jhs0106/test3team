@@ -50,13 +50,15 @@
                         return;
                     }
                     this.symbol = symbol;
-                    this.start(symbol);
+                    this.start(symbol); // 버튼 누르면 start() 실행
                 });
             },
 
             start: function(symbol) {
+                // 기존 타이며나 차트 존재하면 삭제
                 if (this.timer) clearInterval(this.timer);
                 if (this.chart) this.chart.destroy();
+                // 새 차트 만들고 셋인터벌로 5초마다 갱신
                 this.createChart();
                 this.updateData();
                 this.timer = setInterval(() => this.updateData(), 5000);
@@ -170,9 +172,10 @@
                 });
             },
 
-
+            // 실시간 데이터 요청
             updateData: function() {
                 const apiUrl = `${apiOrigin}/api/stocks/${this.symbol}`;
+                // ajax로 요청 -> json응답 받음
                 $.getJSON(apiUrl, (data) => {
                     if (!data || data.error) return;
 
@@ -198,7 +201,7 @@
                             priceSeries.setData([pointData]);
                             volumeSeries.setData([[now, volume]]);
                         } else {
-                            priceSeries.addPoint(pointData, true, priceSeries.data.length > 50);
+                            priceSeries.addPoint(pointData, true, priceSeries.data.length > 50);    // 새 데이터 추가 / true : 차트 즉시 갱신 >50 : 데이터 50개 넘으면 오래된 점 삭제
                             volumeSeries.addPoint([now, volume], true, volumeSeries.data.length > 50);
                         }
                     }
@@ -219,6 +222,7 @@
 
     <script>
         let stockMulti = {
+            // 여러 종목 담음
             symbols: [
                 { code: '005930', name: '삼성전자' },
                 { code: '000660', name: 'SK하이닉스' },

@@ -6,6 +6,8 @@
     <li class="nav-item">
       <a class="nav-link" href="<c:url value ="/chart"/>">Chart Center</a>
       <a class="nav-link" href="<c:url value ="/chart1"/>">Chart1</a>
+      <a class="nav-link" href="<c:url value ="/chart2"/>">Chart2</a>
+      <a class="nav-link" href="<c:url value ="/chart3"/>">Chart3</a>
     </li>
   </ul>
   <hr class="d-sm-none">
