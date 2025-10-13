@@ -140,11 +140,11 @@ public class ChartRestController {
     @GetMapping("/global")
     public ResponseEntity<String> getGlobalStocks() {
         try {
-            // ✅ 1. 콤마로 여러 지수 요청 (한 번에 8개)
+            //  1. 콤마로 여러 지수 요청 (한 번에 8개)
             String symbols = "^KS11,^N225,^DJI,^IXIC,^GSPC,^GDAXI,000001.SS,^BSESN";
             String url = BASE_URL + "?region=US&symbols=" + symbols;
 
-            // ✅ 2. HTTP 헤더 설정 (RapidAPI 인증용)
+            //  2. HTTP 헤더 설정 (RapidAPI 인증용)
             HttpHeaders headers = new HttpHeaders();
             headers.set("X-RapidAPI-Key", API_KEY);
             headers.set("X-RapidAPI-Host", "apidojo-yahoo-finance-v1.p.rapidapi.com");
@@ -152,13 +152,13 @@ public class ChartRestController {
             HttpEntity<String> entity = new HttpEntity<>(headers);
             RestTemplate restTemplate = new RestTemplate();
 
-            // ✅ 3. 실제 API 요청
+            //  3. 실제 API 요청
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
 
-            log.info("🌍 글로벌 주가지수 데이터 요청 성공");
+
             return ResponseEntity.ok(response.getBody());
         } catch (Exception e) {
-            log.error("🌍 글로벌 지수 API 호출 실패", e);
+            log.error(" 글로벌 지수 API 호출 실패", e);
             return ResponseEntity.status(500).body("{}");
         }
     }
