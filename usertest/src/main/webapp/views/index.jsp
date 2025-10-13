@@ -32,7 +32,10 @@
     <%--tab --%>
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script
+
+    <%-- chart --%>
+
 
 </head>
 <body>
@@ -90,11 +93,6 @@
             <li class="nav-item">
                 <a class="nav-link" href="<c:url value="/websocket"/>">Chat</a>
             </li>
-<%--            </c:if>--%>
-            <li class="nav-item">
-                <a class="nav-link" href="<c:url value='/stock'/>">Stock</a>
-            </li>
-
         </ul>
     </div>
 </nav>
