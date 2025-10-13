@@ -14,4 +14,9 @@ public interface ChatRoomRepository {
     ChatRoomDto getActiveByCustId(@Param("custId") String custId);
     List<ChatRoomDto> getAllRooms();
     ChatRoomDto selectById(@Param("roomId") Integer roomId);
+
+    // 8단계: 위치 정보 업데이트
+    int updateLocation(@Param("roomId") Integer roomId,
+                       @Param("latitude") Double latitude,
+                       @Param("longitude") Double longitude);
 }

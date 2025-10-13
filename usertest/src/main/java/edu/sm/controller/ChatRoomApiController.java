@@ -97,4 +97,24 @@ public class ChatRoomApiController {
         ChatRoomDto room = chatRoomService.getActiveByCustId(custId);
         return ResponseEntity.ok(room);
     }
+
+    // ⭐ 8단계: 위치 정보 업데이트
+    @PostMapping("/{roomId}/location")
+    public ResponseEntity<Map<String, Object>> updateLocation(
+            @PathVariable Integer roomId,
+            @RequestParam Double latitude,
+            @RequestParam Double longitude) {
+        log.info("===== API: 위치 정보 업데이트, roomId={}, lat={}, lng={} =====",
+                roomId, latitude, longitude);
+
+        boolean success = chatRoomService.updateLocation(roomId, latitude, longitude);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", success);
+        response.put("roomId", roomId);
+        response.put("latitude", latitude);
+        response.put("longitude", longitude);
+
+        return ResponseEntity.ok(response);
+    }
 }

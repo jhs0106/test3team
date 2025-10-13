@@ -1,5 +1,8 @@
+.env/
 /.env
 /.gradle
 /build
 /gradle
 /build.gradle
+
+build/

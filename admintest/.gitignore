@@ -36,3 +36,9 @@ out/
 
 ### VS Code ###
 .vscode/
+
+/build
+build/
+
+.env/
+/.env

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="edu.sm.app.repository.UserStatsRepository">
+
+    <!-- 특정 고객의 최근 N일 통계 조회 -->
+    <select id="getStatsByCustId" resultType="UserStatsDto">
+        SELECT
+            stat_id,
+            cust_id,
+            stat_date,
+            chat_count,
+            total_duration,
+            avg_response_time,
+            satisfaction_score,
+            created_at,
+            updated_at
+        FROM user_stats
+        WHERE cust_id = #{custId}
+          AND stat_date >= CURRENT_DATE - INTERVAL '#{days} days'
+        ORDER BY stat_date DESC
+    </select>
+
+    <!-- 특정 고객의 특정 기간 통계 조회 -->
+    <select id="getStatsByDateRange" resultType="UserStatsDto">
+        SELECT
+            stat_id,
+            cust_id,
+            stat_date,
+            chat_count,
+            total_duration,
+            avg_response_time,
+            satisfaction_score,
+            created_at,
+            updated_at
+        FROM user_stats
+        WHERE cust_id = #{custId}
+          AND stat_date BETWEEN #{startDate} AND #{endDate}
+        ORDER BY stat_date ASC
+    </select>
+
+    <!-- 모든 고객의 일별 통계 합계 조회 (최근 N일) -->
+    <select id="getDailyStats" resultType="map">
+        SELECT
+            stat_date,
+            SUM(chat_count) AS total_chats,
+            SUM(total_duration) AS total_duration,
+            AVG(avg_response_time) AS avg_response_time,
+            AVG(satisfaction_score) AS avg_satisfaction
+        FROM user_stats
+        WHERE stat_date >= CURRENT_DATE - INTERVAL '#{days} days'
+        GROUP BY stat_date
+        ORDER BY stat_date ASC
+    </select>
+
+    <!-- 통계 데이터 삽입 -->
+    <insert id="insertStats">
+        INSERT INTO user_stats (
+            cust_id,
+            stat_date,
+            chat_count,
+            total_duration,
+            avg_response_time,
+            satisfaction_score
+        ) VALUES (
+                     #{custId},
+                     #{statDate},
+                     #{chatCount},
+                     #{totalDuration},
+                     #{avgResponseTime},
+                     #{satisfactionScore}
+                 )
+            ON CONFLICT (cust_id, stat_date)
+        DO UPDATE SET
+            chat_count = user_stats.chat_count + EXCLUDED.chat_count,
+                           total_duration = user_stats.total_duration + EXCLUDED.total_duration,
+                           avg_response_time = (user_stats.avg_response_time + EXCLUDED.avg_response_time) / 2,
+                           updated_at = CURRENT_TIMESTAMP
+    </insert>
+
+    <!-- 고객별 통계 요약 조회 -->
+    <select id="getCustomerSummary" resultType="map">
+        SELECT
+            cust_id,
+            SUM(chat_count) AS total_chats,
+            SUM(total_duration) AS total_duration,
+            AVG(satisfaction_score) AS avg_satisfaction,
+            MAX(stat_date) AS last_chat_date
+        FROM user_stats
+        WHERE stat_date >= CURRENT_DATE - INTERVAL '#{days} days'
+        GROUP BY cust_id
+        ORDER BY total_chats DESC
+    </select>
+
+</mapper>

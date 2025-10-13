@@ -112,12 +112,76 @@
         background: #f8d7da;
         color: #721c24;
     }
+    .chat-panel {
+        margin-top: 30px;
+        border: 1px solid #e9ecef;
+        border-radius: 12px;
+        background: white;
+        padding: 20px;
+        box-shadow: 0 10px 30px rgba(31, 45, 61, 0.1);
+    }
+    .chat-panel h4 {
+        margin-bottom: 15px;
+        font-weight: 600;
+        color: #4a4a4a;
+    }
+    .chat-status-indicator {
+        font-size: 14px;
+        color: #6c757d;
+        margin-bottom: 10px;
+    }
+    .chat-messages {
+        height: 280px;
+        overflow-y: auto;
+        border: 1px solid #e9ecef;
+        border-radius: 10px;
+        padding: 15px;
+        margin-bottom: 15px;
+        background: #f8f9fb;
+    }
+    .chat-message {
+        margin-bottom: 12px;
+        line-height: 1.5;
+    }
+    .chat-message .sender {
+        display: block;
+        font-weight: 600;
+    }
+    .chat-message.user .sender {
+        color: #764ba2;
+    }
+    .chat-message.admin .sender {
+        color: #007bff;
+    }
+    .chat-input-group {
+        display: flex;
+        gap: 10px;
+    }
+    .chat-input-group input {
+        flex: 1;
+        border-radius: 8px;
+        border: 1px solid #ced4da;
+        padding: 10px 12px;
+    }
+    .chat-input-group button {
+        background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+        border: none;
+        color: white;
+        padding: 0 24px;
+        border-radius: 8px;
+        font-weight: 600;
+    }
+    .chat-input-group button:disabled {
+        background: #6c757d;
+    }
 </style>
 
 <script>
     let inquiryPage = {
         custId: null,
         activeRoomId: null,
+        stompClient: null,
+        isConnected: false,
 
         init: function() {
             // 세션에서 사용자 ID 가져오기
@@ -130,8 +194,68 @@
 
             console.log('👤 현재 사용자 ID:', this.custId);
 
+            this.bindEvents();
+            this.updateConnectionStatus(false);
+            this.connectWebSocket();
             // 활성 채팅방 확인
             this.checkActiveRoom();
+        },
+
+        getCurrentLocation: function() {
+            if (!navigator.geolocation) {
+                console.warn('⚠️ Geolocation API를 지원하지 않는 브라우저입니다.');
+                return;
+            }
+
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const lat = position.coords.latitude;
+                    const lng = position.coords.longitude;
+                    console.log('📍 현재 위치:', lat, lng);
+
+                    // 위치 정보를 서버로 전송
+                    if (this.activeRoomId) {
+                        this.sendLocation(lat, lng);
+                    }
+                },
+                (error) => {
+                    console.error('❌ 위치 정보 수집 실패:', error.message);
+                },
+                {
+                    enableHighAccuracy: true,
+                    timeout: 5000,
+                    maximumAge: 0
+                }
+            );
+        },
+
+        sendLocation: function(latitude, longitude) {
+            $.ajax({
+                url: 'https://192.168.45.176:8443/api/chatroom/' + this.activeRoomId + '/location',
+                type: 'POST',
+                data: {
+                    latitude: latitude,
+                    longitude: longitude
+                },
+                success: (response) => {
+                    console.log('✅ 위치 정보 전송 성공:', response);
+                },
+                error: (xhr) => {
+                    console.error('❌ 위치 정보 전송 실패:', xhr.responseText);
+                }
+            });
+        },
+
+        bindEvents: function() {
+            $('#sendChatBtn').click(() => {
+                this.sendMessage();
+            });
+            $('#chatMessage').on('keypress', (e) => {
+                if (e.which === 13) {
+                    e.preventDefault();
+                    this.sendMessage();
+                }
+            });
         },
 
         checkActiveRoom: function() {
@@ -154,6 +278,125 @@
                     this.showReadyStatus();
                 }
             });
+        },
+
+        connectWebSocket: function() {
+            if (this.stompClient || !this.custId) {
+                return;
+            }
+
+            try {
+                const socket = new SockJS('${websocketurl}chat');
+                this.stompClient = Stomp.over(socket);
+                this.stompClient.connect({}, (frame) => {
+                    console.log('✅ WebSocket 연결 완료:', frame);
+                    this.updateConnectionStatus(true);
+                    this.getCurrentLocation();
+
+                    // 메시지 수신 처리
+                    this.stompClient.subscribe('/adminsend/to/' + this.custId, (message) => {
+                        const payload = JSON.parse(message.body);
+
+                        // 종료 시그널 확인
+                        if (payload.content1 === '__CHAT_CLOSED__') {
+                            this.handleChatClosed();
+                        } else {
+                            this.appendMessage('admin', payload.content1);
+                        }
+                    });
+                }, (error) => {
+                    console.error('❌ WebSocket 연결 실패:', error);
+                    this.stompClient = null;
+                    this.updateConnectionStatus(false);
+                });
+
+                socket.onclose = () => {
+                    console.log('ℹ️ WebSocket 연결 종료');
+                    this.stompClient = null;
+                    this.updateConnectionStatus(false);
+                };
+            } catch (e) {
+                console.error('WebSocket 초기화 실패:', e);
+                this.updateConnectionStatus(false);
+            }
+        },
+
+        handleChatClosed: function() {
+            // 시스템 메시지 표시
+            this.appendMessage('admin', '⚠️ 상담사가 채팅을 종료했습니다. 감사합니다!');
+
+            // UI 업데이트
+            $('#chatConnection').text('상담 종료됨').removeClass('text-success').addClass('text-warning');
+            $('#sendChatBtn').prop('disabled', true);
+            $('#chatMessage').prop('disabled', true);
+
+            // WebSocket 연결 해제
+            if (this.stompClient) {
+                this.stompClient.disconnect();
+                this.stompClient = null;
+            }
+
+            this.isConnected = false;
+            this.activeRoomId = null;
+
+            // 상태 메시지 업데이트
+            $('#statusMessage').html(
+                '<div class="alert alert-warning">' +
+                '<i class="fas fa-check-circle"></i> ' +
+                '상담이 종료되었습니다. 새로운 문의를 시작하려면 페이지를 새로고침하세요.' +
+                '</div>'
+            );
+        },
+
+        updateConnectionStatus: function(isConnected) {
+            this.isConnected = isConnected;
+            const canChat = isConnected && this.activeRoomId;
+            if (isConnected) {
+                $('#chatConnection').text('실시간 상담 연결됨').removeClass('text-danger').addClass('text-success');
+                $('#sendChatBtn').prop('disabled', !canChat);
+                $('#chatMessage').prop('disabled', !canChat);
+            } else {
+                $('#chatConnection').text('연결 대기 중...').removeClass('text-success').addClass('text-danger');
+                $('#sendChatBtn').prop('disabled', true);
+                $('#chatMessage').prop('disabled', true);
+            }
+        },
+
+        appendMessage: function(sender, message) {
+            const sanitized = $('<div>').text(message).html();
+            const time = new Date().toLocaleTimeString();
+            const senderLabel = sender === 'user' ? '나' : '상담사';
+            const messageClass = sender === 'user' ? 'user' : 'admin';
+
+            $('#chatMessages').append(
+                '<div class="chat-message ' + messageClass + '">' +
+                '<span class="sender">[' + time + '] ' + senderLabel + '</span>' +
+                '<span class="text">' + sanitized + '</span>' +
+                '</div>'
+            );
+            $('#chatMessages').scrollTop($('#chatMessages')[0].scrollHeight);
+        },
+
+        sendMessage: function() {
+            if (!this.isConnected || !this.stompClient) {
+                alert('상담 연결이 아직 완료되지 않았습니다. 잠시 후 다시 시도해주세요.');
+                return;
+            }
+
+            const message = $('#chatMessage').val().trim();
+            if (!message) {
+                return;
+            }
+
+            const payload = {
+                sendid: this.custId,
+                receiveid: 'admin',
+                content1: message
+            };
+
+            this.stompClient.send('/receiveto', {}, JSON.stringify(payload));
+            this.appendMessage('user', message);
+            $('#chatMessage').val('');
         },
 
         createChatRoom: function() {
@@ -200,6 +443,7 @@
         },
 
         showReadyStatus: function() {
+            this.activeRoomId = null;
             $('#chatStatus').html(
                 '<div class="chat-status">' +
                 '<div class="status-icon">💬</div>' +
@@ -214,6 +458,7 @@
             $('#startChatBtn').click(() => {
                 this.createChatRoom();
             });
+            this.updateConnectionStatus(this.isConnected);
         },
 
         showActiveRoomStatus: function(room) {
@@ -234,6 +479,7 @@
                 '<i class="fas fa-check-circle"></i> 채팅방 생성됨' +
                 '</button>'
             );
+            this.updateConnectionStatus(this.isConnected);
         }
     };
 
@@ -267,5 +513,16 @@
                 <div class="status-detail">잠시만 기다려주세요</div>
             </div>
         </div>
+
+        <div class="chat-panel">
+            <h4>실시간 상담</h4>
+            <div class="chat-status-indicator">연결 상태: <span id="chatConnection" class="text-danger">연결 대기 중...</span></div>
+            <div id="chatMessages" class="chat-messages"></div>
+            <div class="chat-input-group">
+                <input type="text" id="chatMessage" placeholder="상담사에게 메시지를 입력하세요" disabled>
+                <button id="sendChatBtn" disabled>전송</button>
+            </div>
+        </div>
     </div>
 </div>
+

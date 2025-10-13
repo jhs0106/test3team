@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 //
 @Controller
@@ -64,6 +65,24 @@ public class MainController {
     public String chatroom(Model model) {
         model.addAttribute("center", "chatroom");
         return "index";
+    }
+
+    @RequestMapping("/chatroom/detail")
+    public String chatroomDetail(@RequestParam("roomId") Long roomId,
+                                 @RequestParam("custId") String custId,
+                                 Model model) {
+        prepareCommon(model);
+        model.addAttribute("wsurl", wsurl);
+        model.addAttribute("roomId", roomId);
+        model.addAttribute("custId", custId);
+        model.addAttribute("center", "chatroom-detail");
+        return "index";
+    }
+
+    @RequestMapping("/stats")
+    public String stats(Model model) {
+        log.info("==== 통계 대시보드 페이지 접근====");
+        return "stats-dashboard";
     }
 
     @RequestMapping("/operation")
