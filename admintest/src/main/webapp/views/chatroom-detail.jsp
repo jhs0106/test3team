@@ -2,7 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <!-- ⭐ Kakao Map SDK를 제일 먼저 로드 -->
-<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=YOUR_KAKAO_API_KEY"></script>
+<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=15d758eb02a2d0158ff32a94530e3426"></script>
 
 <style>
     .chatroom-detail-wrapper {
@@ -626,7 +626,9 @@
             navigator.mediaDevices.getUserMedia({ video: true, audio: true })
                     .then(stream => {
                         this.localStream = stream;
-                        document.getElementById('adminLocalVideo').srcObject = stream;
+                        const localVideo = document.getElementById('adminLocalVideo');
+                        localVideo.srcObject = stream;
+                        localVideo.play().catch(err => console.warn('⚠️ 로컬 영상 자동재생 실패:', err));
 
                         this.setupAdminWebRTC();
 
@@ -676,7 +678,9 @@
 
             this.rtcConnection.ontrack = (event) => {
                 console.log('📹 Admin 원격 스트림 수신');
-                document.getElementById('adminRemoteVideo').srcObject = event.streams[0];
+                const remoteVideo = document.getElementById('adminRemoteVideo');
+                remoteVideo.srcObject = event.streams[0];
+                remoteVideo.play().catch(err => console.warn('⚠️ 원격 영상 자동재생 실패:', err));
                 $('#adminVideoConnectionStatus').removeClass('connecting disconnected').addClass('connected').text('통화 연결됨');
             };
 
@@ -685,7 +689,8 @@
                     this.rtcSocket.send(JSON.stringify({
                         type: 'ice-candidate',
                         roomId: this.roomId.toString(),
-                        data: event.candidate
+                        data: event.candidate,
+                        candidate: event.candidate
                     }));
                 }
             };
@@ -696,26 +701,48 @@
             console.log('📨 Admin Signaling 메시지:', message.type);
 
             switch (message.type) {
-                case 'offer':
-                    this.rtcConnection.setRemoteDescription(new RTCSessionDescription(message.offer))
+                case 'offer': {
+                    const offer = message.offer || message.data;
+                    if (!offer) {
+                        console.warn('⚠️ 수신한 Offer 정보가 없습니다.', message);
+                        return;
+                    }
+                    this.rtcConnection.setRemoteDescription(new RTCSessionDescription(offer))
                             .then(() => this.rtcConnection.createAnswer())
                             .then(answer => this.rtcConnection.setLocalDescription(answer))
                             .then(() => {
                                 this.rtcSocket.send(JSON.stringify({
                                     type: 'answer',
                                     roomId: this.roomId.toString(),
-                                    data: this.rtcConnection.localDescription
+                                    data: this.rtcConnection.localDescription,
+                                    answer: this.rtcConnection.localDescription
                                 }));
-                            });
+                            })
+                            .catch(error => console.error('❌ Admin Offer 처리 실패:', error));
                     break;
+                }
 
-                case 'answer':
-                    this.rtcConnection.setRemoteDescription(new RTCSessionDescription(message.answer));
+                case 'answer': {
+                    const answer = message.answer || message.data;
+                    if (!answer) {
+                        console.warn('⚠️ 수신한 Answer 정보가 없습니다.', message);
+                        return;
+                    }
+                    this.rtcConnection.setRemoteDescription(new RTCSessionDescription(answer))
+                            .catch(error => console.error('❌ Admin Answer 처리 실패:', error));
                     break;
+                }
 
-                case 'ice-candidate':
-                    this.rtcConnection.addIceCandidate(new RTCIceCandidate(message.candidate));
+                case 'ice-candidate': {
+                    const candidate = message.candidate || message.data;
+                    if (!candidate) {
+                        console.warn('⚠️ 수신한 ICE 후보가 없습니다.', message);
+                        return;
+                    }
+                    this.rtcConnection.addIceCandidate(new RTCIceCandidate(candidate))
+                            .catch(error => console.error('❌ Admin ICE 후보 처리 실패:', error));
                     break;
+                }
 
                 case 'user-joined':
                     // User가 참가하면 Offer 생성 (Admin이 먼저 시작한 경우)
@@ -725,12 +752,15 @@
                                 this.rtcSocket.send(JSON.stringify({
                                     type: 'offer',
                                     roomId: this.roomId.toString(),
-                                    data: this.rtcConnection.localDescription
+                                    data: this.rtcConnection.localDescription,
+                                    offer: this.rtcConnection.localDescription
                                 }));
-                            });
+                            })
+                            .catch(error => console.error('❌ Admin Offer 생성 실패:', error));
                     break;
             }
         },
+
 
 // ⭐ Admin 영상통화 종료
         endAdminVideoCall: function() {
