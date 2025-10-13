@@ -61,7 +61,8 @@
 </style>
 <script>
   video = {
-    roomId: '1', // 하드코딩된 방 번호
+    roomId: '${roomId}' || '1', // ✅ URL 파라미터 또는 기본값
+    custId: '${custId}' || 'guest', // ✅ URL 파라미터 또는 기본값
     peerConnection:null,
     localStream:null,
     websocket:null,

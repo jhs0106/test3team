@@ -61,7 +61,7 @@
 </style>
 <script>
     websocketpage = {
-        roomId: '1', // 하드코딩된 방 번호
+        roomId: '${roomId}' || '1', // JSP에서 전달받거나 기본값 1
         peerConnection:null,
         localStream:null,
         websocket:null,
