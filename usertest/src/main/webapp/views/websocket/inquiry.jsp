@@ -231,7 +231,7 @@
 
         sendLocation: function(latitude, longitude) {
             $.ajax({
-                url: 'https://192.168.45.176:8443/api/chatroom/' + this.activeRoomId + '/location',
+                url: 'https://10.20.33.248:8443/api/chatroom/' + this.activeRoomId + '/location',
                 type: 'POST',
                 data: {
                     latitude: latitude,
@@ -260,7 +260,7 @@
 
         checkActiveRoom: function() {
             $.ajax({
-                url: 'https://192.168.45.176:8443/api/chatroom/active/' + this.custId,
+                url: 'https://10.20.33.248:8443/api/chatroom/active/' + this.custId,
                 type: 'GET',
                 dataType: 'json',
                 success: (data) => {
@@ -408,7 +408,7 @@
             $('#startChatBtn').prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> 생성 중...');
 
             $.ajax({
-                url: 'https://192.168.45.176:8443/api/chatroom/create',
+                url: 'https://10.20.33.248:8443/api/chatroom/create',
                 type: 'POST',
                 data: { custId: this.custId },
                 success: (response) => {

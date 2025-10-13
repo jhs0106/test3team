@@ -119,13 +119,6 @@
                     <i class="fas fa-fw fa-comments"></i>
                     <span>Chat-List</span></a>
             </li>
-            <!-- ⭐ 통계 대시보드 (NEW) -->
-            <li class="nav-item">
-                <a class="nav-link" href="<c:url value="/stats"/>">
-                    <i class="fas fa-fw fa-chart-line"></i>
-                    <span>사용량 통계</span>
-                </a>
-            </li>
 
             <%-- [수정] 'super' 역할 체크: adminId가 'admin'인지 직접 비교 --%>
             <c:if test="${sessionScope.admin == 'admin'}">

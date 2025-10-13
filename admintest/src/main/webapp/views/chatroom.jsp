@@ -66,7 +66,7 @@
 
         loadRooms: function() {
             $.ajax({
-                url: 'https://192.168.45.176:8443/api/chatroom/all',
+                url: 'https://10.20.33.248:8443/api/chatroom/all',
                 type: 'GET',
                 success: (data) => {
                     console.log("✅ 채팅방 리스트 조회 성공:", data);
@@ -87,8 +87,8 @@
                         const certificateGuide =
                             '⚠️ <strong>인증서 오류입니다.</strong><br>' +
                             '다음 URL을 새 탭에서 열어 인증서를 승인해주세요:<br>' +
-                            '<a href="https://192.168.45.176:8443/api/chatroom/all" target="_blank" ' +
-                            'style="color:#e74a3b; font-weight:bold;">https://192.168.45.176:8443/api/chatroom/all</a><br>' +
+                            '<a href="https://10.20.33.248:8443/api/chatroom/all" target="_blank" ' +
+                            'style="color:#e74a3b; font-weight:bold;">https://10.20.33.28:8443/api/chatroom/all</a><br>' +
                             '<ol style="text-align: left; margin-top: 10px;">' +
                             '<li>위 링크를 클릭하여 새 탭에서 열기</li>' +
                             '<li>"고급" 버튼 클릭</li>' +
@@ -195,10 +195,6 @@
             <i class="fas fa-comments"></i> 채팅방 현황
         </h1>
         <div>
-            <!-- ⭐ 통계 대시보드 버튼 추가 -->
-            <a href="<c:url value="/stats"/>" class="btn btn-info btn-sm shadow-sm mr-2">
-                <i class="fas fa-chart-line"></i> 사용량 통계
-            </a>
             <button class="btn btn-primary btn-sm shadow-sm" onclick="chatRoomList.loadRooms()">
                 <i class="fas fa-sync-alt"></i> 새로고침
             </button>
