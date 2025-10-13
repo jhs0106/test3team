@@ -148,7 +148,6 @@
     .chat-input-group button:disabled {
         background: #6c757d;
     }
-    /* ⭐ 영상 통화 버튼 스타일 */
     .btn-video-call {
         background: linear-gradient(135deg, #10b981 0%, #059669 100%);
         border: none;
@@ -164,7 +163,7 @@
         background: #6c757d;
         cursor: not-allowed;
     }
-    /* 영상통화 모달 */
+
     .video-modal {
         display: none;
         position: fixed;
@@ -284,14 +283,6 @@
         display: flex;
         align-items: center;
         gap: 8px;
-    }
-
-    .video-control-btn.start {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-    }
-
-    .video-control-btn.end {
         background: #dc3545;
         color: white;
     }
@@ -299,12 +290,6 @@
     .video-control-btn:hover {
         transform: translateY(-2px);
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    }
-
-    .video-control-btn:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-        transform: none;
     }
 
     .connection-status {
@@ -335,7 +320,6 @@
         activeRoomId: null,
         stompClient: null,
         isConnected: false,
-        // ⭐ WebRTC 관련 변수 추가
         rtcConnection: null,
         rtcSocket: null,
         localStream: null,
@@ -410,9 +394,10 @@
                     this.sendMessage();
                 }
             });
-            // ⭐ 영상통화 버튼 이벤트
+
+            // ⭐ 영상통화 버튼 - 바로 시작
             $('#videoCallBtn').click(() => {
-                this.openVideoModal();
+                this.startVideoCall();
             });
 
             // ⭐ 모달 닫기
@@ -420,20 +405,9 @@
                 this.closeVideoModal();
             });
 
-            // ⭐ 통화 시작/종료
-            $('#startCallBtn').click(() => {
-                this.startVideoCall();
-            });
-
+            // ⭐ 통화 종료
             $('#endCallBtn').click(() => {
                 this.endVideoCall();
-            });
-
-            // ⭐ 모달 외부 클릭 시 닫기
-            $(window).click((e) => {
-                if (e.target.id === 'videoModal') {
-                    this.closeVideoModal();
-                }
             });
         },
 
@@ -447,7 +421,7 @@
                         console.log('✅ 활성 채팅방 존재:', data);
                         this.activeRoomId = data.roomId;
                         this.showActiveRoomStatus(data);
-                        $('#videoCallBtn').prop('disabled', false); // ⭐ 영상 통화 버튼 활성화
+                        $('#videoCallBtn').prop('disabled', false);
                     } else {
                         console.log('ℹ️ 활성 채팅방 없음');
                         this.showReadyStatus();
@@ -473,11 +447,16 @@
                     this.updateConnectionStatus(true);
                     this.getCurrentLocation();
 
+                    // ⭐ 일반 채팅 메시지 구독
                     this.stompClient.subscribe('/adminsend/to/' + this.custId, (message) => {
                         const payload = JSON.parse(message.body);
 
                         if (payload.content1 === '__CHAT_CLOSED__') {
                             this.handleChatClosed();
+                        } else if (payload.content1 === '__VIDEO_CALL_START__') {
+                            // ⭐ Admin이 영상통화 시작 신호를 보냄
+                            console.log('📞 Admin이 영상통화를 시작했습니다!');
+                            this.receiveVideoCallStart();
                         } else {
                             this.appendMessage('admin', payload.content1);
                         }
@@ -505,7 +484,7 @@
             $('#chatConnection').text('상담 종료됨').removeClass('text-success').addClass('text-warning');
             $('#sendChatBtn').prop('disabled', true);
             $('#chatMessage').prop('disabled', true);
-            $('#videoCallBtn').prop('disabled', true); // ⭐ 영상 통화 버튼 비활성화
+            $('#videoCallBtn').prop('disabled', true);
 
             if (this.stompClient) {
                 this.stompClient.disconnect();
@@ -648,62 +627,65 @@
             this.updateConnectionStatus(this.isConnected);
         },
 
-        // ⭐ 영상통화 모달 열기
-        openVideoModal: function() {
+        // ⭐ User가 영상통화 시작 (Admin에게 알림 전송)
+        startVideoCall: function() {
             if (!this.activeRoomId) {
                 alert('먼저 채팅방을 생성해주세요.');
                 return;
             }
-            $('#videoModal').fadeIn(300);
-        },
 
-        // ⭐ 영상통화 모달 닫기
-        closeVideoModal: function() {
-            if (this.rtcConnection) {
-                if (confirm('통화 중입니다. 종료하시겠습니까?')) {
-                    this.endVideoCall();
-                    $('#videoModal').fadeOut(300);
-                }
-            } else {
-                $('#videoModal').fadeOut(300);
+            console.log('📞 User가 영상통화를 시작합니다...');
+
+            // ⭐ Admin에게 영상통화 시작 신호 전송
+            if (this.stompClient && this.isConnected) {
+                const payload = {
+                    sendid: this.custId,
+                    receiveid: 'admin',
+                    content1: '__VIDEO_CALL_START__',
+                    roomId: this.activeRoomId
+                };
+                this.stompClient.send('/receiveto', {}, JSON.stringify(payload));
             }
+
+            // 모달 열고 자동으로 통화 시작
+            $('#videoModal').fadeIn(300);
+            this.initializeVideoCall();
         },
 
-        // ⭐ 영상 통화 시작 함수
-        startVideoCall: function() {
-            console.log('🎥 영상통화 시작');
+        // ⭐ Admin이 영상통화를 시작했을 때 (수신)
+        receiveVideoCallStart: function() {
+            console.log('📞 Admin의 영상통화 요청을 받았습니다!');
+
+            // 모달 자동 열림
+            $('#videoModal').fadeIn(300);
+
+            // 자동으로 통화 시작
+            this.initializeVideoCall();
+        },
+
+        // ⭐ 실제 영상통화 초기화 (WebRTC)
+        initializeVideoCall: function() {
             $('#videoConnectionStatus').removeClass('disconnected').addClass('connecting').text('연결 중...');
 
-            // 로컬 비디오 스트림 가져오기
             navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-                    .then(stream => {
+                    .then((stream) => {
                         this.localStream = stream;
-                        const localVideo = document.getElementById('localVideo');
-                        localVideo.srcObject = stream;
-                        localVideo.play().catch(err => console.warn('⚠️ 로컬 영상 자동재생 실패:', err));
-
-                        // WebRTC 연결 설정
+                        document.getElementById('localVideo').srcObject = stream;
                         this.setupWebRTC();
-
-                        $('#startCallBtn').hide();
-                        $('#endCallBtn').show();
                     })
-                    .catch(error => {
+                    .catch((error) => {
                         console.error('❌ 미디어 접근 실패:', error);
-                        alert('카메라/마이크 접근에 실패했습니다. 브라우저 설정을 확인해주세요.');
+                        alert('카메라/마이크 접근 권한이 필요합니다. 브라우저 설정을 확인해주세요.');
                         $('#videoConnectionStatus').removeClass('connecting').addClass('disconnected').text('연결 실패');
                     });
         },
 
-// ⭐ WebRTC 설정 (새로운 함수 추가)
         setupWebRTC: function() {
-            // WebRTC Signaling Server 연결
             this.rtcSocket = new WebSocket('wss://10.20.33.248:8443/signal');
 
             this.rtcSocket.onopen = () => {
                 console.log('✅ Signaling Server 연결');
 
-                // Room 참가
                 this.rtcSocket.send(JSON.stringify({
                     type: 'join',
                     roomId: this.activeRoomId.toString(),
@@ -721,51 +703,65 @@
                 $('#videoConnectionStatus').removeClass('connecting').addClass('disconnected').text('연결 실패');
             };
 
-            // RTCPeerConnection 생성
+            this.rtcSocket.onclose = (event) => {
+                console.log('ℹ️ Signaling WebSocket 연결 종료');
+            };
+
             const configuration = {
                 iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
             };
 
             this.rtcConnection = new RTCPeerConnection(configuration);
 
-            // 로컬 스트림 추가
             this.localStream.getTracks().forEach(track => {
                 this.rtcConnection.addTrack(track, this.localStream);
             });
 
-            // 원격 스트림 수신
+            this.rtcConnection.onconnectionstatechange = () => {
+                console.log('🔄 RTC 연결 상태:', this.rtcConnection.connectionState);
+
+                switch (this.rtcConnection.connectionState) {
+                    case 'connected':
+                        $('#videoConnectionStatus').removeClass('connecting disconnected').addClass('connected').text('통화 연결됨');
+                        break;
+                    case 'disconnected':
+                        $('#videoConnectionStatus').removeClass('connecting connected').addClass('disconnected').text('연결 끊김');
+                        break;
+                    case 'failed':
+                        $('#videoConnectionStatus').removeClass('connecting connected').addClass('disconnected').text('연결 실패');
+                        break;
+                    case 'closed':
+                        $('#videoConnectionStatus').removeClass('connecting connected').addClass('disconnected').text('연결 종료됨');
+                        break;
+                }
+            };
+
             this.rtcConnection.ontrack = (event) => {
                 console.log('📹 원격 스트림 수신');
                 const remoteVideo = document.getElementById('remoteVideo');
                 remoteVideo.srcObject = event.streams[0];
                 remoteVideo.play().catch(err => console.warn('⚠️ 원격 영상 자동재생 실패:', err));
-                $('#videoConnectionStatus').removeClass('connecting disconnected').addClass('connected').text('통화 연결됨');
             };
 
-            // ICE candidate 처리
             this.rtcConnection.onicecandidate = (event) => {
-                if (event.candidate) {
+                if (event.candidate && this.rtcSocket && this.rtcSocket.readyState === WebSocket.OPEN) {
                     this.rtcSocket.send(JSON.stringify({
                         type: 'ice-candidate',
                         roomId: this.activeRoomId.toString(),
-                        data: event.candidate,
-                        candidate: event.candidate
+                        data: event.candidate
                     }));
                 }
             };
         },
 
-// ⭐ Signaling 메시지 처리 (새로운 함수 추가)
         handleSignalingMessage: function(message) {
             console.log('📨 Signaling 메시지:', message.type);
 
             switch (message.type) {
-                case 'offer': {
+                case 'offer':
                     const offer = message.offer || message.data;
-                    if (!offer) {
-                        console.warn('⚠️ 수신한 Offer 정보가 없습니다.', message);
-                        return;
-                    }
+                    if (!offer) return;
+
                     this.rtcConnection.setRemoteDescription(new RTCSessionDescription(offer))
                             .then(() => this.rtcConnection.createAnswer())
                             .then(answer => this.rtcConnection.setLocalDescription(answer))
@@ -773,80 +769,67 @@
                                 this.rtcSocket.send(JSON.stringify({
                                     type: 'answer',
                                     roomId: this.activeRoomId.toString(),
-                                    data: this.rtcConnection.localDescription,
-                                    answer: this.rtcConnection.localDescription
+                                    data: this.rtcConnection.localDescription
                                 }));
-                            })
-                            .catch(error => console.error('❌ Offer 처리 실패:', error));
+                            });
                     break;
-                }
 
-                case 'answer': {
+                case 'answer':
                     const answer = message.answer || message.data;
-                    if (!answer) {
-                        console.warn('⚠️ 수신한 Answer 정보가 없습니다.', message);
-                        return;
-                    }
-                    this.rtcConnection.setRemoteDescription(new RTCSessionDescription(answer))
-                            .catch(error => console.error('❌ Answer 처리 실패:', error));
-                    break;
-                }
+                    if (!answer) return;
 
-                case 'ice-candidate': {
-                    const candidate = message.candidate || message.data;
-                    if (!candidate) {
-                        console.warn('⚠️ 수신한 ICE 후보가 없습니다.', message);
-                        return;
-                    }
-                    this.rtcConnection.addIceCandidate(new RTCIceCandidate(candidate))
-                            .catch(error => console.error('❌ ICE 후보 처리 실패:', error));
+                    this.rtcConnection.setRemoteDescription(new RTCSessionDescription(answer));
                     break;
-                }
+
+                case 'ice-candidate':
+                    const candidate = message.candidate || message.data;
+                    if (!candidate) return;
+
+                    this.rtcConnection.addIceCandidate(new RTCIceCandidate(candidate));
+                    break;
 
                 case 'user-joined':
-                    // Admin이 참가하면 Offer 생성
+                    // Admin이 먼저 들어왔을 때 User가 Offer 생성
                     this.rtcConnection.createOffer()
                             .then(offer => this.rtcConnection.setLocalDescription(offer))
                             .then(() => {
                                 this.rtcSocket.send(JSON.stringify({
                                     type: 'offer',
                                     roomId: this.activeRoomId.toString(),
-                                    data: this.rtcConnection.localDescription,
-                                    offer: this.rtcConnection.localDescription
+                                    data: this.rtcConnection.localDescription
                                 }));
-                            })
-                            .catch(error => console.error('❌ Offer 생성 실패:', error));
+                            });
                     break;
             }
         },
 
-// ⭐ 영상 통화 종료 (새로운 함수 추가)
+        closeVideoModal: function() {
+            if (confirm('통화를 종료하시겠습니까?')) {
+                this.endVideoCall();
+                $('#videoModal').fadeOut(300);
+            }
+        },
+
         endVideoCall: function() {
             console.log('📴 영상통화 종료');
 
-            // 로컬 스트림 정지
             if (this.localStream) {
                 this.localStream.getTracks().forEach(track => track.stop());
                 this.localStream = null;
             }
 
-            // RTCPeerConnection 닫기
             if (this.rtcConnection) {
                 this.rtcConnection.close();
                 this.rtcConnection = null;
             }
 
-            // WebSocket 닫기
             if (this.rtcSocket) {
                 this.rtcSocket.close();
                 this.rtcSocket = null;
             }
 
-            // UI 초기화
             document.getElementById('localVideo').srcObject = null;
             document.getElementById('remoteVideo').srcObject = null;
-            $('#startCallBtn').show();
-            $('#endCallBtn').hide();
             $('#videoConnectionStatus').removeClass('connected connecting').addClass('disconnected').text('연결 대기 중');
         }
     };
@@ -862,7 +845,6 @@
             <h2>🎧 고객 상담 센터</h2>
             <p>무엇을 도와드릴까요?</p>
         </div>
-
         <div class="inquiry-info">
             <h5>📋 상담 안내</h5>
             <ul>
@@ -896,7 +878,6 @@
                 <button id="sendChatBtn" disabled>전송</button>
             </div>
 
-            <!-- ⭐ 영상 통화 버튼 추가 -->
             <button id="videoCallBtn" class="btn-video-call" disabled>
                 <i class="fas fa-video"></i> 영상 통화 시작
             </button>
@@ -920,10 +901,7 @@
                             </div>
                         </div>
                         <div class="video-controls">
-                            <button id="startCallBtn" class="video-control-btn start">
-                                <i class="fas fa-phone"></i> 통화 시작
-                            </button>
-                            <button id="endCallBtn" class="video-control-btn end" style="display: none;">
+                            <button id="endCallBtn" class="video-control-btn">
                                 <i class="fas fa-phone-slash"></i> 통화 종료
                             </button>
                         </div>
