@@ -76,7 +76,7 @@
               <H1 id="status">Status</H1>
 
               <h3>To</h3>
-              <input type="text" id="target" value="id00">
+              <input type="text" id="target" value="cust">
               <input type="text" id="totext"><button id="sendto">Send</button>
               <div id="to"></div>
 
