@@ -46,8 +46,8 @@ public class ChartRestController {
             normalizedSymbol = "005930"; // 기본값: 삼성전자
         }
 //      실제 서버가 요청하느 주소 형태 : https://apidojo-yahoo-finance-v1.p.rapidapi.com/market/v2/get-quotes?region=KR&symbols=005930.KS
-        String url = BASE_URL + "?region=KR&symbols=" + normalizedSymbol + ".KS";   //region=KR -> 한국 주식시장 데이터 / .KS -> 한국 거래소 종목임
-//      RapidAPI에서 승인된 사용자로 인식하기 위한 두개의 헤더 값
+        String url = BASE_URL + "?region=KR&symbols=" + normalizedSymbol +
+                (normalizedSymbol.matches("\\d+") ? ".KS" : "");//      RapidAPI에서 승인된 사용자로 인식하기 위한 두개의 헤더 값
         HttpHeaders headers = new HttpHeaders();
         headers.set("X-RapidAPI-Key", API_KEY);
         headers.set("X-RapidAPI-Host", API_HOST);
@@ -135,5 +135,31 @@ public class ChartRestController {
             }
         }
         return null;
+    }
+
+    @GetMapping("/global")
+    public ResponseEntity<String> getGlobalStocks() {
+        try {
+            // ✅ 1. 콤마로 여러 지수 요청 (한 번에 8개)
+            String symbols = "^KS11,^N225,^DJI,^IXIC,^GSPC,^GDAXI,000001.SS,^BSESN";
+            String url = BASE_URL + "?region=US&symbols=" + symbols;
+
+            // ✅ 2. HTTP 헤더 설정 (RapidAPI 인증용)
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("X-RapidAPI-Key", API_KEY);
+            headers.set("X-RapidAPI-Host", "apidojo-yahoo-finance-v1.p.rapidapi.com");
+
+            HttpEntity<String> entity = new HttpEntity<>(headers);
+            RestTemplate restTemplate = new RestTemplate();
+
+            // ✅ 3. 실제 API 요청
+            ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+
+            log.info("🌍 글로벌 주가지수 데이터 요청 성공");
+            return ResponseEntity.ok(response.getBody());
+        } catch (Exception e) {
+            log.error("🌍 글로벌 지수 API 호출 실패", e);
+            return ResponseEntity.status(500).body("{}");
+        }
     }
 }
