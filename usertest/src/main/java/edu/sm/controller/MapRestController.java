@@ -21,9 +21,13 @@ import java.util.List;
 public class MapRestController {
     private final MarkerService markerService;
 
-    @Value("${upload.dir:C:/uploads/}")
-    private String uploadDir;
+    // [수정] 파일 저장을 위해 application.yml의 파일 쓰기용 절대 경로를 사용합니다.
+    @Value("${app.dir.uploadimgsdir}")
+    private String uploadDir; // ex: C:/smspring/imgs/
 
+    /**
+     * 클라이언트에서 전송된 마커 정보(제목, 설명, 파일, 위/경도)를 저장합니다.
+     */
     @PostMapping("/registermarker")
     public Object registerMarker(
             @RequestParam("markerTitle") String title,
@@ -34,8 +38,10 @@ public class MapRestController {
     ) {
         String savedImageName = null;
         try {
+            // 1. 파일 업로드 및 저장된 파일명 획득 (uploadDir: C:/smspring/imgs/ 로 파일 저장됨)
             savedImageName = FileUploadUtil.saveFile(imageFile, uploadDir);
 
+            // 2. Marker 객체 생성 및 DB 저장
             Marker marker = Marker.builder()
                     .title(title)
                     .description(description)
@@ -57,6 +63,9 @@ public class MapRestController {
         }
     }
 
+    /**
+     * DB에 저장된 모든 마커 목록을 조회합니다.
+     */
     @GetMapping("/getallmarkers")
     public List<Marker> getAllMarkers() {
         try {

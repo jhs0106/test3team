@@ -599,11 +599,10 @@
             // [추가된 부분] DB에서 가져온 마커를 지도에 표시하는 로직
             function drawExistingMarkers(markers) {
                 markers.forEach(function (markerData) {
-                    // DB에서 조회한 위경도 정보를 Kakao Map LatLng 객체로 변환
                     var position = new kakao.maps.LatLng(markerData.lat, markerData.lng);
 
-                    // 이미지 URL을 생성. (MapRestController.java에서 설정한 upload.dir 경로를 기반으로 /uploads/를 가정)
-                    var imageSrc = markerData.img ? '/uploads/' + markerData.img : null;
+                    // [수정] 파일 저장 경로에 맞춰 웹 접근 경로를 /imgs/로 변경
+                    var imageSrc = markerData.img ? '/imgs/' + markerData.img : null;
 
                     var overlayResult = createOverlay(position, markerData.title, markerData.description, imageSrc);
                     var marker = createBasicMarker(position, markerData.title);
@@ -616,7 +615,7 @@
                         forceVisible: false
                     };
 
-                    // 마커 클릭 이벤트 리스너 설정 (기존 finalize 로직과 동일)
+                    // 마커 클릭 이벤트 리스너 설정
                     kakao.maps.event.addListener(marker, 'click', function () {
                         if (map.getLevel() >= overlayHideLevel) {
                             if (entry.forceVisible) {
@@ -640,7 +639,6 @@
             }
 
             // [추가된 부분] 페이지 로드 시 기존 마커 데이터 로드 AJAX 호출
-            // **주의:** 이 로직은 jQuery($)가 페이지에 로드되어 있어야 작동합니다.
             $.ajax({
                 url: '/getallmarkers',
                 type: 'GET',
@@ -651,7 +649,6 @@
                 },
                 error: function (xhr, status, error) {
                     console.error('기존 마커 데이터 로드 실패:', error);
-                    // 실패해도 지도 기능 자체는 계속 작동하도록 함
                 }
             });
 

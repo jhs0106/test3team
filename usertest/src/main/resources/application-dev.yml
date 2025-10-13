@@ -43,8 +43,8 @@ app:
   url:
     websocketurl: https://192.168.45.41:8443/
   dir:
-    imgsdir: file:///C:/smspring/imgs/     # 화면 출력 용
-    uploadimgsdir: C:/smspring/imgs/    # 파일 Write 용
+    imgsdir: file:///C:/test3/imgs/
+    uploadimgsdir: C:/test3/imgs/    # 파일 Write 용
     logsdir: file:///C:/smspring/logs/     # 로그 출력 용
     logsdirRead: C:/smspring/logs/ # Read용
   key:
