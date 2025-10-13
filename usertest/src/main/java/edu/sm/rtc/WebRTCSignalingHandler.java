@@ -1,5 +1,6 @@
 package edu.sm.rtc;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.socket.CloseStatus;
@@ -20,7 +21,7 @@ public class WebRTCSignalingHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionEstablished(WebSocketSession session) {
         log.info("New WebSocket connection established: {}", session.getId());
-    }//
+    }
 
     @Override
     public void handleTextMessage(WebSocketSession session, TextMessage message) {
@@ -81,6 +82,22 @@ public class WebRTCSignalingHandler extends TextWebSocketHandler {
                 .filter(room -> room.equals(roomId))
                 .count();
         log.info("Room {} now has {} participants", roomId, roomParticipants);
+
+        notifyRoomParticipants(session, roomId);
+    }
+
+    private void notifyRoomParticipants(WebSocketSession newParticipant, String roomId) {
+        SignalMessage joinMessage = new SignalMessage();
+        joinMessage.setType("user-joined");
+        joinMessage.setRoomId(roomId);
+        joinMessage.setSenderSessionId(newParticipant.getId());
+
+        try {
+            String payload = objectMapper.writeValueAsString(joinMessage);
+            broadcastToRoom(newParticipant, new TextMessage(payload), roomId);
+        } catch (JsonProcessingException e) {
+            log.error("Failed to serialize join notification for room {}: {}", roomId, e.getMessage());
+        }
     }
 
     @Override
