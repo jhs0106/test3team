@@ -14,13 +14,14 @@ public class OperationMetricSnapshot {
     private final Instant timestamp;
     private final int totalLogins;
     private final int activeUsers;
-    private final int stockRequests;
-    private final int stockFailures;
+    private final int chartRequests;
+    private final int chartFailures;
     private final int chatMessages;
     private final List<String> activeUserIds;
     private final List<SeriesPoint> overview;
     private final List<DrilldownSeries> drilldown;
     private final List<OperationAlert> alerts;
+    private final List<ChartHighlight> chartHighlights;
 
     @Getter
     @Builder
@@ -46,5 +47,20 @@ public class OperationMetricSnapshot {
     public static class DataPoint {
         private final String name;
         private final double y;
+    }
+
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    public static class ChartHighlight {
+        private final String symbol;
+        private final String name;
+        private final long requestCount;
+        private final double lastPrice;
+        private final double changePercent;
+        private final long volume;
+        private final double marketCap;
+        private final String trend;
+        private final Instant updatedAt;
     }
 }

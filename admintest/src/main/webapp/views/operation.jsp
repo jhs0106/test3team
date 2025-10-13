@@ -79,15 +79,15 @@
       $('#operation-last-updated').text(this.formatTimestamp(snapshot.timestamp));
       $('#metric-totalLogins').text(this.formatNumber(snapshot.totalLogins));
       $('#metric-activeUsers').text(this.formatNumber(snapshot.activeUsers));
-      $('#metric-stockRequests').text(this.formatNumber(snapshot.stockRequests));
+      $('#metric-chartRequests').text(this.formatNumber(snapshot.chartRequests));
       $('#metric-chatMessages').text(this.formatNumber(snapshot.chatMessages));
-      $('#metric-stockFailures').text(this.formatNumber(snapshot.stockFailures));
-      const failureRate = snapshot.stockRequests === 0 ? 0 : (snapshot.stockFailures / snapshot.stockRequests * 100);
-      $('#metric-failureRate').text(failureRate.toFixed(0) + '%');
+      $('#metric-chartFailures').text(this.formatNumber(snapshot.chartFailures));
+      const failureRate = snapshot.chartRequests === 0 ? 0 : (snapshot.chartFailures / snapshot.chartRequests * 100);
+      this.updateFailureStatus(failureRate);
       this.updateChart(snapshot);
       this.updateAlerts(snapshot.alerts || []);
       this.updateActiveUsers(snapshot.activeUserIds || []);
-      this.updateInsights(snapshot);
+      this.updateInsights(snapshot, failureRate);;
       this.initialized = true;
     },
     updateChart(snapshot) {
@@ -142,11 +142,12 @@
         container.append('<li class="list-group-item"><i class="fas fa-user mr-2 text-primary"></i>' + user + '</li>');
       });
     },
-    updateInsights(snapshot) {
+    updateInsights(snapshot, failureRate) {
       const drilldownIndex = this.buildDrilldownIndex(snapshot.drilldown || []);
       this.updateLoginTrend(drilldownIndex);
-      this.updateRankedList('operation-top-stocks', drilldownIndex, ['stocks', 'stock', '종목', '주가'], '주가 조회 데이터가 없습니다.', '회');
+      this.updateChartHighlights(snapshot.chartHighlights || [], drilldownIndex);
       this.updateRankedList('operation-top-chats', drilldownIndex, ['chats', 'chat', '채팅', '메시지'], '채팅 메시지가 아직 없습니다.', '건');
+      this.updateInsightSummary(snapshot, drilldownIndex, failureRate);
     },
     updateLoginTrend(drilldownIndex) {
       const series = this.findSeries(drilldownIndex, ['logins', 'login', '접속', '시간대별 접속자']);
@@ -210,6 +211,74 @@
                 list.append(item);
               });
     },
+    updateChartHighlights(highlights, drilldownIndex) {
+      const list = $('#operation-top-charts');
+      list.empty();
+      const hasHighlights = Array.isArray(highlights) && highlights.length > 0;
+      if (!hasHighlights) {
+        const fallback = this.findSeries(drilldownIndex, ['charts', 'stocks', 'stock', '종목', '주가']);
+        if (!fallback) {
+          this.renderEmptyState(list, '차트 조회 데이터가 없습니다.');
+          return;
+        }
+        const points = this.normalizePoints(fallback).filter(point => point.y > 0);
+        if (!points.length) {
+          this.renderEmptyState(list, '차트 조회 데이터가 없습니다.');
+          return;
+        }
+        points
+                .sort((a, b) => b.y - a.y)
+                .slice(0, 5)
+                .forEach((point, index) => {
+                  const item = $('<li/>', { class: 'list-group-item d-flex justify-content-between align-items-center' });
+                  item.append($('<span/>')
+                          .append($('<span/>', { class: 'badge badge-secondary badge-pill mr-2', text: (index + 1) }))
+                          .append(document.createTextNode(point.name)));
+                  item.append($('<span/>', { class: 'font-weight-bold', text: this.formatNumber(point.y) + '회' }));
+                  list.append(item);
+                });
+        return;
+      }
+
+      highlights.slice(0, 5).forEach((item, index) => {
+        const listItem = $('<li/>', { class: 'list-group-item' });
+        const header = $('<div/>', { class: 'd-flex justify-content-between align-items-center' });
+        const title = $('<div/>', { class: 'd-flex align-items-center' });
+        title.append($('<span/>', { class: 'badge badge-secondary badge-pill mr-2', text: index + 1 }));
+        title.append($('<strong/>', { text: item.name || item.symbol }));
+        title.append($('<small/>', { class: 'text-muted ml-2', text: item.symbol }));
+
+        const changeValue = Number(item.changePercent || 0);
+        const changeClass = changeValue > 0 ? 'text-danger' : changeValue < 0 ? 'text-primary' : 'text-muted';
+        const changeIcon = changeValue > 0 ? 'fa-arrow-up' : changeValue < 0 ? 'fa-arrow-down' : 'fa-minus';
+        const changeText = (changeValue > 0 ? '+' : changeValue < 0 ? '' : '') + changeValue.toFixed(2) + '%';
+
+        const changeContainer = $('<div/>', { class: 'text-right' });
+        changeContainer.append($('<span/>', {
+          class: 'font-weight-bold ' + changeClass,
+          html: '<i class="fas ' + changeIcon + ' mr-1"></i>' + changeText
+        }));
+        changeContainer.append($('<div/>', {
+          class: 'small text-muted',
+          text: '요청 ' + this.formatNumber(item.requestCount || 0)
+        }));
+
+        header.append(title);
+        header.append(changeContainer);
+        listItem.append(header);
+
+        const metricsRow = $('<div/>', { class: 'd-flex justify-content-between text-muted small mt-2 flex-wrap', style: 'gap: .5rem;' });
+        metricsRow.append($('<span/>', { text: '가격 ' + this.formatNumber(item.lastPrice, 2) + ' KRW' }));
+        metricsRow.append($('<span/>', { text: '거래량 ' + this.formatNumber(item.volume || 0) }));
+        metricsRow.append($('<span/>', { text: '시총 ' + this.formatNumber(item.marketCap || 0) }));
+        listItem.append(metricsRow);
+
+        const updatedAt = item.updatedAt ? this.formatTimestamp(item.updatedAt) : '-';
+        listItem.append($('<div/>', { class: 'text-muted small mt-1', text: '업데이트 ' + updatedAt }));
+
+        list.append(listItem);
+      });
+    },
     renderEmptyState(container, message) {
       container.append($('<li/>', { class: 'list-group-item text-muted', text: message }));
     },
@@ -241,8 +310,121 @@
         return { name: point.name, y: Number(point.y || 0) };
       });
     },
-    formatNumber(value) {
-      return (value ?? 0).toLocaleString();
+    updateFailureStatus(failureRate) {
+      const state = this.resolveFailureState(failureRate);
+      const normalized = this.clampRate(failureRate);
+      const statusEl = $('#operation-failure-status');
+      if (statusEl.length) {
+        statusEl.removeClass('text-success text-warning text-danger')
+                .addClass(state.textClass)
+                .text(state.label);
+      }
+      const rateEl = $('#metric-failureRate');
+      if (rateEl.length) {
+        rateEl.removeClass('text-success text-warning text-danger')
+                .addClass(state.textClass)
+                .text(normalized.toFixed(1) + '%');
+      }
+      const progressEl = $('#operation-failure-progress');
+      if (progressEl.length) {
+        progressEl.attr('aria-valuenow', normalized.toFixed(0))
+                .css('width', normalized.toFixed(0) + '%')
+                .removeClass('bg-success bg-warning bg-danger')
+                .addClass(state.progressClass);
+      }
+    },
+    updateInsightSummary(snapshot, drilldownIndex, failureRate) {
+      const list = $('#operation-insights');
+      if (!list.length) return;
+      list.empty();
+
+      const insights = [];
+      const totalLogins = Number(snapshot.totalLogins || 0);
+      insights.push({ icon: 'sign-in-alt', text: '누적 로그인 ' + this.formatNumber(totalLogins) + '회' });
+
+      const activeUsers = Number(snapshot.activeUsers || 0);
+      const loginSeries = this.findSeries(drilldownIndex, ['logins', 'login', '접속', '시간대별 접속자']);
+      const loginPoints = this.normalizePoints(loginSeries);
+      if (loginPoints.length) {
+        const latest = loginPoints[loginPoints.length - 1];
+        const previous = loginPoints.length > 1 ? loginPoints[loginPoints.length - 2] : null;
+        let text = '동시 접속자 ' + this.formatNumber(activeUsers) + '명';
+        if (previous) {
+          const delta = latest.y - previous.y;
+          if (delta > 0) {
+            text += ' (최근 +' + this.formatNumber(delta) + '명 증가)';
+          } else if (delta < 0) {
+            text += ' (최근 ' + this.formatNumber(Math.abs(delta)) + '명 감소)';
+          } else {
+            text += ' (변동 없음)';
+          }
+        }
+        insights.push({ icon: 'users', text: text });
+      }
+
+      const topStock = this.pickTopPoint(drilldownIndex, ['stocks', 'stock', '종목', '주가']);
+      if (topStock) {
+        insights.push({ icon: 'chart-line', text: '가장 많이 조회된 종목: ' + topStock.name + ' (' + this.formatNumber(topStock.y) + '회)' });
+      }
+
+      const topChat = this.pickTopPoint(drilldownIndex, ['chats', 'chat', '채팅', '메시지']);
+      if (topChat) {
+        insights.push({ icon: 'comments', text: '가장 활발한 채팅방: ' + topChat.name + ' (' + this.formatNumber(topChat.y) + '건)' });
+      }
+
+      const failureState = this.resolveFailureState(failureRate);
+      insights.push({
+        icon: 'heartbeat',
+        text: '주가 API 상태: ' + failureState.label + ' (실패율 ' + this.clampRate(failureRate).toFixed(1) + '%)',
+        className: failureState.textClass
+      });
+
+      if (!insights.length) {
+        list.append($('<li/>', { class: 'text-muted', text: '데이터를 수집 중입니다.' }));
+        return;
+      }
+
+      insights.forEach(insight => {
+        const item = $('<li/>', { class: 'd-flex align-items-center mb-2' });
+        item.append($('<i/>', { class: 'fas fa-' + insight.icon + ' text-primary mr-2' }));
+        const text = $('<span/>', { text: insight.text });
+        if (insight.className) {
+          text.addClass(insight.className);
+        }
+        item.append(text);
+        list.append(item);
+      });
+    },
+    pickTopPoint(drilldownIndex, keys) {
+      const series = this.findSeries(drilldownIndex, keys);
+      if (!series) return null;
+      const points = this.normalizePoints(series).filter(point => point.y > 0);
+      if (!points.length) return null;
+      return points.reduce((best, current) => current.y > best.y ? current : best, points[0]);
+    },
+    resolveFailureState(rate) {
+      const value = this.clampRate(rate);
+      if (value >= 30) {
+        return { label: '위험', textClass: 'text-danger', progressClass: 'bg-danger' };
+      }
+      if (value >= 15) {
+        return { label: '주의', textClass: 'text-warning', progressClass: 'bg-warning' };
+      }
+      return { label: '안정', textClass: 'text-success', progressClass: 'bg-success' };
+    },
+    clampRate(value) {
+      if (!Number.isFinite(value)) {
+        return 0;
+      }
+      return Math.max(0, Math.min(100, value));
+    },
+    formatNumber(value, fractionDigits) {
+      const number = Number(value ?? 0);
+      if (Number.isNaN(number)) return '0';
+      if (typeof fractionDigits === 'number') {
+        return number.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: fractionDigits });
+      }
+      return number.toLocaleString();
     },
     formatTimestamp(value) {
       if (!value) return '-';
@@ -336,8 +518,11 @@
     <div class="col-xl-3 col-md-6 mb-4">
       <div class="card border-left-info shadow h-100 py-2">
         <div class="card-body">
-          <div class="text-xs font-weight-bold text-info text-uppercase mb-1">주가 요청</div>
-          <div id="metric-stockRequests" class="h5 mb-0 font-weight-bold text-gray-800">0</div>
+          <div class="text-xs font-weight-bold text-info text-uppercase mb-1">차트 조회</div>
+          <div id="metric-chartRequests" class="h5 mb-0 font-weight-bold text-gray-800">0</div>
+          <div class="text-xs text-muted mt-2">
+            실패 <span id="metric-chartFailures">0</span>건 · 실패율 <span id="metric-failureRate">0%</span>
+          </div>
         </div>
       </div>
     </div>
@@ -346,6 +531,37 @@
         <div class="card-body">
           <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">채팅 메시지</div>
           <div id="metric-chatMessages" class="h5 mb-0 font-weight-bold text-gray-800">0</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-xl-3 col-md-6 mb-4">
+      <div class="card border-left-danger shadow h-100 py-2">
+        <div class="card-body">
+          <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">주가 요청 실패</div>
+          <div class="d-flex justify-content-between align-items-baseline">
+            <div id="metric-stockFailures" class="h5 mb-0 font-weight-bold text-gray-800">0</div>
+            <div id="operation-failure-status" class="small font-weight-bold text-success">안정</div>
+          </div>
+          <div class="text-xs text-muted mt-2">실패율 <span id="metric-failureRate" class="font-weight-bold">0%</span></div>
+          <div class="progress progress-sm mt-2">
+            <div id="operation-failure-progress" class="progress-bar bg-success" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-xl-9 col-md-6 mb-4">
+      <div class="card shadow h-100">
+        <div class="card-header py-3 d-flex align-items-center justify-content-between">
+          <h6 class="m-0 font-weight-bold text-primary">운영 인사이트</h6>
+          <span class="text-xs text-muted">실시간 데이터 기반 주요 지표</span>
+        </div>
+        <div class="card-body">
+          <ul id="operation-insights" class="list-unstyled mb-0">
+            <li class="text-muted">데이터를 수집 중입니다.</li>
+          </ul>
         </div>
       </div>
     </div>
@@ -405,9 +621,9 @@
     <div class="col-xl-4 col-lg-6">
       <div class="card shadow mb-4 h-100">
         <div class="card-header py-3">
-          <h6 class="m-0 font-weight-bold text-primary">인기 종목 TOP 5</h6>
+          <h6 class="m-0 font-weight-bold text-primary">차트 조회 TOP 5</h6>
         </div>
-        <ul id="operation-top-stocks" class="list-group list-group-flush"></ul>
+        <ul id="operation-top-charts" class="list-group list-group-flush"></ul>
       </div>
     </div>
     <div class="col-xl-4 col-lg-6">

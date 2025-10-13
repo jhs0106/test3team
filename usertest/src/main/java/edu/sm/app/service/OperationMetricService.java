@@ -34,16 +34,16 @@ public class OperationMetricService {
     private final SseEmitters sseEmitters;
 
     private final AtomicInteger totalLogins = new AtomicInteger();
-    private final AtomicInteger stockRequests = new AtomicInteger();
-    private final AtomicInteger stockFailures = new AtomicInteger();
+    private final AtomicInteger chartRequests = new AtomicInteger();
+    private final AtomicInteger chartFailures = new AtomicInteger();
     private final AtomicInteger chatMessages = new AtomicInteger();
 
     private final Map<String, Instant> activeUsers = new ConcurrentHashMap<>();
-    private final Map<String, AtomicInteger> stockBySymbol = new ConcurrentHashMap<>();
+    private final Map<String, ChartSymbolStat> chartBySymbol = new ConcurrentHashMap<>();
     private final Map<String, AtomicInteger> chatByRoom = new ConcurrentHashMap<>();
 
     private final Deque<TrendEntry> loginTrend = new ArrayDeque<>();
-    private final Deque<TrendEntry> stockTrend = new ArrayDeque<>();
+    private final Deque<TrendEntry> chartTrend = new ArrayDeque<>();
     private final Deque<TrendEntry> chatTrend = new ArrayDeque<>();
 
     public SseEmitter connect(String clientId) {
@@ -79,15 +79,18 @@ public class OperationMetricService {
         broadcast();
     }
 
-    public void recordStockRequest(String symbol, boolean success) {
-        stockRequests.incrementAndGet();
+    public void recordChartRequest(String symbol, String displayName, boolean success,
+                                   Double price, Double changePercent, Long volume, Double marketCap) {
+        chartRequests.incrementAndGet();
         if (!success) {
-            stockFailures.incrementAndGet();
+            chartFailures.incrementAndGet();
         }
         if (symbol != null && !symbol.isBlank()) {
-            stockBySymbol.computeIfAbsent(symbol.toUpperCase(), k -> new AtomicInteger()).incrementAndGet();
+            String normalized = symbol.toUpperCase();
+            chartBySymbol.computeIfAbsent(normalized, ChartSymbolStat::new)
+                    .update(displayName, success, price, changePercent, volume, marketCap);
         }
-        appendTrend(stockTrend, stockRequests.get());
+        appendTrend(chartTrend, chartRequests.get());
         broadcast();
     }
 
@@ -119,9 +122,9 @@ public class OperationMetricService {
                         .drilldown("logins")
                         .build(),
                 OperationMetricSnapshot.SeriesPoint.builder()
-                        .name("주가 조회")
-                        .y(stockRequests.get())
-                        .drilldown("stocks")
+                        .name("차트 조회")
+                        .y(chartRequests.get())
+                        .drilldown("charts")
                         .build(),
                 OperationMetricSnapshot.SeriesPoint.builder()
                         .name("채팅 메시지")
@@ -137,9 +140,9 @@ public class OperationMetricService {
                         .data(toDataPoints(loginTrend))
                         .build(),
                 OperationMetricSnapshot.DrilldownSeries.builder()
-                        .id("stocks")
+                        .id("charts")
                         .name("종목별 조회")
-                        .data(toSymbolDataPoints())
+                        .data(toChartDataPoints())
                         .build(),
                 OperationMetricSnapshot.DrilldownSeries.builder()
                         .id("chats")
@@ -154,13 +157,14 @@ public class OperationMetricService {
                 .timestamp(Instant.now())
                 .totalLogins(totalLogins.get())
                 .activeUsers(activeUsers.size())
-                .stockRequests(stockRequests.get())
-                .stockFailures(stockFailures.get())
+                .chartRequests(chartRequests.get())
+                .chartFailures(chartFailures.get())
                 .chatMessages(chatMessages.get())
                 .activeUserIds(activeIds)
                 .overview(overview)
                 .drilldown(drilldownSeries)
                 .alerts(alerts)
+                .chartHighlights(buildChartHighlights())
                 .build();
     }
 
@@ -173,13 +177,13 @@ public class OperationMetricService {
                 .toList();
     }
 
-    private List<OperationMetricSnapshot.DataPoint> toSymbolDataPoints() {
-        return stockBySymbol.entrySet().stream()
-                .sorted(symbolComparator())
+    private List<OperationMetricSnapshot.DataPoint> toChartDataPoints() {
+        return chartBySymbol.values().stream()
+                .sorted(chartComparator())
                 .limit(12)
-                .map(entry -> OperationMetricSnapshot.DataPoint.builder()
-                        .name(entry.getKey())
-                        .y(entry.getValue().get())
+                .map(stat -> OperationMetricSnapshot.DataPoint.builder()
+                        .name(stat.symbol())
+                        .y(stat.requestCount())
                         .build())
                 .toList();
     }
@@ -195,10 +199,28 @@ public class OperationMetricService {
                 .toList();
     }
 
-    private Comparator<Map.Entry<String, AtomicInteger>> symbolComparator() {
-        return Comparator.<Map.Entry<String, AtomicInteger>>comparingInt(entry -> entry.getValue().get())
+    private Comparator<ChartSymbolStat> chartComparator() {
+        return Comparator.comparingInt(ChartSymbolStat::requestCount)
                 .reversed()
-                .thenComparing(Map.Entry::getKey);
+                .thenComparing(ChartSymbolStat::symbol);
+    }
+
+    private List<OperationMetricSnapshot.ChartHighlight> buildChartHighlights() {
+        return chartBySymbol.values().stream()
+                .sorted(chartComparator())
+                .limit(5)
+                .map(stat -> OperationMetricSnapshot.ChartHighlight.builder()
+                        .symbol(stat.symbol())
+                        .name(stat.displayName())
+                        .requestCount(stat.requestCount())
+                        .lastPrice(stat.lastPrice())
+                        .changePercent(stat.changePercent())
+                        .volume(stat.volume())
+                        .marketCap(stat.marketCap())
+                        .trend(stat.trend())
+                        .updatedAt(stat.updatedAt())
+                        .build())
+                .toList();
     }
 
     private Comparator<Map.Entry<String, AtomicInteger>> roomComparator() {
@@ -221,17 +243,17 @@ public class OperationMetricService {
 
     private List<OperationAlert> evaluateAlerts() {
         List<OperationAlert> alerts = new ArrayList<>();
-        double failureRate = stockRequests.get() == 0 ? 0.0 : (double) stockFailures.get() / stockRequests.get();
+        double failureRate = chartRequests.get() == 0 ? 0.0 : (double) chartFailures.get() / chartRequests.get();
         if (failureRate > 0.3) {
             alerts.add(OperationAlert.builder()
                     .level("danger")
-                    .message(String.format("주가 조회 실패율 %.0f%% - API 점검 필요", failureRate * 100))
+                    .message(String.format("차트 조회 실패율 %.0f%% - API 점검 필요", failureRate * 100))
                     .timestamp(Instant.now())
                     .build());
         } else if (failureRate > 0.15) {
             alerts.add(OperationAlert.builder()
                     .level("warning")
-                    .message(String.format("주가 조회 실패율 %.0f%% - 추적 권장", failureRate * 100))
+                    .message(String.format("차트 조회 실패율 %.0f%% - 추적 권장", failureRate * 100))
                     .timestamp(Instant.now())
                     .build());
         }
@@ -256,6 +278,83 @@ public class OperationMetricService {
 
     private String buildKey(String clientId) {
         return GROUP_KEY + "-" + clientId;
+    }
+
+    private static class ChartSymbolStat {
+        private final String symbol;
+        private final AtomicInteger requestCount = new AtomicInteger();
+        private volatile String displayName;
+        private volatile double lastPrice;
+        private volatile double changePercent;
+        private volatile long volume;
+        private volatile double marketCap;
+        private volatile String trend = "flat";
+        private volatile Instant updatedAt;
+
+        private ChartSymbolStat(String symbol) {
+            this.symbol = symbol;
+        }
+
+        private void update(String name, boolean success, Double price, Double changePercent,
+                            Long volume, Double marketCap) {
+            requestCount.incrementAndGet();
+            if (!success) {
+                return;
+            }
+            if (name != null && !name.isBlank()) {
+                this.displayName = name;
+            }
+            if (price != null) {
+                this.lastPrice = price;
+            }
+            if (changePercent != null) {
+                this.changePercent = changePercent;
+                this.trend = changePercent > 0 ? "up" : changePercent < 0 ? "down" : "flat";
+            }
+            if (volume != null) {
+                this.volume = volume;
+            }
+            if (marketCap != null) {
+                this.marketCap = marketCap;
+            }
+            this.updatedAt = Instant.now();
+        }
+
+        private String symbol() {
+            return symbol;
+        }
+
+        private int requestCount() {
+            return requestCount.get();
+        }
+
+        private String displayName() {
+            return displayName != null && !displayName.isBlank() ? displayName : symbol;
+        }
+
+        private double lastPrice() {
+            return lastPrice;
+        }
+
+        private double changePercent() {
+            return changePercent;
+        }
+
+        private long volume() {
+            return volume;
+        }
+
+        private double marketCap() {
+            return marketCap;
+        }
+
+        private String trend() {
+            return trend;
+        }
+
+        private Instant updatedAt() {
+            return updatedAt;
+        }
     }
 
     private record TrendEntry(Instant timestamp, double value) { }
