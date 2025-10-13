@@ -15,8 +15,16 @@
 
 <div class="col-sm-10">
     <h2>📈 실시간 주가 그래프</h2>
-    <input id="symbol" value="005930" placeholder="예: 005930 (삼성전자)">
-    <button id="get_btn">조회</button>
+    <select id="symbol" style="padding:6px 10px; border:1px solid #ccc; border-radius:6px;">
+        <option value="005930">삼성전자 </option>
+        <option value="000660">SK하이닉스 </option>
+        <option value="035420">NAVER </option>
+        <option value="068270">셀트리온 </option>
+        <option value="051910">LG화학 </option>
+        <option value="005380">현대차 </option>
+    </select>
+
+    <button id="get_btn" style="margin-left:8px;">조회</button>
 
     <div id="result">
         <h4 id="name"></h4>
@@ -26,6 +34,7 @@
 
     <div id="chart-container" style="width:600px; height:400px; margin-top:20px;"></div>
 
+    <!--  단일 종목용 그래프 -->
     <script>
         let stockLive = {
             symbol: null,
@@ -45,13 +54,10 @@
             },
 
             start: function(symbol) {
-                // ✅ 이전 차트와 타이머 제거
                 if (this.timer) clearInterval(this.timer);
                 if (this.chart) this.chart.destroy();
-
                 this.createChart();
                 this.updateData();
-                // ✅ 5초마다 자동 갱신
                 this.timer = setInterval(() => this.updateData(), 5000);
             },
 
@@ -73,20 +79,14 @@
                                 ]
                             },
                             threshold: null,
-                            marker: {
-                                lineWidth: 1,
-                                lineColor: null,
-                                fillColor: 'white'
-                            }
+                            marker: { lineWidth: 1, fillColor: 'white' }
                         }
                     }
                 });
             },
 
             updateData: function() {
-                // ✅ HTTPS로 고정된 요청 (Spring Boot HTTPS 환경)
                 const apiUrl = `https://${window.location.host}/api/stocks/${this.symbol}`;
-
                 $.getJSON(apiUrl, (data) => {
                     if (!data || data.error) {
                         $('#result').html("<div style='color:red;'>" + (data?.error || "데이터를 불러오지 못했습니다.") + "</div>");
@@ -104,7 +104,6 @@
                     const color = (change >= 0) ? 'red' : 'blue';
                     const sign = (change >= 0) ? '▲' : '▼';
 
-                    // ✅ 안전한 HTML 갱신
                     $('#name').text(name);
                     $('#price-info').html(`<span style="color:${color}; font-weight:bold;">${price.toLocaleString()} KRW ${sign}${change.toFixed(2)}%</span>`);
                     $('#extra-info').html(`
@@ -113,9 +112,12 @@
             52주 범위: ${range}
           `);
 
-                    // ✅ 차트 갱신
                     if (this.chart) {
-                        this.chart.series[0].addPoint([now, price], true, this.chart.series[0].data.length > 30);
+                        if (this.chart.series[0].data.length === 0) {
+                            this.chart.series[0].setData([[now, price]]);
+                        } else {
+                            this.chart.series[0].addPoint([now, price], true, this.chart.series[0].data.length > 30);
+                        }
                     }
                 }).fail((err) => {
                     console.error("API 요청 실패:", err);
@@ -123,14 +125,12 @@
                 });
             }
         };
-
         $(() => stockLive.init());
     </script>
 
-    <!-- ===================================================== -->
-    <!-- 📊 여러 종목 실시간 그래프 영역 -->
-    <!-- ===================================================== -->
-
+    <!-- ============================================== -->
+    <!-- 여러 종목 실시간   -->
+    <!-- ============================================== -->
     <hr style="margin-top:50px;">
     <h3>📊 주요 종목 실시간 그래프</h3>
 
@@ -144,16 +144,14 @@
                 { code: '035420', name: 'NAVER' },
                 { code: '068270', name: '셀트리온' }
             ],
-            charts: {}, // ← 차트 객체 저장
-            timer: null,
+            charts: {},
+            timers: {},
 
             init: function() {
-                this.createLayout();   // HTML만 처음 한 번 생성
-                this.loadAll();        // 데이터 불러오기
-                this.timer = setInterval(() => this.loadAll(), 5000); // 데이터만 갱신
+                this.createLayout();
+                this.startAll();
             },
 
-            // ✅ HTML 레이아웃 1회만 생성
             createLayout: function() {
                 const container = $('#multi-stocks');
                 container.empty();
@@ -163,35 +161,46 @@
                     const infoId = 'info-' + stock.code;
 
                     container.append(`
-        <div class="col-sm-6" style="margin-bottom:30px;">
-          <div style="border:1px solid #ddd; padding:10px; background:#fff; border-radius:8px;">
-            <h5 id="${infoId}-name" style="font-weight:bold;">${stock.name}</h5>
-            <p id="${infoId}-price" style="font-size:1.2em;"></p>
-            <div id="${infoId}-extra" style="margin-bottom:10px;"></div>
-            <div id="${chartId}" style="height:300px;"></div>
-          </div>
-        </div>
-      `);
+            <div class="col-sm-6" style="margin-bottom:30px;">
+              <div style="border:1px solid #ddd; padding:10px; background:#fff; border-radius:8px;">
+                <h5 id="${infoId}-name" style="font-weight:bold;">${stock.name}</h5>
+                <p id="${infoId}-price" style="font-size:1.2em;"></p>
+                <div id="${infoId}-extra" style="margin-bottom:10px;"></div>
+                <div id="${chartId}" style="height:300px;"></div>
+              </div>
+            </div>
+          `);
 
-                    // ✅ 차트 객체 생성 및 저장
+
                     this.charts[stock.code] = Highcharts.chart(chartId, {
-                        chart: { type: 'areaspline' },
-                        title: { text: null },
-                        xAxis: { type: 'datetime', visible: false },
-                        yAxis: { title: { text: null }, visible: false },
-                        legend: { enabled: false },
-                        series: [{ name: stock.name, data: [], color: '#32CD32' }],
-                        credits: { enabled: false },
+                        chart: { type: 'areaspline', animation: Highcharts.svg },
+                        title: { text: '실시간 주가 변화' },
+                        xAxis: { type: 'datetime' },
+                        yAxis: { title: { text: '가격 (KRW)' } },
+                        series: [{ name: stock.name, data: [] }],
                         plotOptions: {
-                            areaspline: { fillOpacity: 0.3, marker: { enabled: false } }
+                            areaspline: {
+                                color: '#32CD32',
+                                fillColor: {
+                                    linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
+                                    stops: [
+                                        [0, '#32CD32'],
+                                        [1, 'rgba(50,205,50,0)']
+                                    ]
+                                },
+                                threshold: null,
+                                marker: { lineWidth: 1, fillColor: 'white' }
+                            }
                         }
                     });
                 });
             },
 
-            // ✅ 데이터만 주기적으로 갱신
-            loadAll: function() {
-                this.symbols.forEach(stock => this.updateStock(stock));
+            startAll: function() {
+                this.symbols.forEach(stock => {
+                    this.updateStock(stock);
+                    this.timers[stock.code] = setInterval(() => this.updateStock(stock), 5000);
+                });
             },
 
             updateStock: function(stock) {
@@ -202,25 +211,27 @@
                     const now = (new Date()).getTime();
                     const price = data.regularMarketPrice || 0;
                     const change = data.regularMarketChangePercent || 0;
-                    const color = (change >= 0) ? 'red' : 'blue';
-                    const sign = (change >= 0) ? '▲' : '▼';
                     const volume = data.regularMarketVolume?.toLocaleString() || '-';
                     const cap = data.marketCap?.toLocaleString() || '-';
+                    const color = (change >= 0) ? 'red' : 'blue';
+                    const sign = (change >= 0) ? '▲' : '▼';
 
                     $(`#info-${stock.code}-price`).html(
                         `<span style="color:${color}; font-weight:bold;">${price.toLocaleString()} KRW ${sign}${change.toFixed(2)}%</span>`
                     );
                     $(`#info-${stock.code}-extra`).html(`거래량: ${volume} | 시총: ${cap}`);
 
-                    // ✅ 차트에 새로운 포인트 추가
                     const chart = this.charts[stock.code];
-                    if (chart) {
-                        chart.series[0].addPoint([now, price], true, chart.series[0].data.length > 30);
+                    if (chart && chart.series && chart.series[0]) {
+                        if (chart.series[0].data.length === 0) {
+                            chart.series[0].setData([[now, price]]);
+                        } else {
+                            chart.series[0].addPoint([now, price], true, chart.series[0].data.length > 30);
+                        }
                     }
-                });
+                }).fail(err => console.error(stock.name + " API 오류", err));
             }
         };
-
         $(() => stockMulti.init());
     </script>
 </div>
