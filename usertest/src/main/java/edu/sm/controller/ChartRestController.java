@@ -6,7 +6,7 @@ import org.springframework.http.*;
 import java.util.*;
 
 /**
- * ✅ RapidAPI 기반 실시간 주가 조회 컨트롤러
+ *   RapidAPI 기반 실시간 주가 조회 컨트롤러
  * Yahoo Finance (공식 RapidAPI) 사용
  * - 429 차단 없음
  * - 안정적 응답
@@ -14,9 +14,9 @@ import java.util.*;
  */
 @RestController
 @RequestMapping("/api/stocks")
-public class StockRestController {
+public class ChartRestController {
 
-    // ✅ RapidAPI 키 (개인 키 사용 중)
+    //  RapidAPI 키 (개인 키 사용 중)
     private static final String API_KEY = "e00490892cmsh481da93a287fe3ep113054jsnaa4e9b11fff6";
     private static final String API_HOST = "apidojo-yahoo-finance-v1.p.rapidapi.com";
     private static final String BASE_URL = "https://" + API_HOST + "/market/v2/get-quotes";
