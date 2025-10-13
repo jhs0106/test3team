@@ -377,17 +377,18 @@
                 alert('WebSocket 연결 또는 채팅방 배정이 완료되지 않았습니다.');
                 return;
             }
-            const content = this.$messageInput.val().trim();
-            if (!content) {
+            const message = this.$messageInput.val().trim();
+            if (!message) {
                 return;
             }
             const payload = {
                 sendid: this.adminId,
                 receiveid: this.custId,
-                content1: content
+                content1: message,
+                roomId: this.roomId
             };
             this.stompClient.send('/adminreceiveto', {}, JSON.stringify(payload));
-            this.appendMessage('나', content, 'admin');
+            this.appendMessage('나', message, 'admin');
             this.$messageInput.val('');
             this.$messageInput.focus();
         },

@@ -378,7 +378,8 @@
             const payload = {
                 sendid: this.custId,
                 receiveid: 'admin',
-                content1: message
+                content1: message,
+                roomId: this.activeRoomId
             };
 
             this.stompClient.send('/receiveto', {}, JSON.stringify(payload));
