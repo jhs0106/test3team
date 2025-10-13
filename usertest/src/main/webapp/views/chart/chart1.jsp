@@ -45,7 +45,6 @@
             if (this.eventSource !== null) return; // 중복 연결 방지
             $('#status').text('연결 중...').css('color', 'orange');
 
-            // admintest 서버 포트(예: 8088)에 맞게 수정
             this.eventSource = new EventSource('https://localhost:8444/sse2/connect/user1');
             this.eventSource.addEventListener('connect', e => {
                 console.log('SSE 연결 성공:', e.data);
@@ -75,7 +74,7 @@
             });
 
             this.eventSource.onerror = () => {
-                $('#status').text('❌ 연결 끊김').css('color', 'red');
+                $('#status').text(' 연결 끊김').css('color', 'red');
                 this.disconnect();
             };
         },
