@@ -2,6 +2,7 @@ package edu.sm.controller;
 
 import edu.sm.app.msg.Msg;
 import edu.sm.app.service.OperationMetricService;
+import edu.sm.util.ChatLogger;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -16,6 +17,7 @@ public class MsgController {
 
     private final SimpMessagingTemplate template;
     private final OperationMetricService operationMetricService;
+    private final ChatLogger chatLogger;
 
     @MessageMapping("/receiveall") // 모두에게 전송
     public void receiveall(Msg msg, SimpMessageHeaderAccessor headerAccessor) {
@@ -36,6 +38,12 @@ public class MsgController {
     public void receiveto(Msg msg, SimpMessageHeaderAccessor headerAccessor) {
         log.info("receiveto: {}", msg);
         String target = msg.getReceiveid();
+
+        // ⭐ 채팅 로그 저장 (User → Admin)
+        if (msg.getRoomId() != null) {
+            chatLogger.logChat(msg.getRoomId(), msg.getSendid(), "user", msg.getContent1());
+        }
+
         template.convertAndSend("/send/to/" + target, msg);
         operationMetricService.recordChatMessage("direct:" + target);
     }
@@ -44,6 +52,12 @@ public class MsgController {
     public void adminreceiveto(Msg msg, SimpMessageHeaderAccessor headerAccessor) {
         log.info("adminreceiveto: {}", msg);
         String target = msg.getReceiveid();
+
+        // ⭐ 채팅 로그 저장 (Admin → User)
+        if (msg.getRoomId() != null) {
+            chatLogger.logChat(msg.getRoomId(), msg.getSendid(), "admin", msg.getContent1());
+        }
+
         template.convertAndSend("/adminsend/to/" + target, msg);
         operationMetricService.recordChatMessage("admin:" + target);
     }
