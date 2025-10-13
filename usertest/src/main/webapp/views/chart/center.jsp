@@ -36,6 +36,7 @@
 
     <!--  단일 종목용 그래프 -->
     <script>
+        const apiOrigin = window.location.origin || (window.location.protocol + '//' + window.location.host);
         let stockLive = {
             symbol: null,
             chart: null,
@@ -86,7 +87,7 @@
             },
 
             updateData: function() {
-                const apiUrl = `https://${window.location.host}/api/stocks/${this.symbol}`;
+                const apiUrl = `${apiOrigin}/api/stocks/${this.symbol}`;
                 $.getJSON(apiUrl, (data) => {
                     if (!data || data.error) {
                         $('#result').html("<div style='color:red;'>" + (data?.error || "데이터를 불러오지 못했습니다.") + "</div>");
@@ -204,7 +205,7 @@
             },
 
             updateStock: function(stock) {
-                const apiUrl = `https://${window.location.host}/api/stocks/${stock.code}`;
+                const apiUrl = `${apiOrigin}/api/stocks/${stock.code}`;
                 $.getJSON(apiUrl, (data) => {
                     if (!data || data.error) return;
 
