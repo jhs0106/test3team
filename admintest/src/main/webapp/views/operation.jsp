@@ -36,7 +36,10 @@
         return;
       }
 
-      this.sse.onmessage = event => {
+      const handleMetrics = event => {
+        if (!event || !event.data) {
+          return;
+        }
         try {
           const snapshot = JSON.parse(event.data);
           this.update(snapshot);
@@ -45,6 +48,13 @@
         }
       };
 
+      this.sse.addEventListener('metrics', handleMetrics);
+      this.sse.addEventListener('connect', event => {
+        if (event && event.data) {
+          console.debug('SSE 연결 상태:', event.data);
+        }
+      });
+      this.sse.onmessage = handleMetrics;
       this.sse.onerror = err => {
         console.error('SSE 오류', err);
         this.scheduleReconnect();
