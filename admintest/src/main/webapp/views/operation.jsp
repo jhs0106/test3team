@@ -8,6 +8,8 @@
     reconnectTimer: null,
     chart: null,
     alertHashes: new Set(),
+    toastTimestamps: new Map(),
+    alertThrottleMs: 60000,
     initialized: false,
     init() {
       this.buildChart();
@@ -87,12 +89,15 @@
       if (!snapshot) return;
       $('#operation-warning').addClass('d-none');
       $('#operation-last-updated').text(this.formatTimestamp(snapshot.timestamp));
+      const chartRequests = Number(snapshot.chartRequests || 0);
+      const chartFailures = Number(snapshot.chartFailures || 0);
       $('#metric-totalLogins').text(this.formatNumber(snapshot.totalLogins));
       $('#metric-activeUsers').text(this.formatNumber(snapshot.activeUsers));
-      $('#metric-chartRequests').text(this.formatNumber(snapshot.chartRequests));
+      $('#metric-chartRequests').text(this.formatNumber(chartRequests));
       $('#metric-chatMessages').text(this.formatNumber(snapshot.chatMessages));
       $('#metric-chartFailures').text(this.formatNumber(snapshot.chartFailures));
-      const failureRate = snapshot.chartRequests === 0 ? 0 : (snapshot.chartFailures / snapshot.chartRequests * 100);
+      $('#metric-stockFailures').text(this.formatNumber(chartFailures));
+      const failureRate = chartRequests === 0 ? 0 : (chartFailures / chartRequests * 100);
       this.updateFailureStatus(failureRate);
       this.updateChart(snapshot);
       this.updateAlerts(snapshot.alerts || []);
@@ -320,7 +325,7 @@
         return { name: point.name, y: Number(point.y || 0) };
       });
     },
-    updateFailureStatus(failureRate) {
+    updateFailureStatus(failureRate, chartFailures) {
       const state = this.resolveFailureState(failureRate);
       const normalized = this.clampRate(failureRate);
       const statusEl = $('#operation-failure-status');
@@ -329,11 +334,19 @@
                 .addClass(state.textClass)
                 .text(state.label);
       }
-      const rateEl = $('#metric-failureRate');
-      if (rateEl.length) {
-        rateEl.removeClass('text-success text-warning text-danger')
+      const formattedRate = normalized.toFixed(1) + '%';
+      const updateRate = selector => {
+        const el = $(selector);
+        if (!el.length) return;
+        el.removeClass('text-success text-warning text-danger')
                 .addClass(state.textClass)
-                .text(normalized.toFixed(1) + '%');
+                .text(formattedRate);
+      };
+      updateRate('#metric-chartFailureRate');
+      updateRate('#metric-stockFailureRate');
+      const stockCountEl = $('#metric-stockFailures');
+      if (stockCountEl.length && Number.isFinite(chartFailures)) {
+        stockCountEl.text(this.formatNumber(chartFailures));
       }
       const progressEl = $('#operation-failure-progress');
       if (progressEl.length) {
@@ -456,6 +469,13 @@
       const container = $('#operation-alert-toasts');
       if (!container.length) return;
       const badge = this.resolveBadge(alert.level);
+      const key = this.alertToastKey(alert);
+      const now = Date.now();
+      const lastShown = this.toastTimestamps.get(key) || 0;
+      if (now - lastShown < this.alertThrottleMs) {
+        return;
+      }
+      this.toastTimestamps.set(key, now);
 
       // 문자열 연결 방식으로 생성 (JSP EL 충돌 방지)
       const html =
@@ -485,6 +505,9 @@
           html: alert.message + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
         }));
       }
+    },
+    alertToastKey(alert) {
+      return [alert.level, alert.message].join('|');
     }
   };
 
@@ -531,7 +554,7 @@
           <div class="text-xs font-weight-bold text-info text-uppercase mb-1">차트 조회</div>
           <div id="metric-chartRequests" class="h5 mb-0 font-weight-bold text-gray-800">0</div>
           <div class="text-xs text-muted mt-2">
-            실패 <span id="metric-chartFailures">0</span>건 · 실패율 <span id="metric-failureRate">0%</span>
+            실패 <span id="metric-chartFailures">0</span>건 · 실패율 <span id="metric-chartFailureRate">0%</span>
           </div>
         </div>
       </div>
@@ -555,7 +578,7 @@
             <div id="metric-stockFailures" class="h5 mb-0 font-weight-bold text-gray-800">0</div>
             <div id="operation-failure-status" class="small font-weight-bold text-success">안정</div>
           </div>
-          <div class="text-xs text-muted mt-2">실패율 <span id="metric-failureRate" class="font-weight-bold">0%</span></div>
+          <div class="text-xs text-muted mt-2">실패율 <span id="metric-stockFailureRate" class="font-weight-bold">0%</span></div>
           <div class="progress progress-sm mt-2">
             <div id="operation-failure-progress" class="progress-bar bg-success" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
           </div>
