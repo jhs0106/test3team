@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org/DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="edu.sm.app.repository.MarkerRepository">
+
+    <insert id="insert" parameterType="edu.sm.app.dto.Marker">
+        INSERT INTO marker (title, description, img, lat, lng)
+        VALUES (#{title}, #{description}, #{img}, #{lat}, #{lng})
+    </insert>
+
+    <select id="findAll" resultType="edu.sm.app.dto.Marker">
+        SELECT target, title, description, img, lat, lng
+        FROM marker
+    </select>
+
+</mapper>

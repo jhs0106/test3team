@@ -210,7 +210,8 @@
 <div class="map-page">
     <div class="map-header">
         <h2>내가 발견한 공간 기록하기</h2>
-        <p>지도를 클릭해 제목, 설명, 사진을 남겨보세요. 저장된 기록은 지도 위 카드 형태의 마커로 표시됩니다.</p>
+        <p>지도를 클릭해 제목, 설명, 사진을 남겨보세요.
+            저장된 기록은 지도 위 카드 형태의 마커로 표시됩니다.</p>
     </div>
 
     <div id="map"></div>
@@ -221,21 +222,25 @@
                 <label for="markerTitle">제목</label>
                 <input id="markerTitle" type="text" placeholder="예: 주말마다 가는 카페" required />
             </div>
+
             <div class="marker-form__row">
                 <label for="markerDescription">설명</label>
-                <textarea id="markerDescription" placeholder="이 장소에 대한 메모를 적어주세요." maxlength="300"></textarea>
+                <textarea id="markerDescription" placeholder="이 장소에 대한 메모를 적어주세요."
+                          maxlength="300"></textarea>
             </div>
             <div class="marker-form__row">
                 <label for="markerImage">사진</label>
                 <input id="markerImage" type="file" accept="image/*" />
                 <div id="imagePreview" class="marker-form__preview"></div>
             </div>
+
             <div class="marker-form__row">
                 <label>선택한 위치</label>
                 <div id="selectedPosition" style="font-size: 13px; color: #444444;">지도에서 위치를 선택해주세요.</div>
             </div>
             <div class="marker-form__actions">
                 <button type="button" id="cancelMarker" class="secondary">취소</button>
+
                 <button type="submit" class="primary">기록 남기기</button>
             </div>
         </form>
@@ -246,6 +251,7 @@
         <ul>
             <li>지도 위 아무 곳이나 클릭하면 기록 입력창이 열립니다.</li>
             <li>사진은 JPG, PNG 등 이미지 파일을 선택하면 함께 저장됩니다.</li>
+
             <li>저장된 카드를 클릭하면 설명이 펼쳐집니다.</li>
         </ul>
     </div>
@@ -284,7 +290,6 @@
                 center: new kakao.maps.LatLng(36.800209, 127.074968),
                 level: 4
             });
-
             var markerFormWrapper = document.getElementById('markerFormWrapper');
             var markerForm = document.getElementById('markerForm');
             var markerTitleInput = document.getElementById('markerTitle');
@@ -356,7 +361,6 @@
 
                 var imageWrapper = document.createElement('div');
                 imageWrapper.className = 'photo-marker__image';
-
                 if (imageSrc) {
                     var image = document.createElement('img');
                     image.src = imageSrc;
@@ -376,7 +380,6 @@
                 titleEl.className = 'photo-marker__title';
                 titleEl.textContent = title;
                 body.appendChild(titleEl);
-
                 if (description) {
                     var descriptionEl = document.createElement('div');
                     descriptionEl.className = 'photo-marker__description';
@@ -406,15 +409,14 @@
 
             function createOverlay(position, title, description, imageSrc) {
                 var contentNode = createOverlayElement(title, description, imageSrc);
-
                 var overlay = new kakao.maps.CustomOverlay({
                     position: position,
                     content: contentNode,
                     xAnchor: 0.5,
                     yAnchor: 1.1,
+
                     clickable: true
                 });
-
                 overlay.setMap(map);
                 return {
                     overlay: overlay,
@@ -454,13 +456,16 @@
                 var svg = '' +
                     '<svg xmlns="http://www.w3.org/2000/svg" width="' + width + '" height="' + height + '" viewBox="0 0 60 80">' +
                     '<defs>' +
+
                     '<linearGradient id="markerGradient" x1="50%" y1="0%" x2="50%" y2="100%">' +
                     '<stop offset="0%" stop-color="#ff7b7b" />' +
                     '<stop offset="100%" stop-color="#ff4040" />' +
                     '</linearGradient>' +
+
                     '</defs>' +
                     '<path d="M30 0C16 0 5 11.8 5 26.3c0 15.4 11.6 33 23.5 46.5a3.2 3.2 0 0 0 4.9 0C45.3 59.3 55 41.8 55 26.3 55 11.8 44 0 30 0z" fill="url(#markerGradient)" />' +
                     '<circle cx="30" cy="26" r="14" fill="#ffffff" opacity="0.85" />' +
+
                     '<circle cx="30" cy="26" r="8" fill="#ff5959" />' +
                     '</svg>';
                 return 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg);
@@ -475,6 +480,7 @@
                         src,
                         new kakao.maps.Size(size.width, size.height),
                         {
+
                             offset: new kakao.maps.Point(Math.round(size.width / 2), size.height)
                         }
                     );
@@ -487,9 +493,9 @@
                     position: position,
                     image: getMarkerImage(map.getLevel()),
                     title: title,
+
                     clickable: true
                 });
-
                 marker.setMap(map);
                 return marker;
             }
@@ -508,10 +514,8 @@
 
             function updateEntryForLevel(entry, level) {
                 entry.marker.setImage(getMarkerImage(level));
-
                 var shouldShowOverlay = level < overlayHideLevel || entry.forceVisible;
                 var isShown = !!entry.overlay.getMap();
-
                 if (shouldShowOverlay && !isShown) {
                     entry.overlay.setMap(map);
                 } else if (!shouldShowOverlay && isShown) {
@@ -533,72 +537,86 @@
                 entries.forEach(function (item) {
                     if (item !== entry) {
                         item.forceVisible = false;
+
                         if (map.getLevel() >= overlayHideLevel) {
                             item.overlay.setMap(null);
                         }
                         collapseOverlay(item);
+
                     }
                 });
-
                 entry.forceVisible = true;
                 updateEntryForLevel(entry, map.getLevel());
                 expandOverlay(entry);
             }
 
-            kakao.maps.event.addListener(map, 'click', function (mouseEvent) {
-                openForm(mouseEvent.latLng);
-            });
+            // =================================================================
+            // 서버 통신 후 마커/오버레이 생성 로직 (로컬 표시)
+            // 서버에 데이터 저장이 성공한 후에 호출됩니다.
+            function finalize(imageSrc, title, description, selectedLatLng) {
+                var overlayResult = createOverlay(selectedLatLng, title, description, imageSrc);
+                var marker = createBasicMarker(selectedLatLng, title);
 
-            kakao.maps.event.addListener(map, 'zoom_changed', function () {
-                var level = map.getLevel();
-                if (level < overlayHideLevel) {
-                    entries.forEach(function (entry) {
-                        entry.forceVisible = false;
-                    });
+                var entry = {
+                    position: selectedLatLng,
+                    marker: marker,
+                    overlay: overlayResult.overlay,
+                    overlayContent: overlayResult.content,
+
+                    forceVisible: false
+                };
+                kakao.maps.event.addListener(marker, 'click', function () {
+                    if (map.getLevel() >= overlayHideLevel) {
+                        if (entry.forceVisible) {
+                            entry.forceVisible = false;
+
+                            entry.overlay.setMap(null);
+                            collapseOverlay(entry);
+                        } else {
+                            focusOnEntry(entry);
+
+                        }
+                    } else {
+                        entry.overlay.setMap(map);
+                        expandOverlay(entry);
+
+                    }
+                    map.panTo(entry.position);
+                    updateEntryForLevel(entry, map.getLevel());
+                });
+                entries.push(entry);
+
+                if (map.getLevel() >= overlayHideLevel) {
+                    focusOnEntry(entry);
                 }
-                updateAllEntries(level);
-            });
 
-            markerImageInput.addEventListener('change', function (event) {
-                var file = event.target.files && event.target.files[0];
-                handleImagePreview(file);
-            });
-
-            cancelButton.addEventListener('click', function () {
+                updateEntryForLevel(entry, map.getLevel());
+                map.panTo(selectedLatLng);
                 closeForm();
-            });
+            }
+            // =================================================================
 
-            markerForm.addEventListener('submit', function (event) {
-                event.preventDefault();
+            // [추가된 부분] DB에서 가져온 마커를 지도에 표시하는 로직
+            function drawExistingMarkers(markers) {
+                markers.forEach(function (markerData) {
+                    // DB에서 조회한 위경도 정보를 Kakao Map LatLng 객체로 변환
+                    var position = new kakao.maps.LatLng(markerData.lat, markerData.lng);
 
-                if (!selectedLatLng) {
-                    alert('먼저 지도에서 위치를 선택해주세요.');
-                    return;
-                }
+                    // 이미지 URL을 생성. (MapRestController.java에서 설정한 upload.dir 경로를 기반으로 /uploads/를 가정)
+                    var imageSrc = markerData.img ? '/uploads/' + markerData.img : null;
 
-                var title = markerTitleInput.value.trim();
-                var description = markerDescriptionInput.value.trim();
-
-                if (!title) {
-                    alert('제목을 입력해주세요.');
-                    markerTitleInput.focus();
-                    return;
-                }
-
-                var file = markerImageInput.files && markerImageInput.files[0];
-
-                function finalize(imageSrc) {
-                    var overlayResult = createOverlay(selectedLatLng, title, description, imageSrc);
-                    var marker = createBasicMarker(selectedLatLng, title);
+                    var overlayResult = createOverlay(position, markerData.title, markerData.description, imageSrc);
+                    var marker = createBasicMarker(position, markerData.title);
 
                     var entry = {
-                        position: selectedLatLng,
+                        position: position,
                         marker: marker,
                         overlay: overlayResult.overlay,
                         overlayContent: overlayResult.content,
                         forceVisible: false
                     };
 
+                    // 마커 클릭 이벤트 리스너 설정 (기존 finalize 로직과 동일)
                     kakao.maps.event.addListener(marker, 'click', function () {
                         if (map.getLevel() >= overlayHideLevel) {
                             if (entry.forceVisible) {
@@ -617,31 +635,131 @@
                     });
 
                     entries.push(entry);
-
-                    if (map.getLevel() >= overlayHideLevel) {
-                        focusOnEntry(entry);
-                    }
-
                     updateEntryForLevel(entry, map.getLevel());
-                    map.panTo(selectedLatLng);
-                    closeForm();
-                }
+                });
+            }
 
-                if (file) {
-                    if (!file.type || !file.type.startsWith('image/')) {
-                        alert('이미지 파일만 업로드할 수 있습니다.');
-                        return;
-                    }
-
-                    var reader = new FileReader();
-                    reader.onload = function (loadEvent) {
-                        finalize(loadEvent.target.result);
-                    };
-                    reader.readAsDataURL(file);
-                } else {
-                    finalize(null);
+            // [추가된 부분] 페이지 로드 시 기존 마커 데이터 로드 AJAX 호출
+            // **주의:** 이 로직은 jQuery($)가 페이지에 로드되어 있어야 작동합니다.
+            $.ajax({
+                url: '/getallmarkers',
+                type: 'GET',
+                dataType: 'json',
+                success: function (markers) {
+                    console.log('기존 마커 데이터 로드 성공:', markers.length + '개');
+                    drawExistingMarkers(markers);
+                },
+                error: function (xhr, status, error) {
+                    console.error('기존 마커 데이터 로드 실패:', error);
+                    // 실패해도 지도 기능 자체는 계속 작동하도록 함
                 }
             });
+
+            // =================================================================
+            // [기존 코드] 지도 클릭 이벤트 리스너
+            kakao.maps.event.addListener(map, 'click', function (mouseEvent) {
+                openForm(mouseEvent.latLng);
+            });
+            kakao.maps.event.addListener(map, 'zoom_changed', function () {
+                var level = map.getLevel();
+                if (level < overlayHideLevel) {
+                    entries.forEach(function (entry) {
+                        entry.forceVisible = false;
+
+                    });
+                }
+                updateAllEntries(level);
+            });
+            markerImageInput.addEventListener('change', function (event) {
+                var file = event.target.files && event.target.files[0];
+                handleImagePreview(file);
+            });
+            cancelButton.addEventListener('click', function () {
+                closeForm();
+            });
+            // =================================================================
+            // [기존 코드] 폼 제출 시 AJAX를 통해 서버에 데이터와 파일 전송
+            // =================================================================
+            markerForm.addEventListener('submit', function (event) {
+                event.preventDefault();
+
+                if (!selectedLatLng) {
+
+                    alert('먼저 지도에서 위치를 선택해주세요.');
+                    return;
+                }
+
+                var title = markerTitleInput.value.trim();
+                var description = markerDescriptionInput.value.trim();
+                var
+                    imageFile = markerImageInput.files && markerImageInput.files[0];
+
+                if (!title) {
+                    alert('제목을 입력해주세요.');
+                    markerTitleInput.focus();
+                    return;
+                }
+
+
+                // 파일 형식 체크
+                if (imageFile && (!imageFile.type || !imageFile.type.startsWith('image/'))) {
+                    alert('이미지 파일만 업로드할 수 있습니다.');
+                    return;
+                }
+
+                // FormData를 사용하여 파일과 텍스트 데이터를 한번에 전송
+                var formData = new FormData();
+                formData.append('markerTitle', title);
+                formData.append('markerDescription', description);
+                // 파일이 없어도 서버에서 처리할 수 있도록 빈 Blob 또는 null 대신 File 객체 전달
+                formData.append('markerImage', imageFile || new Blob([], {type: 'application/octet-stream'}), 'empty');
+                formData.append('lat', selectedLatLng.getLat());
+                formData.append('lng', selectedLatLng.getLng());
+
+                // 로딩 중임을 사용자에게 알리는 UI (선택 사항)
+                document.querySelector('.marker-form__actions .primary').disabled = true;
+                // AJAX 통신
+                $.ajax({
+                    url: '/registermarker',
+                    type: 'POST',
+                    data: formData,
+
+                    processData: false, // FormData 사용 시 필수: 데이터를 쿼리 문자열로 변환하지 않음
+                    contentType: false, // FormData 사용 시 필수: 컨텐츠 타입을 설정하지 않음
+                    success: function (response) {
+                        document.querySelector('.marker-form__actions .primary').disabled = false;
+
+
+                        if (response === 'success') {
+                            alert('기록이 성공적으로 저장되었습니다!');
+
+                            // DB 저장이 성공하면, 이미지 파일을 로컬에서 읽어 지도에 표시
+
+                            if (imageFile) {
+                                var reader = new FileReader();
+                                reader.onload = function (loadEvent) {
+
+                                    // 서버 성공 후 클라이언트의 지도 표시 로직 호출
+                                    finalize(loadEvent.target.result, title, description, selectedLatLng);
+
+                                };
+                                reader.readAsDataURL(imageFile);
+                            } else {
+                                // 파일이 없는 경우, 파일 없이 지도 표시 로직 호출
+                                finalize(null, title, description, selectedLatLng);
+                            }
+
+                        } else {
+                            alert('기록 저장에 실패했습니다: ' + response);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        document.querySelector('.marker-form__actions .primary').disabled = false;
+                        alert('서버 통신 중 오류가 발생했습니다: ' + error);
+                    }
+                });
+            });
+            // =================================================================
         }
 
         if (document.readyState === 'loading') {
