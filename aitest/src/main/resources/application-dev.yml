@@ -1,0 +1,72 @@
+server:
+  port: 8445
+  ssl:
+    enabled: true
+    key-store: classpath:keystore.p12
+    key-store-password: ENC(idIWCdznEM3ggslDeTmLJw==)
+    key-store-type: PKCS12
+  servlet:
+    encoding:
+      charset: UTF-8
+      force: true
+  tomcat:
+    # 폼/POST 본문 한도 (기본 2MB → 20MB로 상향)
+    max-http-form-post-size: 20MB
+    # 업로드 처리 중 큰 본문을 삼키는(swallow) 한도. -1은 무제한(권장)
+    max-swallow-size: -1
+
+spring:
+  config:
+    import: optional:file:.env[.properties] #.env import
+  mvc:
+    view:
+      prefix: /views/
+      suffix: .jsp
+  servlet:
+    multipart:
+      # 파일 개별 최대 크기
+      max-file-size: 20MB
+      # 요청 전체 최대 크기(파일+필드)
+      max-request-size: 20MB
+  datasource:
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
+    password: ENC(AZD/oOYNtCPlDC68dabOeA==)
+  ai:
+    vectorstore:
+      pgvector:
+        initialize-schema: true
+    openai:
+#      api-key: ENC(+FnIWM0i4a3zH84yUlW52xumf48u6k0skXOzULTQE2rY552u1LanL4r4azV4+0wj)
+#      chat:
+#        options:
+#          model: gemini-2.0-flash
+#          temperature: 0.0
+#          max-tokens: 1000
+#        completions-path: /v1/chat/completions
+#        base-url: https://generativelanguage.googleapis.com/v1beta/openai/
+      api-key: ENC(+T9SWaH75QZqZr5jsSY/GPfYhyJSiku54nYHGBHzq2D8M6Ri7sq3QXgWNzqalZw1kxI4ewSWJ5sbOH0zCQt6418r05/ShuliVIYKCWLIZtjMAOwzahzqKH+vtkWOlu2v5C3XBYdZYl2/14oOWDyR6yjYFNOTyCBOpxAEphIYS2SVMLqr6rTbFFN1RpBFs4Iko7C3Lmx1PdzADzBqyCezj4u+2PCSYN4ChZKtLrY7QnI=)
+      chat:
+        options:
+          model: gpt-4o
+          temperature: 0.1
+          max-tokens: 1000
+mybatis:
+  type-aliases-package: edu.sm.app.dto
+  mapper-locations: classpath:/mapper/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+
+logging:
+  level:
+    root: info
+
+# Application Config
+# @Value("${}")
+app:
+  url:
+    adminserver: https://10.20.34.95:8444/
+  key:
+    skey: ${MY_KEY}
+#    chatgpt: ENC(96io+0B0aLRRY31p7DlYjdEZoAu0vUpwK5l/FG10h6uYM0Dei2wRdzwMa78eru7XaOhjf9I4f7DRthbA1TKnekluejmFUaZ11vZCQu98rOjlAX/4UM0ExC//AunnSJYocdJb0np6ZVCLOfzHfOaaa8WvUrQyATrcBFXWWGTzPF2OMdpZKCzP+MBidcvQnPlZIcL+8rWvx5Fs4qTTie0Eho1YdIX0zGVO1HP2YfLtQ4k=)
+#    gemini: ENC(+FnIWM0i4a3zH84yUlW52xumf48u6k0skXOzULTQE2rY552u1LanL4r4azV4+0wj)

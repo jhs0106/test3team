@@ -12,6 +12,14 @@
         </option>
       </GradleProjectSettings>
       <GradleProjectSettings>
+        <option name="externalProjectPath" value="$PROJECT_DIR$/aitest" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$/aitest" />
+          </set>
+        </option>
+      </GradleProjectSettings>
+      <GradleProjectSettings>
         <option name="externalProjectPath" value="$PROJECT_DIR$/usertest" />
         <option name="modules">
           <set>
