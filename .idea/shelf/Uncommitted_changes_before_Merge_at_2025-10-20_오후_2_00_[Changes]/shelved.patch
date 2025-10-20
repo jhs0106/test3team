@@ -1,0 +1,442 @@
+Index: .idea/modules.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"ProjectModuleManager\">\r\n    <modules>\r\n      <module fileurl=\"file://$PROJECT_DIR$/.idea/test3.iml\" filepath=\"$PROJECT_DIR$/.idea/test3.iml\" />\r\n    </modules>\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/modules.xml b/.idea/modules.xml
+--- a/.idea/modules.xml	(revision 0fddcf34dd71a331da5ce6583a917b07abe099d4)
++++ b/.idea/modules.xml	(date 1760936438740)
+@@ -2,7 +2,13 @@
+ <project version="4">
+   <component name="ProjectModuleManager">
+     <modules>
++      <module fileurl="file://$PROJECT_DIR$/.idea/modules/admintest.main.iml" filepath="$PROJECT_DIR$/.idea/modules/admintest.main.iml" />
++      <module fileurl="file://$PROJECT_DIR$/.idea/modules/admintest.test.iml" filepath="$PROJECT_DIR$/.idea/modules/admintest.test.iml" />
++      <module fileurl="file://$PROJECT_DIR$/.idea/modules/aitest.main.iml" filepath="$PROJECT_DIR$/.idea/modules/aitest.main.iml" />
++      <module fileurl="file://$PROJECT_DIR$/.idea/modules/aitest.test.iml" filepath="$PROJECT_DIR$/.idea/modules/aitest.test.iml" />
+       <module fileurl="file://$PROJECT_DIR$/.idea/test3.iml" filepath="$PROJECT_DIR$/.idea/test3.iml" />
++      <module fileurl="file://$PROJECT_DIR$/.idea/modules/usertest.main.iml" filepath="$PROJECT_DIR$/.idea/modules/usertest.main.iml" />
++      <module fileurl="file://$PROJECT_DIR$/.idea/modules/usertest.test.iml" filepath="$PROJECT_DIR$/.idea/modules/usertest.test.iml" />
+     </modules>
+   </component>
+ </project>
+\ No newline at end of file
+Index: usertest/.gitignore
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>.env/\r\n/.env\r\n/.gradle\r\n/build\r\n/gradle\r\n/build.gradle\r\n\r\nbuild/
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/usertest/.gitignore b/usertest/.gitignore
+--- a/usertest/.gitignore	(revision 0fddcf34dd71a331da5ce6583a917b07abe099d4)
++++ b/usertest/.gitignore	(date 1760936438750)
+@@ -5,4 +5,4 @@
+ /gradle
+ /build.gradle
+ 
+-build/
+\ No newline at end of file
++build/
+Index: .idea/modules/aitest.main.iml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/modules/aitest.main.iml b/.idea/modules/aitest.main.iml
+new file mode 100644
+--- /dev/null	(date 1760936438742)
++++ b/.idea/modules/aitest.main.iml	(date 1760936438742)
+@@ -0,0 +1,8 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<module version="4">
++  <component name="AdditionalModuleElements">
++    <content url="file://$MODULE_DIR$/../../aitest/build/generated/sources/annotationProcessor/java/main">
++      <sourceFolder url="file://$MODULE_DIR$/../../aitest/build/generated/sources/annotationProcessor/java/main" isTestSource="false" generated="true" />
++    </content>
++  </component>
++</module>
+\ No newline at end of file
+Index: .idea/modules/admintest.test.iml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/modules/admintest.test.iml b/.idea/modules/admintest.test.iml
+new file mode 100644
+--- /dev/null	(date 1760936438742)
++++ b/.idea/modules/admintest.test.iml	(date 1760936438742)
+@@ -0,0 +1,8 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<module version="4">
++  <component name="AdditionalModuleElements">
++    <content url="file://$MODULE_DIR$/../../admintest/build/generated/sources/annotationProcessor/java/test">
++      <sourceFolder url="file://$MODULE_DIR$/../../admintest/build/generated/sources/annotationProcessor/java/test" isTestSource="true" generated="true" />
++    </content>
++  </component>
++</module>
+\ No newline at end of file
+Index: .idea/modules/admintest.main.iml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/modules/admintest.main.iml b/.idea/modules/admintest.main.iml
+new file mode 100644
+--- /dev/null	(date 1760936438741)
++++ b/.idea/modules/admintest.main.iml	(date 1760936438741)
+@@ -0,0 +1,8 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<module version="4">
++  <component name="AdditionalModuleElements">
++    <content url="file://$MODULE_DIR$/../../admintest/build/generated/sources/annotationProcessor/java/main">
++      <sourceFolder url="file://$MODULE_DIR$/../../admintest/build/generated/sources/annotationProcessor/java/main" isTestSource="false" generated="true" />
++    </content>
++  </component>
++</module>
+\ No newline at end of file
+Index: .idea/modules/usertest.test.iml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/modules/usertest.test.iml b/.idea/modules/usertest.test.iml
+new file mode 100644
+--- /dev/null	(date 1760936438745)
++++ b/.idea/modules/usertest.test.iml	(date 1760936438745)
+@@ -0,0 +1,8 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<module version="4">
++  <component name="AdditionalModuleElements">
++    <content url="file://$MODULE_DIR$/../../usertest/build/generated/sources/annotationProcessor/java/test">
++      <sourceFolder url="file://$MODULE_DIR$/../../usertest/build/generated/sources/annotationProcessor/java/test" isTestSource="true" generated="true" />
++    </content>
++  </component>
++</module>
+\ No newline at end of file
+Index: .idea/modules/usertest.main.iml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/modules/usertest.main.iml b/.idea/modules/usertest.main.iml
+new file mode 100644
+--- /dev/null	(date 1760936438745)
++++ b/.idea/modules/usertest.main.iml	(date 1760936438745)
+@@ -0,0 +1,8 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<module version="4">
++  <component name="AdditionalModuleElements">
++    <content url="file://$MODULE_DIR$/../../usertest/build/generated/sources/annotationProcessor/java/main">
++      <sourceFolder url="file://$MODULE_DIR$/../../usertest/build/generated/sources/annotationProcessor/java/main" isTestSource="false" generated="true" />
++    </content>
++  </component>
++</module>
+\ No newline at end of file
+Index: .idea/modules/aitest.test.iml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/modules/aitest.test.iml b/.idea/modules/aitest.test.iml
+new file mode 100644
+--- /dev/null	(date 1760936438743)
++++ b/.idea/modules/aitest.test.iml	(date 1760936438743)
+@@ -0,0 +1,8 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<module version="4">
++  <component name="AdditionalModuleElements">
++    <content url="file://$MODULE_DIR$/../../aitest/build/generated/sources/annotationProcessor/java/test">
++      <sourceFolder url="file://$MODULE_DIR$/../../aitest/build/generated/sources/annotationProcessor/java/test" isTestSource="true" generated="true" />
++    </content>
++  </component>
++</module>
+\ No newline at end of file
+Index: .idea/compiler.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"CompilerConfiguration\">\r\n    <annotationProcessing>\r\n      <profile default=\"true\" name=\"Default\" enabled=\"true\" />\r\n      <profile name=\"Gradle Imported\" enabled=\"true\">\r\n        <outputRelativeToContentRoot value=\"true\" />\r\n        <processorPath useClasspath=\"false\">\r\n          <entry name=\"$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.projectlombok/lombok/1.18.42/8365263844ebb62398e0dc33057ba10ba472d3b8/lombok-1.18.42.jar\" />\r\n        </processorPath>\r\n        <module name=\"admintest.main\" />\r\n        <module name=\"admintest.test\" />\r\n      </profile>\r\n    </annotationProcessing>\r\n  </component>\r\n  <component name=\"JavacSettings\">\r\n    <option name=\"ADDITIONAL_OPTIONS_OVERRIDE\">\r\n      <module name=\"admintest\" options=\"-parameters\" />\r\n      <module name=\"admintest.main\" options=\"-parameters\" />\r\n      <module name=\"admintest.test\" options=\"-parameters\" />\r\n      <module name=\"aitest\" options=\"-parameters\" />\r\n      <module name=\"aitest.main\" options=\"-parameters\" />\r\n      <module name=\"aitest.test\" options=\"-parameters\" />\r\n      <module name=\"usertest\" options=\"-parameters\" />\r\n      <module name=\"usertest.main\" options=\"-parameters\" />\r\n      <module name=\"usertest.test\" options=\"-parameters\" />\r\n    </option>\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/compiler.xml b/.idea/compiler.xml
+--- a/.idea/compiler.xml	(revision 0fddcf34dd71a331da5ce6583a917b07abe099d4)
++++ b/.idea/compiler.xml	(date 1760936438739)
+@@ -8,8 +8,8 @@
+         <processorPath useClasspath="false">
+           <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.projectlombok/lombok/1.18.42/8365263844ebb62398e0dc33057ba10ba472d3b8/lombok-1.18.42.jar" />
+         </processorPath>
+-        <module name="admintest.main" />
+-        <module name="admintest.test" />
++        <module name="aitest.main" />
++        <module name="aitest.test" />
+       </profile>
+     </annotationProcessing>
+   </component>
+Index: aitest/.gitignore
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>HELP.md\r\n.gradle\r\nbuild/\r\n!gradle/wrapper/gradle-wrapper.jar\r\n!**/src/main/**/build/\r\n!**/src/test/**/build/\r\n\r\n### STS ###\r\n.apt_generated\r\n.classpath\r\n.factorypath\r\n.project\r\n.settings\r\n.springBeans\r\n.sts4-cache\r\nbin/\r\n!**/src/main/**/bin/\r\n!**/src/test/**/bin/\r\n\r\n### IntelliJ IDEA ###\r\n.idea\r\n*.iws\r\n*.iml\r\n*.ipr\r\nout/\r\n!**/src/main/**/out/\r\n!**/src/test/**/out/\r\n\r\n### NetBeans ###\r\n/nbproject/private/\r\n/nbbuild/\r\n/dist/\r\n/nbdist/\r\n/.nb-gradle/\r\n\r\n### VS Code ###\r\n.vscode/\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/aitest/.gitignore b/aitest/.gitignore
+--- a/aitest/.gitignore	(revision 0fddcf34dd71a331da5ce6583a917b07abe099d4)
++++ b/aitest/.gitignore	(date 1760936438748)
+@@ -35,3 +35,5 @@
+ 
+ ### VS Code ###
+ .vscode/
++
++/.env
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"AutoImportSettings\">\r\n    <option name=\"autoReloadType\" value=\"SELECTIVE\" />\r\n  </component>\r\n  <component name=\"ChangeListManager\">\r\n    <list default=\"true\" id=\"c5573ccb-e778-4258-b980-fd13f6548239\" name=\"Changes\" comment=\"ds\">\r\n      <change afterPath=\"$PROJECT_DIR$/aitest/src/main/java/edu/sm/AiApplication.java\" afterDir=\"false\" />\r\n      <change afterPath=\"$PROJECT_DIR$/aitest/src/main/java/edu/sm/ServletInitializer.java\" afterDir=\"false\" />\r\n      <change afterPath=\"$PROJECT_DIR$/aitest/src/main/java/edu/sm/app/dto/CustomerCarePlan.java\" afterDir=\"false\" />\r\n      <change afterPath=\"$PROJECT_DIR$/aitest/src/main/java/edu/sm/app/service/CustomerCareService.java\" afterDir=\"false\" />\r\n      <change afterPath=\"$PROJECT_DIR$/aitest/src/main/java/edu/sm/app/service/ReviewClassificationClient.java\" afterDir=\"false\" />\r\n      <change afterPath=\"$PROJECT_DIR$/aitest/src/main/java/edu/sm/controller/CustomerCareController.java\" afterDir=\"false\" />\r\n      <change afterPath=\"$PROJECT_DIR$/aitest/src/test/java/edu/sm/service/CustomerCareServiceTest.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/.idea/compiler.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.idea/compiler.xml\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/.idea/workspace.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.idea/workspace.xml\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/aitest/gradlew\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/aitest/gradlew\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/aitest/gradlew.bat\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/aitest/gradlew.bat\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/aitest/src/main/java/edu/sm/app/springai/service2/AiServiceSystemMessage.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/aitest/src/main/java/edu/sm/app/springai/service2/AiServiceSystemMessage.java\" afterDir=\"false\" />\r\n    </list>\r\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\r\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\r\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\r\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\r\n  </component>\r\n  <component name=\"ExternalProjectsData\">\r\n    <projectState path=\"$PROJECT_DIR$/admintest\">\r\n      <ProjectState />\r\n    </projectState>\r\n    <projectState path=\"$PROJECT_DIR$/aitest\">\r\n      <ProjectState />\r\n    </projectState>\r\n    <projectState path=\"$PROJECT_DIR$/usertest\">\r\n      <ProjectState />\r\n    </projectState>\r\n  </component>\r\n  <component name=\"ExternalProjectsManager\">\r\n    <system id=\"GRADLE\">\r\n      <state>\r\n        <task path=\"$PROJECT_DIR$/usertest\">\r\n          <activation />\r\n        </task>\r\n        <task path=\"$PROJECT_DIR$/admintest\">\r\n          <activation />\r\n        </task>\r\n        <task path=\"$PROJECT_DIR$/aitest\">\r\n          <activation />\r\n        </task>\r\n        <projects_view>\r\n          <tree_state>\r\n            <expand>\r\n              <path>\r\n                <item name=\"\" type=\"6a2764b6:ExternalProjectsStructure$RootNode\" />\r\n                <item name=\"aitest\" type=\"f1a62948:ProjectNode\" />\r\n              </path>\r\n              <path>\r\n                <item name=\"\" type=\"6a2764b6:ExternalProjectsStructure$RootNode\" />\r\n                <item name=\"aitest\" type=\"f1a62948:ProjectNode\" />\r\n                <item name=\"Tasks\" type=\"e4a08cd1:TasksNode\" />\r\n              </path>\r\n              <path>\r\n                <item name=\"\" type=\"6a2764b6:ExternalProjectsStructure$RootNode\" />\r\n                <item name=\"aitest\" type=\"f1a62948:ProjectNode\" />\r\n                <item name=\"Tasks\" type=\"e4a08cd1:TasksNode\" />\r\n                <item name=\"application\" type=\"c8890929:TasksNode$1\" />\r\n              </path>\r\n              <path>\r\n                <item name=\"\" type=\"6a2764b6:ExternalProjectsStructure$RootNode\" />\r\n                <item name=\"aitest\" type=\"f1a62948:ProjectNode\" />\r\n                <item name=\"Dependencies\" type=\"6de06a37:ExternalSystemViewDefaultContributor$MyDependenciesNode\" />\r\n              </path>\r\n            </expand>\r\n            <select />\r\n          </tree_state>\r\n        </projects_view>\r\n      </state>\r\n    </system>\r\n  </component>\r\n  <component name=\"FileTemplateManagerImpl\">\r\n    <option name=\"RECENT_TEMPLATES\">\r\n      <list>\r\n        <option value=\"Jsp File\" />\r\n        <option value=\"Class\" />\r\n      </list>\r\n    </option>\r\n  </component>\r\n  <component name=\"Git.Settings\">\r\n    <option name=\"RECENT_BRANCH_BY_REPOSITORY\">\r\n      <map>\r\n        <entry key=\"$PROJECT_DIR$\" value=\"main\" />\r\n      </map>\r\n    </option>\r\n    <option name=\"RECENT_GIT_ROOT_PATH\" value=\"$PROJECT_DIR$\" />\r\n  </component>\r\n  <component name=\"GitHubPullRequestSearchHistory\">{\r\n  &quot;lastFilter&quot;: {\r\n    &quot;state&quot;: &quot;OPEN&quot;,\r\n    &quot;assignee&quot;: &quot;lsh030412&quot;\r\n  }\r\n}</component>\r\n  <component name=\"GithubPullRequestsUISettings\"><![CDATA[{\r\n  \"selectedUrlAndAccountId\": {\r\n    \"url\": \"https://github.com/jhs0106/test3team.git\",\r\n    \"accountId\": \"3504a14b-84ff-4fc2-bc95-6566cfe88ad3\"\r\n  }\r\n}]]></component>\r\n  <component name=\"ProjectColorInfo\">{\r\n  &quot;associatedIndex&quot;: 2\r\n}</component>\r\n  <component name=\"ProjectId\" id=\"33ovUQDRDnofUSZCOZPlKzznXpr\" />\r\n  <component name=\"ProjectLevelVcsManager\">\r\n    <ConfirmationsSetting value=\"2\" id=\"Add\" />\r\n  </component>\r\n  <component name=\"ProjectViewState\">\r\n    <option name=\"showLibraryContents\" value=\"true\" />\r\n  </component>\r\n  <component name=\"PropertiesComponent\"><![CDATA[{\r\n  \"keyToString\": {\r\n    \"Gradle.Build admintest.executor\": \"Run\",\r\n    \"Gradle.Build usertest.executor\": \"Run\",\r\n    \"Gradle.CustomerCareServiceTest.executor\": \"Run\",\r\n    \"Gradle.admintest [bootRun].executor\": \"Run\",\r\n    \"Gradle.admintest [build].executor\": \"Run\",\r\n    \"Gradle.aitest [bootRun].executor\": \"Run\",\r\n    \"Gradle.usertest [bootRun].executor\": \"Run\",\r\n    \"Gradle.usertest [build].executor\": \"Run\",\r\n    \"Gradle.usertest [dependencies].executor\": \"Run\",\r\n    \"ModuleVcsDetector.initialDetectionPerformed\": \"true\",\r\n    \"RunOnceActivity.ShowReadmeOnStart\": \"true\",\r\n    \"RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager\": \"true\",\r\n    \"RunOnceActivity.git.unshallow\": \"true\",\r\n    \"SHARE_PROJECT_CONFIGURATION_FILES\": \"true\",\r\n    \"git-widget-placeholder\": \"jhs\",\r\n    \"ignore.virus.scanning.warn.message\": \"true\",\r\n    \"last_opened_file_path\": \"C:/test3team/aitest/src/main/java/edu/sm\",\r\n    \"node.js.detected.package.eslint\": \"true\",\r\n    \"node.js.detected.package.tslint\": \"true\",\r\n    \"node.js.selected.package.eslint\": \"(autodetect)\",\r\n    \"node.js.selected.package.tslint\": \"(autodetect)\",\r\n    \"nodejs_package_manager_path\": \"npm\",\r\n    \"project.structure.last.edited\": \"Modules\",\r\n    \"project.structure.proportion\": \"0.0\",\r\n    \"project.structure.side.proportion\": \"0.0\",\r\n    \"run.configurations.included.in.services\": \"true\",\r\n    \"vue.rearranger.settings.migration\": \"true\"\r\n  },\r\n  \"keyToStringList\": {\r\n    \"DatabaseDriversLRU\": [\r\n      \"postgresql\"\r\n    ]\r\n  }\r\n}]]></component>\r\n  <component name=\"RecentsManager\">\r\n    <key name=\"CopyFile.RECENT_KEYS\">\r\n      <recent name=\"C:\\test3team\\aitest\\src\\main\\java\\edu\\sm\" />\r\n      <recent name=\"C:\\java\\test3\\usertest\" />\r\n      <recent name=\"C:\\java\\test3\\admintest\" />\r\n      <recent name=\"C:\\java\\test3\\admintest\\src\\main\\resources\" />\r\n      <recent name=\"C:\\java\\test3\" />\r\n    </key>\r\n    <key name=\"MoveFile.RECENT_KEYS\">\r\n      <recent name=\"C:\\java\\test3\\admintest\\src\\main\\webapp\\views\" />\r\n      <recent name=\"C:\\java\\test3\\usertest\\src\\main\\webapp\\views\" />\r\n    </key>\r\n    <key name=\"CopyClassDialog.RECENTS_KEY\">\r\n      <recent name=\"edu.sm.controller\" />\r\n    </key>\r\n  </component>\r\n  <component name=\"RunDashboard\">\r\n    <option name=\"configurationTypes\">\r\n      <set>\r\n        <option value=\"KtorApplicationConfigurationType\" />\r\n        <option value=\"MicronautRunConfigurationType\" />\r\n        <option value=\"QuarkusRunConfigurationType\" />\r\n        <option value=\"SpringBootApplicationConfigurationType\" />\r\n      </set>\r\n    </option>\r\n  </component>\r\n  <component name=\"RunManager\" selected=\"Gradle.aitest [bootRun]\">\r\n    <configuration name=\"CustomerCareServiceTest\" type=\"GradleRunConfiguration\" factoryName=\"Gradle\" temporary=\"true\">\r\n      <ExternalSystemSettings>\r\n        <option name=\"executionName\" />\r\n        <option name=\"externalProjectPath\" value=\"$PROJECT_DIR$/aitest\" />\r\n        <option name=\"externalSystemIdString\" value=\"GRADLE\" />\r\n        <option name=\"scriptParameters\" value=\"\" />\r\n        <option name=\"taskDescriptions\">\r\n          <list />\r\n        </option>\r\n        <option name=\"taskNames\">\r\n          <list>\r\n            <option value=\":test\" />\r\n            <option value=\"--tests\" />\r\n            <option value=\"&quot;edu.sm.service.CustomerCareServiceTest&quot;\" />\r\n          </list>\r\n        </option>\r\n        <option name=\"vmOptions\" />\r\n      </ExternalSystemSettings>\r\n      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>\r\n      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>\r\n      <DebugAllEnabled>false</DebugAllEnabled>\r\n      <RunAsTest>true</RunAsTest>\r\n      <method v=\"2\" />\r\n    </configuration>\r\n    <configuration name=\"aitest [bootRun]\" type=\"GradleRunConfiguration\" factoryName=\"Gradle\" temporary=\"true\">\r\n      <ExternalSystemSettings>\r\n        <option name=\"executionName\" />\r\n        <option name=\"externalProjectPath\" value=\"$PROJECT_DIR$/aitest\" />\r\n        <option name=\"externalSystemIdString\" value=\"GRADLE\" />\r\n        <option name=\"scriptParameters\" />\r\n        <option name=\"taskDescriptions\">\r\n          <list />\r\n        </option>\r\n        <option name=\"taskNames\">\r\n          <list>\r\n            <option value=\"bootRun\" />\r\n          </list>\r\n        </option>\r\n        <option name=\"vmOptions\" />\r\n      </ExternalSystemSettings>\r\n      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>\r\n      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>\r\n      <DebugAllEnabled>false</DebugAllEnabled>\r\n      <RunAsTest>false</RunAsTest>\r\n      <method v=\"2\" />\r\n    </configuration>\r\n    <configuration name=\"usertest [bootRun]\" type=\"GradleRunConfiguration\" factoryName=\"Gradle\" temporary=\"true\">\r\n      <ExternalSystemSettings>\r\n        <option name=\"executionName\" />\r\n        <option name=\"externalProjectPath\" value=\"$PROJECT_DIR$/usertest\" />\r\n        <option name=\"externalSystemIdString\" value=\"GRADLE\" />\r\n        <option name=\"scriptParameters\" />\r\n        <option name=\"taskDescriptions\">\r\n          <list />\r\n        </option>\r\n        <option name=\"taskNames\">\r\n          <list>\r\n            <option value=\"bootRun\" />\r\n          </list>\r\n        </option>\r\n        <option name=\"vmOptions\" />\r\n      </ExternalSystemSettings>\r\n      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>\r\n      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>\r\n      <DebugAllEnabled>false</DebugAllEnabled>\r\n      <RunAsTest>false</RunAsTest>\r\n      <method v=\"2\" />\r\n    </configuration>\r\n    <configuration name=\"usertest [build]\" type=\"GradleRunConfiguration\" factoryName=\"Gradle\" temporary=\"true\">\r\n      <ExternalSystemSettings>\r\n        <option name=\"executionName\" />\r\n        <option name=\"externalProjectPath\" value=\"$PROJECT_DIR$/usertest\" />\r\n        <option name=\"externalSystemIdString\" value=\"GRADLE\" />\r\n        <option name=\"scriptParameters\" />\r\n        <option name=\"taskDescriptions\">\r\n          <list />\r\n        </option>\r\n        <option name=\"taskNames\">\r\n          <list>\r\n            <option value=\"build\" />\r\n          </list>\r\n        </option>\r\n        <option name=\"vmOptions\" />\r\n      </ExternalSystemSettings>\r\n      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>\r\n      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>\r\n      <DebugAllEnabled>false</DebugAllEnabled>\r\n      <RunAsTest>false</RunAsTest>\r\n      <method v=\"2\" />\r\n    </configuration>\r\n    <configuration name=\"usertest [dependencies]\" type=\"GradleRunConfiguration\" factoryName=\"Gradle\" temporary=\"true\">\r\n      <ExternalSystemSettings>\r\n        <option name=\"executionName\" />\r\n        <option name=\"externalProjectPath\" value=\"$PROJECT_DIR$/usertest\" />\r\n        <option name=\"externalSystemIdString\" value=\"GRADLE\" />\r\n        <option name=\"scriptParameters\" />\r\n        <option name=\"taskDescriptions\">\r\n          <list />\r\n        </option>\r\n        <option name=\"taskNames\">\r\n          <list>\r\n            <option value=\"dependencies\" />\r\n          </list>\r\n        </option>\r\n        <option name=\"vmOptions\" />\r\n      </ExternalSystemSettings>\r\n      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>\r\n      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>\r\n      <DebugAllEnabled>false</DebugAllEnabled>\r\n      <RunAsTest>false</RunAsTest>\r\n      <method v=\"2\" />\r\n    </configuration>\r\n    <configuration name=\"AdmintestApplication\" type=\"SpringBootApplicationConfigurationType\" factoryName=\"Spring Boot\" nameIsGenerated=\"true\">\r\n      <option name=\"FRAME_DEACTIVATION_UPDATE_POLICY\" value=\"UpdateClassesAndResources\" />\r\n      <module name=\"admintest.main\" />\r\n      <option name=\"SPRING_BOOT_MAIN_CLASS\" value=\"edu.sm.AdmintestApplication\" />\r\n      <method v=\"2\">\r\n        <option name=\"Make\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n    <configuration name=\"AitestApplication\" type=\"SpringBootApplicationConfigurationType\" factoryName=\"Spring Boot\" nameIsGenerated=\"true\">\r\n      <option name=\"FRAME_DEACTIVATION_UPDATE_POLICY\" value=\"UpdateClassesAndResources\" />\r\n      <module name=\"aitest.main\" />\r\n      <option name=\"SPRING_BOOT_MAIN_CLASS\" value=\"edu.sm.AitestApplication\" />\r\n      <method v=\"2\">\r\n        <option name=\"Make\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n    <configuration name=\"UsertestApplication\" type=\"SpringBootApplicationConfigurationType\" factoryName=\"Spring Boot\" nameIsGenerated=\"true\">\r\n      <option name=\"FRAME_DEACTIVATION_UPDATE_POLICY\" value=\"UpdateClassesAndResources\" />\r\n      <module name=\"usertest.main\" />\r\n      <option name=\"SPRING_BOOT_MAIN_CLASS\" value=\"edu.sm.UsertestApplication\" />\r\n      <method v=\"2\">\r\n        <option name=\"Make\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n    <recent_temporary>\r\n      <list>\r\n        <item itemvalue=\"Gradle.aitest [bootRun]\" />\r\n        <item itemvalue=\"Gradle.CustomerCareServiceTest\" />\r\n        <item itemvalue=\"Gradle.usertest [bootRun]\" />\r\n        <item itemvalue=\"Gradle.usertest [dependencies]\" />\r\n        <item itemvalue=\"Gradle.usertest [build]\" />\r\n      </list>\r\n    </recent_temporary>\r\n  </component>\r\n  <component name=\"SharedIndexes\">\r\n    <attachedChunks>\r\n      <set>\r\n        <option value=\"bundled-jdk-9823dce3aa75-fbdcb00ec9e3-intellij.indexing.shared.core-IU-251.27812.49\" />\r\n        <option value=\"bundled-js-predefined-d6986cc7102b-09060db00ec0-JavaScript-IU-251.27812.49\" />\r\n      </set>\r\n    </attachedChunks>\r\n  </component>\r\n  <component name=\"StructureViewState\">\r\n    <option name=\"selectedTab\" value=\"Logical\" />\r\n  </component>\r\n  <component name=\"TaskManager\">\r\n    <task active=\"true\" id=\"Default\" summary=\"Default task\">\r\n      <changelist id=\"c5573ccb-e778-4258-b980-fd13f6548239\" name=\"Changes\" comment=\"\" />\r\n      <created>1759996254508</created>\r\n      <option name=\"number\" value=\"Default\" />\r\n      <option name=\"presentableId\" value=\"Default\" />\r\n      <updated>1759996254508</updated>\r\n      <workItem from=\"1759996255598\" duration=\"2719000\" />\r\n      <workItem from=\"1759999003836\" duration=\"40000\" />\r\n      <workItem from=\"1759999049597\" duration=\"500000\" />\r\n      <workItem from=\"1759999578435\" duration=\"396000\" />\r\n      <workItem from=\"1760000055837\" duration=\"989000\" />\r\n      <workItem from=\"1760057216732\" duration=\"4802000\" />\r\n      <workItem from=\"1760064439901\" duration=\"141000\" />\r\n      <workItem from=\"1760064617642\" duration=\"1175000\" />\r\n      <workItem from=\"1760094282028\" duration=\"750000\" />\r\n      <workItem from=\"1760095172781\" duration=\"3000\" />\r\n      <workItem from=\"1760095548629\" duration=\"304000\" />\r\n      <workItem from=\"1760096092952\" duration=\"7000\" />\r\n      <workItem from=\"1760096723719\" duration=\"46000\" />\r\n      <workItem from=\"1760676081333\" duration=\"1255000\" />\r\n      <workItem from=\"1760882993733\" duration=\"217000\" />\r\n      <workItem from=\"1760920020514\" duration=\"2647000\" />\r\n    </task>\r\n    <task id=\"LOCAL-00001\" summary=\"ds\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1759997105175</created>\r\n      <option name=\"number\" value=\"00001\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00001\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1759997105175</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00002\" summary=\"ds\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1759997182277</created>\r\n      <option name=\"number\" value=\"00002\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00002\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1759997182277</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00003\" summary=\"ds\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1759997205226</created>\r\n      <option name=\"number\" value=\"00003\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00003\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1759997205226</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00004\" summary=\"ds\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1760061509776</created>\r\n      <option name=\"number\" value=\"00004\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00004\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1760061509776</updated>\r\n    </task>\r\n    <option name=\"localTasksCounter\" value=\"5\" />\r\n    <servers />\r\n  </component>\r\n  <component name=\"TypeScriptGeneratedFilesManager\">\r\n    <option name=\"version\" value=\"3\" />\r\n  </component>\r\n  <component name=\"Vcs.Log.Tabs.Properties\">\r\n    <option name=\"TAB_STATES\">\r\n      <map>\r\n        <entry key=\"MAIN\">\r\n          <value>\r\n            <State />\r\n          </value>\r\n        </entry>\r\n      </map>\r\n    </option>\r\n  </component>\r\n  <component name=\"VcsManagerConfiguration\">\r\n    <MESSAGE value=\"ds\" />\r\n    <option name=\"LAST_COMMIT_MESSAGE\" value=\"ds\" />\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	(revision 0fddcf34dd71a331da5ce6583a917b07abe099d4)
++++ b/.idea/workspace.xml	(date 1760936438746)
+@@ -4,19 +4,19 @@
+     <option name="autoReloadType" value="SELECTIVE" />
+   </component>
+   <component name="ChangeListManager">
+-    <list default="true" id="c5573ccb-e778-4258-b980-fd13f6548239" name="Changes" comment="ds">
+-      <change afterPath="$PROJECT_DIR$/aitest/src/main/java/edu/sm/AiApplication.java" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/aitest/src/main/java/edu/sm/ServletInitializer.java" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/aitest/src/main/java/edu/sm/app/dto/CustomerCarePlan.java" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/aitest/src/main/java/edu/sm/app/service/CustomerCareService.java" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/aitest/src/main/java/edu/sm/app/service/ReviewClassificationClient.java" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/aitest/src/main/java/edu/sm/controller/CustomerCareController.java" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/aitest/src/test/java/edu/sm/service/CustomerCareServiceTest.java" afterDir="false" />
++    <list default="true" id="c5573ccb-e778-4258-b980-fd13f6548239" name="Changes" comment="1020">
++      <change afterPath="$PROJECT_DIR$/.idea/modules/admintest.main.iml" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/.idea/modules/admintest.test.iml" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/.idea/modules/aitest.main.iml" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/.idea/modules/aitest.test.iml" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/.idea/modules/usertest.main.iml" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/.idea/modules/usertest.test.iml" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/aitest/src/main/resources/keystore.p12" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/aitest/gradlew" beforeDir="false" afterPath="$PROJECT_DIR$/aitest/gradlew" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/aitest/gradlew.bat" beforeDir="false" afterPath="$PROJECT_DIR$/aitest/gradlew.bat" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/aitest/src/main/java/edu/sm/app/springai/service2/AiServiceSystemMessage.java" beforeDir="false" afterPath="$PROJECT_DIR$/aitest/src/main/java/edu/sm/app/springai/service2/AiServiceSystemMessage.java" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/aitest/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/aitest/.gitignore" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/usertest/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/usertest/.gitignore" afterDir="false" />
+     </list>
+     <option name="SHOW_DIALOG" value="false" />
+     <option name="HIGHLIGHT_CONFLICTS" value="true" />
+@@ -51,23 +51,33 @@
+             <expand>
+               <path>
+                 <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+-                <item name="aitest" type="f1a62948:ProjectNode" />
++                <item name="admintest" type="f1a62948:ProjectNode" />
+               </path>
+               <path>
+                 <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+-                <item name="aitest" type="f1a62948:ProjectNode" />
++                <item name="admintest" type="f1a62948:ProjectNode" />
+                 <item name="Tasks" type="e4a08cd1:TasksNode" />
+               </path>
+               <path>
+                 <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+-                <item name="aitest" type="f1a62948:ProjectNode" />
++                <item name="admintest" type="f1a62948:ProjectNode" />
+                 <item name="Tasks" type="e4a08cd1:TasksNode" />
+                 <item name="application" type="c8890929:TasksNode$1" />
+               </path>
+               <path>
+                 <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+-                <item name="aitest" type="f1a62948:ProjectNode" />
+-                <item name="Dependencies" type="6de06a37:ExternalSystemViewDefaultContributor$MyDependenciesNode" />
++                <item name="usertest" type="f1a62948:ProjectNode" />
++              </path>
++              <path>
++                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
++                <item name="usertest" type="f1a62948:ProjectNode" />
++                <item name="Tasks" type="e4a08cd1:TasksNode" />
++              </path>
++              <path>
++                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
++                <item name="usertest" type="f1a62948:ProjectNode" />
++                <item name="Tasks" type="e4a08cd1:TasksNode" />
++                <item name="application" type="c8890929:TasksNode$1" />
+               </path>
+             </expand>
+             <select />
+@@ -81,6 +91,7 @@
+       <list>
+         <option value="Jsp File" />
+         <option value="Class" />
++        <option value="AnnotationType" />
+       </list>
+     </option>
+   </component>
+@@ -101,7 +112,7 @@
+   <component name="GithubPullRequestsUISettings"><![CDATA[{
+   "selectedUrlAndAccountId": {
+     "url": "https://github.com/jhs0106/test3team.git",
+-    "accountId": "3504a14b-84ff-4fc2-bc95-6566cfe88ad3"
++    "accountId": "f3dc64ba-2d72-4ec0-a711-652f943a4bdd"
+   }
+ }]]></component>
+   <component name="ProjectColorInfo">{
+@@ -116,7 +127,9 @@
+   </component>
+   <component name="PropertiesComponent"><![CDATA[{
+   "keyToString": {
++    "Downloaded.Files.Path.Enabled": "false",
+     "Gradle.Build admintest.executor": "Run",
++    "Gradle.Build aitest.executor": "Run",
+     "Gradle.Build usertest.executor": "Run",
+     "Gradle.CustomerCareServiceTest.executor": "Run",
+     "Gradle.admintest [bootRun].executor": "Run",
+@@ -126,13 +139,16 @@
+     "Gradle.usertest [build].executor": "Run",
+     "Gradle.usertest [dependencies].executor": "Run",
+     "ModuleVcsDetector.initialDetectionPerformed": "true",
++    "Repository.Attach.Annotations": "false",
++    "Repository.Attach.JavaDocs": "false",
++    "Repository.Attach.Sources": "false",
+     "RunOnceActivity.ShowReadmeOnStart": "true",
+     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager": "true",
+     "RunOnceActivity.git.unshallow": "true",
+     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+-    "git-widget-placeholder": "jhs",
++    "git-widget-placeholder": "#2 on daon",
+     "ignore.virus.scanning.warn.message": "true",
+-    "last_opened_file_path": "C:/test3team/aitest/src/main/java/edu/sm",
++    "last_opened_file_path": "C:/test3team/aitest/src/main/resources",
+     "node.js.detected.package.eslint": "true",
+     "node.js.detected.package.tslint": "true",
+     "node.js.selected.package.eslint": "(autodetect)",
+@@ -151,12 +167,15 @@
+   }
+ }]]></component>
+   <component name="RecentsManager">
++    <key name="CreateClassDialog.RecentsKey">
++      <recent name="edu.sm" />
++    </key>
+     <key name="CopyFile.RECENT_KEYS">
++      <recent name="C:\test3team\aitest\src\main\resources" />
++      <recent name="C:\test3team\aitest\src\main\java\edu\sm\controller" />
+       <recent name="C:\test3team\aitest\src\main\java\edu\sm" />
+       <recent name="C:\java\test3\usertest" />
+       <recent name="C:\java\test3\admintest" />
+-      <recent name="C:\java\test3\admintest\src\main\resources" />
+-      <recent name="C:\java\test3" />
+     </key>
+     <key name="MoveFile.RECENT_KEYS">
+       <recent name="C:\java\test3\admintest\src\main\webapp\views" />
+@@ -176,7 +195,7 @@
+       </set>
+     </option>
+   </component>
+-  <component name="RunManager" selected="Gradle.aitest [bootRun]">
++  <component name="RunManager" selected="Gradle.admintest [bootRun]">
+     <configuration name="CustomerCareServiceTest" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+       <ExternalSystemSettings>
+         <option name="executionName" />
+@@ -201,10 +220,10 @@
+       <RunAsTest>true</RunAsTest>
+       <method v="2" />
+     </configuration>
+-    <configuration name="aitest [bootRun]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
++    <configuration name="admintest [bootRun]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+       <ExternalSystemSettings>
+         <option name="executionName" />
+-        <option name="externalProjectPath" value="$PROJECT_DIR$/aitest" />
++        <option name="externalProjectPath" value="$PROJECT_DIR$/admintest" />
+         <option name="externalSystemIdString" value="GRADLE" />
+         <option name="scriptParameters" />
+         <option name="taskDescriptions">
+@@ -223,10 +242,10 @@
+       <RunAsTest>false</RunAsTest>
+       <method v="2" />
+     </configuration>
+-    <configuration name="usertest [bootRun]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
++    <configuration name="aitest [bootRun]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+       <ExternalSystemSettings>
+         <option name="executionName" />
+-        <option name="externalProjectPath" value="$PROJECT_DIR$/usertest" />
++        <option name="externalProjectPath" value="$PROJECT_DIR$/aitest" />
+         <option name="externalSystemIdString" value="GRADLE" />
+         <option name="scriptParameters" />
+         <option name="taskDescriptions">
+@@ -245,7 +264,7 @@
+       <RunAsTest>false</RunAsTest>
+       <method v="2" />
+     </configuration>
+-    <configuration name="usertest [build]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
++    <configuration name="usertest [bootRun]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+       <ExternalSystemSettings>
+         <option name="executionName" />
+         <option name="externalProjectPath" value="$PROJECT_DIR$/usertest" />
+@@ -256,7 +275,7 @@
+         </option>
+         <option name="taskNames">
+           <list>
+-            <option value="build" />
++            <option value="bootRun" />
+           </list>
+         </option>
+         <option name="vmOptions" />
+@@ -315,19 +334,19 @@
+     </configuration>
+     <recent_temporary>
+       <list>
++        <item itemvalue="Gradle.admintest [bootRun]" />
++        <item itemvalue="Gradle.usertest [bootRun]" />
+         <item itemvalue="Gradle.aitest [bootRun]" />
+         <item itemvalue="Gradle.CustomerCareServiceTest" />
+-        <item itemvalue="Gradle.usertest [bootRun]" />
+         <item itemvalue="Gradle.usertest [dependencies]" />
+-        <item itemvalue="Gradle.usertest [build]" />
+       </list>
+     </recent_temporary>
+   </component>
+   <component name="SharedIndexes">
+     <attachedChunks>
+       <set>
+-        <option value="bundled-jdk-9823dce3aa75-fbdcb00ec9e3-intellij.indexing.shared.core-IU-251.27812.49" />
+-        <option value="bundled-js-predefined-d6986cc7102b-09060db00ec0-JavaScript-IU-251.27812.49" />
++        <option value="bundled-jdk-9823dce3aa75-fbdcb00ec9e3-intellij.indexing.shared.core-IU-251.26927.53" />
++        <option value="bundled-js-predefined-d6986cc7102b-09060db00ec0-JavaScript-IU-251.26927.53" />
+       </set>
+     </attachedChunks>
+   </component>
+@@ -357,6 +376,7 @@
+       <workItem from="1760676081333" duration="1255000" />
+       <workItem from="1760882993733" duration="217000" />
+       <workItem from="1760920020514" duration="2647000" />
++      <workItem from="1760925582636" duration="2913000" />
+     </task>
+     <task id="LOCAL-00001" summary="ds">
+       <option name="closed" value="true" />
+@@ -396,6 +416,9 @@
+   <component name="TypeScriptGeneratedFilesManager">
+     <option name="version" value="3" />
+   </component>
++  <component name="UnknownFeatures">
++    <option featureType="com.intellij.fileTypeFactory" implementationName=".env" />
++  </component>
+   <component name="Vcs.Log.Tabs.Properties">
+     <option name="TAB_STATES">
+       <map>
+@@ -409,6 +432,7 @@
+   </component>
+   <component name="VcsManagerConfiguration">
+     <MESSAGE value="ds" />
+-    <option name="LAST_COMMIT_MESSAGE" value="ds" />
++    <MESSAGE value="1020" />
++    <option name="LAST_COMMIT_MESSAGE" value="1020" />
+   </component>
+ </project>
+\ No newline at end of file
