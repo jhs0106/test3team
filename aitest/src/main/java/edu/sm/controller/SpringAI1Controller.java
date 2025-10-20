@@ -18,9 +18,9 @@ public class SpringAI1Controller {
         return "index";
     }
 
-    @RequestMapping("/ai1")
+    @RequestMapping("/schedule")
     public String ai1(Model model) {
-       model.addAttribute("center", dir+"ai1");
+       model.addAttribute("center", dir+"schedule");
        model.addAttribute("left", dir+"left");
        return "index";
     }

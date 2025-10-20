@@ -2,281 +2,149 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <style>
-    #calendar-container {
-        display: flex;
-        gap: 20px;
-        padding: 20px;
-    }
-    #calendar {
-        flex: 2;
-        min-height: 600px;
-        background: white;
-        padding: 20px;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-    #chat-panel {
-        flex: 1;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        padding: 20px;
-        background: #f9f9f9;
-        max-width: 400px;
-    }
-    #chat-messages {
-        height: 400px;
-        overflow-y: auto;
-        border: 1px solid #ddd;
-        padding: 10px;
-        background: white;
-        margin-bottom: 10px;
-        border-radius: 5px;
-    }
-    .message {
-        margin-bottom: 10px;
-        padding: 10px;
-        border-radius: 5px;
-    }
-    .user-message {
-        background: #007bff;
+    .hero-section {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
-        text-align: right;
+        padding: 80px 20px;
+        text-align: center;
+        border-radius: 10px;
+        margin-bottom: 40px;
     }
-    .ai-message {
-        background: #e9ecef;
-        color: #333;
+    .hero-section h1 {
+        font-size: 3rem;
+        font-weight: bold;
+        margin-bottom: 20px;
     }
-    #schedule-input {
-        width: 100%;
-        height: 80px;
-        margin-bottom: 10px;
-        padding: 10px;
-        border: 1px solid #ddd;
-        border-radius: 5px;
+    .hero-section p {
+        font-size: 1.3rem;
+        margin-bottom: 30px;
+    }
+    .feature-card {
+        padding: 30px;
+        border: 2px solid #e9ecef;
+        border-radius: 10px;
+        text-align: center;
+        transition: all 0.3s;
+        margin-bottom: 20px;
+        background: white;
+    }
+    .feature-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        border-color: #667eea;
+    }
+    .feature-icon {
+        font-size: 3rem;
+        margin-bottom: 20px;
+        color: #667eea;
+    }
+    .cta-button {
+        padding: 15px 40px;
+        font-size: 1.2rem;
+        border-radius: 50px;
+        margin: 10px;
     }
 </style>
 
-<script>
-    let scheduleManager = {
-        calendar: null,
-
-        init: function() {
-            this.initCalendar();
-            this.initEventHandlers();
-        },
-
-        initCalendar: function() {
-            let calendarEl = document.getElementById('calendar');
-            this.calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'dayGridMonth',
-                timeZone: 'local',
-                locale: 'ko',
-                headerToolbar: {
-                    left: 'prev,next today',
-                    center: 'title',
-                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
-                },
-                buttonText: {
-                    today: '오늘',
-                    month: '월',
-                    week: '주',
-                    day: '일'
-                },
-                events: (info, successCallback, failureCallback) => {
-                    this.loadSchedules(info.start, info.end, successCallback, failureCallback);
-                },
-                editable: true,
-                selectable: true,
-                eventClick: (info) => {
-                    this.handleEventClick(info);
-                }
-            });
-            this.calendar.render();
-        },
-
-        initEventHandlers: function() {
-            $('#send-btn').click(() => this.sendScheduleRequest());
-            $('#schedule-input').keypress((e) => {
-                if (e.which === 13 && !e.shiftKey) {
-                    e.preventDefault();
-                    this.sendScheduleRequest();
-                }
-            });
-        },
-
-        sendScheduleRequest: async function() {
-            const input = $('#schedule-input').val().trim();
-            if (!input) {
-                alert('일정 내용을 입력해주세요.');
-                return;
-            }
-
-            this.addMessage('user', input);
-            $('#schedule-input').val('');
-
-            const loadingMsg = this.addMessage('ai', '일정을 분석하고 있습니다... ⏳');
-
-            try {
-                const response = await fetch('/schedule/test', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                    body: 'input=' + encodeURIComponent(input)
-                });
-
-                if (!response.ok) {
-                    throw new Error('서버 오류');
-                }
-
-                const data = await response.json();
-                loadingMsg.remove();
-
-                this.addMessage('ai', data.message);
-
-                if (data.clarificationQuestions && data.clarificationQuestions.length > 0) {
-                    data.clarificationQuestions.forEach(q => {
-                        setTimeout(() => this.addMessage('ai', '❓ ' + q), 300);
-                    });
-                }
-
-                if (data.status === 'SUCCESS') {
-                    setTimeout(() => {
-                        this.calendar.refetchEvents();
-                        this.addMessage('ai', '✅ 일정이 캘린더에 추가되었습니다!');
-                    }, 500);
-                }
-
-            } catch (error) {
-                loadingMsg.remove();
-                this.addMessage('ai', '❌ 오류: ' + error.message);
-            }
-        },
-
-        loadSchedules: async function(start, end, successCallback, failureCallback) {
-            try {
-                const startStr = start.toISOString();
-                const endStr = end.toISOString();
-
-                const response = await fetch(`/schedule/events?start=\${startStr}&end=\${endStr}`);
-
-                if (!response.ok) {
-                    throw new Error('일정 로드 실패');
-                }
-
-                const events = await response.json();
-
-                const calendarEvents = events.map(event => ({
-                    id: event.scheduleId,
-                    title: event.title,
-                    start: event.startDatetime,
-                    end: event.endDatetime,
-                    backgroundColor: this.getCategoryColor(event.category),
-                    extendedProps: {
-                        description: event.description,
-                        location: event.location,
-                        category: event.category
-                    }
-                }));
-
-                successCallback(calendarEvents);
-
-            } catch (error) {
-                console.error('일정 로드 실패:', error);
-                failureCallback(error);
-            }
-        },
-
-        getCategoryColor: function(category) {
-            const colors = {
-                '회의': '#007bff',
-                '약속': '#28a745',
-                '개인': '#ffc107',
-                '업무': '#dc3545',
-                '기타': '#6c757d'
-            };
-            return colors[category] || '#6c757d';
-        },
-
-        handleEventClick: function(info) {
-            const event = info.event;
-            const props = event.extendedProps;
-
-            let details = `제목: \${event.title}\n`;
-            details += `시작: \${this.formatDateTime(event.start)}\n`;
-            details += `종료: \${this.formatDateTime(event.end)}\n`;
-            if (props.location) details += `장소: \${props.location}\n`;
-            if (props.category) details += `카테고리: \${props.category}\n`;
-            if (props.description) details += `설명: \${props.description}\n`;
-
-            if (confirm(details + '\n\n이 일정을 삭제하시겠습니까?')) {
-                this.deleteSchedule(event.id, info.event);
-            }
-        },
-
-        deleteSchedule: async function(scheduleId, eventObj) {
-            try {
-                const response = await fetch(`/schedule/\${scheduleId}`, {
-                    method: 'DELETE'
-                });
-
-                if (!response.ok) {
-                    throw new Error('삭제 실패');
-                }
-
-                eventObj.remove();
-                this.addMessage('ai', '🗑️ 일정이 삭제되었습니다.');
-
-            } catch (error) {
-                alert('일정 삭제 실패');
-            }
-        },
-
-        addMessage: function(type, text) {
-            const messageClass = type === 'user' ? 'user-message' : 'ai-message';
-            const $message = $(`<div class="message \${messageClass}">\${text}</div>`);
-            $('#chat-messages').append($message);
-
-            const chatMessages = document.getElementById('chat-messages');
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-
-            return $message;
-        },
-
-        formatDateTime: function(date) {
-            if (!date) return '';
-            const d = new Date(date);
-            return d.toLocaleString('ko-KR', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-            });
-        }
-    };
-
-    $(document).ready(function() {
-        scheduleManager.init();
-    });
-</script>
-
 <div class="col-sm-10">
-    <h2>🗓️ AI 일정 관리 캘린더</h2>
-    <p class="text-muted">자연어로 일정을 입력하면 AI가 자동으로 캘린더에 추가합니다!</p>
+    <!-- Hero Section -->
+    <div class="hero-section">
+        <h1>💑 결정사</h1>
+        <p>AI가 찾아주는 완벽한 인연</p>
+        <div>
+            <c:choose>
+                <c:when test="${not empty sessionScope.loginMember}">
+                    <a href="<c:url value='/members'/>" class="btn btn-light btn-lg cta-button">회원 매칭 보기</a>
+                    <a href="<c:url value='/ai-chat'/>" class="btn btn-outline-light btn-lg cta-button">AI 상담 시작</a>
+                </c:when>
+                <c:otherwise>
+                    <a href="<c:url value='/register'/>" class="btn btn-light btn-lg cta-button">무료 가입하기</a>
+                    <a href="<c:url value='/login'/>" class="btn btn-outline-light btn-lg cta-button">로그인</a>
+                </c:otherwise>
+            </c:choose>
+        </div>
+    </div>
 
-    <div id="calendar-container">
-        <!-- FullCalendar -->
-        <div id="calendar"></div>
-
-        <!-- AI Chat Panel -->
-        <div id="chat-panel">
-            <h5>💬 일정 추가하기</h5>
-            <div id="chat-messages">
-                <div class="message ai-message">
-                    안녕하세요! 일정을 자연어로 말씀해주시면 자동으로 캘린더에 추가해드립니다. 😊
-                </div>
+    <!-- Features Section -->
+    <h2 class="text-center mb-4">결정사만의 특별한 서비스</h2>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="feature-card">
+                <div class="feature-icon">🤖</div>
+                <h4>AI 기반 매칭</h4>
+                <p>인공지능이 당신의 이상형을 정확하게 분석하여 최적의 파트너를 추천합니다.</p>
+                <c:if test="${not empty sessionScope.loginMember}">
+                    <a href="<c:url value='/members'/>" class="btn btn-primary">시작하기</a>
+                </c:if>
             </div>
-            <textarea id="schedule-input" placeholder="예: 내일 오후 3시에 강남에서 회의"></textarea>
-            <button id="send-btn" class="btn btn-primary btn-block">일정 추가</button>
+        </div>
+        <div class="col-md-4">
+            <div class="feature-card">
+                <div class="feature-icon">💄</div>
+                <h4>외모 컨설팅</h4>
+                <p>AI가 얼굴과 의상을 분석하여 맞춤형 스타일링을 제안해드립니다.</p>
+                <a href="<c:url value='/appearance'/>" class="btn btn-primary">분석하기</a>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="feature-card">
+                <div class="feature-icon">💬</div>
+                <h4>24시간 AI 상담</h4>
+                <p>언제든지 AI 상담원과 연애 고민, 매칭 문의를 상담할 수 있습니다.</p>
+                <c:if test="${not empty sessionScope.loginMember}">
+                    <a href="<c:url value='/ai-chat'/>" class="btn btn-primary">상담하기</a>
+                </c:if>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-4">
+            <div class="feature-card">
+                <div class="feature-icon">🎤</div>
+                <h4>음성 프로필</h4>
+                <p>음성으로 자기소개를 녹음하면 AI가 매력적인 프로필로 자동 정리합니다.</p>
+                <a href="<c:url value='/voice-profile/create'/>" class="btn btn-primary">만들기</a>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="feature-card">
+                <div class="feature-icon">📅</div>
+                <h4>일정 관리</h4>
+                <p>자연어로 일정을 입력하면 AI가 자동으로 캘린더에 추가합니다.</p>
+                <a href="<c:url value='springai1/schedule'/>" class="btn btn-primary">관리하기</a>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="feature-card">
+                <div class="feature-icon">⭐</div>
+                <h4>고객 케어</h4>
+                <p>후기를 남기면 AI가 감정을 분석하고 맞춤형 케어를 제공합니다.</p>
+                <a href="<c:url value='/customer-care'/>" class="btn btn-primary">후기 남기기</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Section -->
+    <div class="text-center mt-5 mb-5">
+        <h3 class="mb-4">결정사의 성과</h3>
+        <div class="row">
+            <div class="col-md-3">
+                <h2 class="text-primary">1,234+</h2>
+                <p>등록 회원</p>
+            </div>
+            <div class="col-md-3">
+                <h2 class="text-success">567+</h2>
+                <p>성공한 커플</p>
+            </div>
+            <div class="col-md-3">
+                <h2 class="text-info">89%</h2>
+                <p>만족도</p>
+            </div>
+            <div class="col-md-3">
+                <h2 class="text-warning">24/7</h2>
+                <p>AI 상담 운영</p>
+            </div>
         </div>
     </div>
 </div>
