@@ -4,21 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c5573ccb-e778-4258-b980-fd13f6548239" name="Changes" comment="ds">
-      <change afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/aitest/src/main/java/edu/sm/app/dto/Schedule.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/aitest/src/main/java/edu/sm/app/repository/ScheduleRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/aitest/src/main/java/edu/sm/app/service/ScheduleService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/aitest/src/main/java/edu/sm/app/springai/schedule/AiScheduleService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/aitest/src/main/java/edu/sm/controller/AiScheduleController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/aitest/src/main/resources/keystore.p12" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/aitest/src/main/webapp/views/springai1/center.jsp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/aitest/src/main/webapp/views/springai1/left.jsp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/aitest/src/test/java/edu/sm/service/AiScheduleServiceTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/aitest/src/test/java/edu/sm/service/ScheduleServiceTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/aitest/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/aitest/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/aitest/src/main/resources/application-dev.yml" beforeDir="false" afterPath="$PROJECT_DIR$/aitest/src/main/resources/application-dev.yml" afterDir="false" />
+
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -76,7 +62,7 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Interface" />
+
         <option value="Class" />
         <option value="Jsp File" />
       </list>
@@ -138,7 +124,7 @@
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "git-widget-placeholder": "jms",
     "ignore.virus.scanning.warn.message": "true",
-    "last_opened_file_path": "C:/test3team/aitest/src/main/webapp/views/springai1",
+
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -158,11 +144,7 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\test3team\aitest\src\main\webapp\views\springai1" />
-      <recent name="C:\test3team\aitest\src\main\java\edu\sm" />
-      <recent name="C:\java\test3\usertest" />
-      <recent name="C:\java\test3\admintest" />
-      <recent name="C:\java\test3\admintest\src\main\resources" />
+
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\java\test3\admintest\src\main\webapp\views" />
@@ -368,7 +350,7 @@
       <workItem from="1760096723719" duration="46000" />
       <workItem from="1760676081333" duration="1255000" />
       <workItem from="1760882993733" duration="217000" />
-      <workItem from="1760920020514" duration="2647000" />
+
     </task>
     <task id="LOCAL-00001" summary="ds">
       <option name="closed" value="true" />
@@ -402,7 +384,7 @@
       <option name="project" value="LOCAL" />
       <updated>1760061509776</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -421,6 +403,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="ds" />
-    <option name="LAST_COMMIT_MESSAGE" value="ds" />
+
   </component>
 </project>
