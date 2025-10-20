@@ -82,34 +82,30 @@
                     week: '주',
                     day: '일'
                 },
-                events: function(info, successCallback, failureCallback) {
-                    scheduleManager.loadSchedules(info.start, info.end, successCallback, failureCallback);
+                events: (info, successCallback, failureCallback) => {
+                    this.loadSchedules(info.start, info.end, successCallback, failureCallback);
                 },
                 editable: true,
                 selectable: true,
-                eventClick: function(info) {
-                    scheduleManager.handleEventClick(info);
+                eventClick: (info) => {
+                    this.handleEventClick(info);
                 }
             });
             this.calendar.render();
         },
 
         initEventHandlers: function() {
-            var self = this;
-            $('#send-btn').click(function() {
-                self.sendScheduleRequest();
-            });
-            $('#schedule-input').keypress(function(e) {
+            $('#send-btn').click(() => this.sendScheduleRequest());
+            $('#schedule-input').keypress((e) => {
                 if (e.which === 13 && !e.shiftKey) {
                     e.preventDefault();
-                    self.sendScheduleRequest();
+                    this.sendScheduleRequest();
                 }
             });
         },
 
-        sendScheduleRequest: function() {
-            var self = this;
-            var input = $('#schedule-input').val().trim();
+        sendScheduleRequest: async function() {
+            const input = $('#schedule-input').val().trim();
             if (!input) {
                 alert('일정 내용을 입력해주세요.');
                 return;
@@ -118,86 +114,79 @@
             this.addMessage('user', input);
             $('#schedule-input').val('');
 
-            var loadingMsg = this.addMessage('ai', '일정을 분석하고 있습니다... ⏳');
+            const loadingMsg = this.addMessage('ai', '일정을 분석하고 있습니다... ⏳');
 
-            fetch('/schedule/test', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                body: 'input=' + encodeURIComponent(input)
-            })
-                    .then(function(response) {
-                        if (!response.ok) {
-                            throw new Error('서버 오류');
-                        }
-                        return response.json();
-                    })
-                    .then(function(data) {
-                        loadingMsg.remove();
-                        self.addMessage('ai', data.message);
+            try {
+                const response = await fetch('/schedule/test', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                    body: 'input=' + encodeURIComponent(input)
+                });
 
-                        if (data.clarificationQuestions && data.clarificationQuestions.length > 0) {
-                            data.clarificationQuestions.forEach(function(q) {
-                                setTimeout(function() {
-                                    self.addMessage('ai', '❓ ' + q);
-                                }, 300);
-                            });
-                        }
+                if (!response.ok) {
+                    throw new Error('서버 오류');
+                }
 
-                        if (data.status === 'SUCCESS') {
-                            setTimeout(function() {
-                                self.calendar.refetchEvents();
-                                self.addMessage('ai', '✅ 일정이 캘린더에 추가되었습니다!');
-                            }, 500);
-                        }
-                    })
-                    .catch(function(error) {
-                        loadingMsg.remove();
-                        self.addMessage('ai', '❌ 오류: ' + error.message);
+                const data = await response.json();
+                loadingMsg.remove();
+
+                this.addMessage('ai', data.message);
+
+                if (data.clarificationQuestions && data.clarificationQuestions.length > 0) {
+                    data.clarificationQuestions.forEach(q => {
+                        setTimeout(() => this.addMessage('ai', '❓ ' + q), 300);
                     });
+                }
+
+                if (data.status === 'SUCCESS') {
+                    setTimeout(() => {
+                        this.calendar.refetchEvents();
+                        this.addMessage('ai', '✅ 일정이 캘린더에 추가되었습니다!');
+                    }, 500);
+                }
+
+            } catch (error) {
+                loadingMsg.remove();
+                this.addMessage('ai', '❌ 오류: ' + error.message);
+            }
         },
 
-        loadSchedules: function(start, end, successCallback, failureCallback) {
-            var self = this;
-            var startStr = start ? start.toISOString() : '';
-            var endStr = end ? end.toISOString() : '';
+        loadSchedules: async function(start, end, successCallback, failureCallback) {
+            try {
+                const startStr = start.toISOString();
+                const endStr = end.toISOString();
 
-            console.log('일정 조회:', startStr, endStr);
+                const response = await fetch(`/schedule/events?start=\${startStr}&end=\${endStr}`);
 
-            fetch('/schedule/events?start=' + encodeURIComponent(startStr) + '&end=' + encodeURIComponent(endStr))
-                    .then(function(response) {
-                        if (!response.ok) {
-                            throw new Error('일정 로드 실패');
-                        }
-                        return response.json();
-                    })
-                    .then(function(events) {
-                        console.log('조회된 일정:', events);
+                if (!response.ok) {
+                    throw new Error('일정 로드 실패');
+                }
 
-                        var calendarEvents = events.map(function(event) {
-                            return {
-                                id: event.id,
-                                title: event.title,
-                                start: event.start,
-                                end: event.end,
-                                backgroundColor: self.getCategoryColor(event.category),
-                                extendedProps: {
-                                    description: event.description,
-                                    location: event.location,
-                                    category: event.category
-                                }
-                            };
-                        });
+                const events = await response.json();
 
-                        successCallback(calendarEvents);
-                    })
-                    .catch(function(error) {
-                        console.error('일정 로드 실패:', error);
-                        failureCallback(error);
-                    });
+                const calendarEvents = events.map(event => ({
+                    id: event.scheduleId,
+                    title: event.title,
+                    start: event.startDatetime,
+                    end: event.endDatetime,
+                    backgroundColor: this.getCategoryColor(event.category),
+                    extendedProps: {
+                        description: event.description,
+                        location: event.location,
+                        category: event.category
+                    }
+                }));
+
+                successCallback(calendarEvents);
+
+            } catch (error) {
+                console.error('일정 로드 실패:', error);
+                failureCallback(error);
+            }
         },
 
         getCategoryColor: function(category) {
-            var colors = {
+            const colors = {
                 '회의': '#007bff',
                 '약속': '#28a745',
                 '개인': '#ffc107',
@@ -208,44 +197,45 @@
         },
 
         handleEventClick: function(info) {
-            var event = info.event;
-            var props = event.extendedProps;
+            const event = info.event;
+            const props = event.extendedProps;
 
-            var details = '제목: ' + event.title + '\n';
-            details += '시작: ' + this.formatDateTime(event.start) + '\n';
-            details += '종료: ' + this.formatDateTime(event.end) + '\n';
-            if (props.location) details += '장소: ' + props.location + '\n';
-            if (props.category) details += '카테고리: ' + props.category + '\n';
-            if (props.description) details += '설명: ' + props.description + '\n';
+            let details = `제목: \${event.title}\n`;
+            details += `시작: \${this.formatDateTime(event.start)}\n`;
+            details += `종료: \${this.formatDateTime(event.end)}\n`;
+            if (props.location) details += `장소: \${props.location}\n`;
+            if (props.category) details += `카테고리: \${props.category}\n`;
+            if (props.description) details += `설명: \${props.description}\n`;
 
             if (confirm(details + '\n\n이 일정을 삭제하시겠습니까?')) {
                 this.deleteSchedule(event.id, info.event);
             }
         },
 
-        deleteSchedule: function(scheduleId, eventObj) {
-            var self = this;
-            fetch('/schedule/' + scheduleId, {
-                method: 'DELETE'
-            })
-                    .then(function(response) {
-                        if (!response.ok) {
-                            throw new Error('삭제 실패');
-                        }
-                        eventObj.remove();
-                        self.addMessage('ai', '🗑️ 일정이 삭제되었습니다.');
-                    })
-                    .catch(function(error) {
-                        alert('일정 삭제 실패');
-                    });
+        deleteSchedule: async function(scheduleId, eventObj) {
+            try {
+                const response = await fetch(`/schedule/\${scheduleId}`, {
+                    method: 'DELETE'
+                });
+
+                if (!response.ok) {
+                    throw new Error('삭제 실패');
+                }
+
+                eventObj.remove();
+                this.addMessage('ai', '🗑️ 일정이 삭제되었습니다.');
+
+            } catch (error) {
+                alert('일정 삭제 실패');
+            }
         },
 
         addMessage: function(type, text) {
-            var messageClass = type === 'user' ? 'user-message' : 'ai-message';
-            var $message = $('<div class="message ' + messageClass + '">' + text + '</div>');
+            const messageClass = type === 'user' ? 'user-message' : 'ai-message';
+            const $message = $(`<div class="message \${messageClass}">\${text}</div>`);
             $('#chat-messages').append($message);
 
-            var chatMessages = document.getElementById('chat-messages');
+            const chatMessages = document.getElementById('chat-messages');
             chatMessages.scrollTop = chatMessages.scrollHeight;
 
             return $message;
@@ -253,7 +243,7 @@
 
         formatDateTime: function(date) {
             if (!date) return '';
-            var d = new Date(date);
+            const d = new Date(date);
             return d.toLocaleString('ko-KR', {
                 year: 'numeric',
                 month: 'long',
@@ -274,8 +264,10 @@
     <p class="text-muted">자연어로 일정을 입력하면 AI가 자동으로 캘린더에 추가합니다!</p>
 
     <div id="calendar-container">
+        <!-- FullCalendar -->
         <div id="calendar"></div>
 
+        <!-- AI Chat Panel -->
         <div id="chat-panel">
             <h5>💬 일정 추가하기</h5>
             <div id="chat-messages">

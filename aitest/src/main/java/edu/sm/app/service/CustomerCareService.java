@@ -40,33 +40,33 @@ public class CustomerCareService {
 
         switch (sentiment) {
             case POSITIVE -> {
-                priority = "LOW";
-                owner = "Community Team";
-                automationTrigger = "send-appreciation-workflow";
+                priority = "낮음";
+                owner = "커뮤니티 팀";
+                automationTrigger = "감사 메시지 자동 발송";
                 followUpActions = List.of(
-                        "Send a personalized thank-you message",
-                        "Log the feedback in the success stories dashboard",
-                        "Share highlights with the marketing team"
+                        "개인화된 감사 메시지를 전송합니다.",
+                        "성공 사례 대시보드에 피드백을 기록합니다.",
+                        "주요 내용을 마케팅 팀과 공유합니다."
                 );
             }
             case NEGATIVE -> {
-                priority = "HIGH";
-                owner = "Support Escalation";
-                automationTrigger = "open-urgent-ticket";
+                priority = "높음";
+                owner = "지원 에스컬레이션 팀";
+                automationTrigger = "긴급 티켓 생성";
                 followUpActions = List.of(
-                        "Create an escalation ticket with full context",
-                        "Notify the on-call quality lead",
-                        "Prepare a proactive outreach script with compensation options"
+                        "세부 내용을 포함한 에스컬레이션 티켓을 생성합니다.",
+                        "당직 품질 책임자에게 즉시 알립니다.",
+                        "보상 옵션이 포함된 선제 대응 스크립트를 준비합니다."
                 );
             }
             case NEUTRAL -> {
-                priority = "MEDIUM";
-                owner = "Customer Success";
-                automationTrigger = "schedule-follow-up-checkin";
+                priority = "보통";
+                owner = "고객 성공 팀";
+                automationTrigger = "후속 확인 일정 예약";
                 followUpActions = List.of(
-                        "Send a follow-up asking for additional detail",
-                        "Monitor the account for further activity",
-                        "Route feedback to the product insights board"
+                        "추가 정보를 요청하는 후속 연락을 보냅니다.",
+                        "추가 활동이 있는지 계정을 모니터링합니다.",
+                        "피드백을 제품 인사이트 보드로 전달합니다."
                 );
             }
             default -> throw new IllegalStateException("Unexpected sentiment: " + sentiment);

@@ -17,6 +17,7 @@
     <script src="https://cdn.jsdelivr.net/npm/lamejs@1.2.0/lame.min.js"></script>
     <link href="<c:url value="/css/springai.css"/>" rel="stylesheet" />
     <script src="<c:url value="/js/springai.js"/>"></script>
+
     <style>
         .fakeimg {
             height: 200px;
@@ -132,6 +133,16 @@
         <ul class="navbar-nav">
             <li class="nav-item">
                 <a class="nav-link" href="<c:url value="/springai5"/>">SrpingAi5</a>
+            </li>
+        </ul>
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" href="<c:url value="/customer-care"/>">Customer Care</a>
+            </li>
+        </ul>
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" href="<c:url value="/voice-profile/create"/>">음성 프로필</a>
             </li>
         </ul>
     </div>
