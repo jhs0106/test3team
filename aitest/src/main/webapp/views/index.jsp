@@ -90,12 +90,24 @@
     <h1>SpringAI System</h1>
 </div>
 <ul class="nav justify-content-end">
-    <li class="nav-item">
-        <a class="nav-link" href="#">LOGIN</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" href="#">REGISTER</a>
-    </li>
+    <c:choose>
+        <c:when test="${not empty sessionScope.loginMember}">
+            <li class="nav-item">
+                <span class="nav-link">${sessionScope.loginMember.name} 님 (${sessionScope.loginMember.membershipLevel})</span>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="<c:url value='/logout'/>">로그아웃</a>
+            </li>
+        </c:when>
+        <c:otherwise>
+            <li class="nav-item">
+                <a class="nav-link" href="<c:url value='/login'/>">LOGIN</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="<c:url value='/register'/>">REGISTER</a>
+            </li>
+        </c:otherwise>
+    </c:choose>
     <li class="nav-item">
         <button class="btn btn-primary" disabled >
             <span class="spinner-border spinner-border-sm" id="mainSpinner"></span>

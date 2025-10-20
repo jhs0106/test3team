@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="edu.sm.app.repository.MemberRepository">
+
+    <resultMap id="memberResultMap" type="edu.sm.app.dto.Member">
+        <id property="memberNo" column="member_no" />
+        <result property="loginId" column="login_id" />
+        <result property="password" column="password" />
+        <result property="name" column="name" />
+        <result property="birthDate" column="birth_date" />
+        <result property="address" column="address" />
+        <result property="assetStatus" column="asset_status" />
+        <result property="phoneNumber" column="phone_number" />
+        <result property="membershipLevel" column="membership_level" />
+    </resultMap>
+
+    <insert id="insertMember" parameterType="edu.sm.app.dto.Member" useGeneratedKeys="true" keyProperty="memberNo">
+        INSERT INTO decision_member
+        (login_id, password, name, birth_date, address, asset_status, phone_number, membership_level)
+        VALUES
+            (#{loginId}, #{password}, #{name}, #{birthDate}, #{address}, #{assetStatus}, #{phoneNumber}, #{membershipLevel})
+    </insert>
+
+    <select id="findByLoginId" parameterType="string" resultMap="memberResultMap">
+        SELECT member_no, login_id, password, name, birth_date, address, asset_status, phone_number, membership_level
+        FROM decision_member
+        WHERE login_id = #{loginId}
+    </select>
+
+    <select id="existsByLoginId" parameterType="string" resultType="boolean">
+        SELECT CASE WHEN COUNT(1) > 0 THEN TRUE ELSE FALSE END
+        FROM decision_member
+        WHERE login_id = #{loginId}
+    </select>
+</mapper>

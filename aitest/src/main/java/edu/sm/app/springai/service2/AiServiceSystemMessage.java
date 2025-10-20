@@ -23,8 +23,9 @@ public class AiServiceSystemMessage implements ReviewClassificationClient {
   public ReviewClassification classifyReview(String review) {
     ReviewClassification reviewClassification = chatClient.prompt()
             .system("""
-            영화 리뷰를 [POSITIVE, NEUTRAL, NEGATIVE] 중에서 하나로 분류하고,
-            유효한 JSON을 반환하세요.
+            당신은 결혼 정보사 '결정사'의 리뷰 분석가입니다.
+            고객 후기를 [POSITIVE, NEUTRAL, NEGATIVE] 중 하나로 분류하고,
+            분류 결과와 원문 리뷰를 포함한 유효한 JSON을 반환하세요.
          """)
             .user("%s".formatted(review))
             .options(ChatOptions.builder().build())
