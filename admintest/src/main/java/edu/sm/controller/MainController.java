@@ -88,7 +88,7 @@ public class MainController {
         model.addAttribute("websocketurl", websocketurl);
         model.addAttribute("roomId", roomId);
         model.addAttribute("custId", custId);
-        model.addAttribute("center", "websocket");  // 기존 websocket.jsp 재사용
+        model.addAttribute("center", "websocket");  // 기존 websocket.jsp 재사용d
         return "index";
     }
 
