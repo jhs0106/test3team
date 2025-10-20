@@ -2,7 +2,6 @@ package edu.sm.app.service;
 
 import edu.sm.app.dto.CustomerCarePlan;
 import edu.sm.app.dto.ReviewClassification;
-import edu.sm.app.springai.service2.AiServiceSystemMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -13,10 +12,10 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class CustomerCareService {
 
-    private final AiServiceSystemMessage aiServiceSystemMessage;
+    private final ReviewClassificationClient reviewClassificationClient;
 
     public CustomerCarePlan handleFeedback(String feedback) {
-        ReviewClassification classification = aiServiceSystemMessage.classifyReview(feedback);
+        ReviewClassification classification = reviewClassificationClient.classifyReview(feedback);
         if (classification == null) {
             classification = new ReviewClassification();
         }
