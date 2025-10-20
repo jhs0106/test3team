@@ -5,22 +5,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c5573ccb-e778-4258-b980-fd13f6548239" name="Changes" comment="ds">
+      <change afterPath="$PROJECT_DIR$/aitest/src/main/java/edu/sm/AiApplication.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/aitest/src/main/java/edu/sm/ServletInitializer.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/aitest/src/main/java/edu/sm/app/dto/CustomerCarePlan.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/aitest/src/main/java/edu/sm/app/service/CustomerCareService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/aitest/src/main/java/edu/sm/app/service/ReviewClassificationClient.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/aitest/src/main/java/edu/sm/controller/CustomerCareController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/aitest/src/test/java/edu/sm/service/CustomerCareServiceTest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules/usertest.main.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_2025-10-10__11_07__Changes_.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_2025-10-10__11_08__Changes_.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_2025-10-10_오전_11_07_[Changes]/shelved.patch" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_2025-10-10_오전_11_08_[Changes]/shelved.patch" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Merge_at_2025-10-09__5_55__Changes_.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Merge_at_2025-10-09_오후_5_55_[Changes]/keystore.p12" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Merge_at_2025-10-09_오후_5_55_[Changes]/shelved.patch" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_rebase_[Changes]/keystore.p12" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_rebase_[Changes]/shelved.patch" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_rebase__Changes_.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/aitest/gradlew" beforeDir="false" afterPath="$PROJECT_DIR$/aitest/gradlew" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/aitest/gradlew.bat" beforeDir="false" afterPath="$PROJECT_DIR$/aitest/gradlew.bat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/aitest/src/main/java/edu/sm/app/springai/service2/AiServiceSystemMessage.java" beforeDir="false" afterPath="$PROJECT_DIR$/aitest/src/main/java/edu/sm/app/springai/service2/AiServiceSystemMessage.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -52,7 +48,28 @@
         </task>
         <projects_view>
           <tree_state>
-            <expand />
+            <expand>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="aitest" type="f1a62948:ProjectNode" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="aitest" type="f1a62948:ProjectNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="aitest" type="f1a62948:ProjectNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
+                <item name="application" type="c8890929:TasksNode$1" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="aitest" type="f1a62948:ProjectNode" />
+                <item name="Dependencies" type="6de06a37:ExternalSystemViewDefaultContributor$MyDependenciesNode" />
+              </path>
+            </expand>
             <select />
           </tree_state>
         </projects_view>
@@ -62,8 +79,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Class" />
         <option value="Jsp File" />
+        <option value="Class" />
       </list>
     </option>
   </component>
@@ -81,12 +98,12 @@
     &quot;assignee&quot;: &quot;lsh030412&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings">{
-  &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/jhs0106/test3.git&quot;,
-    &quot;accountId&quot;: &quot;3504a14b-84ff-4fc2-bc95-6566cfe88ad3&quot;
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/jhs0106/test3team.git",
+    "accountId": "3504a14b-84ff-4fc2-bc95-6566cfe88ad3"
   }
-}</component>
+}]]></component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 2
 }</component>
@@ -101,8 +118,10 @@
   "keyToString": {
     "Gradle.Build admintest.executor": "Run",
     "Gradle.Build usertest.executor": "Run",
+    "Gradle.CustomerCareServiceTest.executor": "Run",
     "Gradle.admintest [bootRun].executor": "Run",
     "Gradle.admintest [build].executor": "Run",
+    "Gradle.aitest [bootRun].executor": "Run",
     "Gradle.usertest [bootRun].executor": "Run",
     "Gradle.usertest [build].executor": "Run",
     "Gradle.usertest [dependencies].executor": "Run",
@@ -111,8 +130,9 @@
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager": "true",
     "RunOnceActivity.git.unshallow": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "main",
-    "last_opened_file_path": "C:/java/test3/usertest",
+    "git-widget-placeholder": "jhs",
+    "ignore.virus.scanning.warn.message": "true",
+    "last_opened_file_path": "C:/test3team/aitest/src/main/java/edu/sm",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -123,15 +143,20 @@
     "project.structure.side.proportion": "0.0",
     "run.configurations.included.in.services": "true",
     "vue.rearranger.settings.migration": "true"
+  },
+  "keyToStringList": {
+    "DatabaseDriversLRU": [
+      "postgresql"
+    ]
   }
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\test3team\aitest\src\main\java\edu\sm" />
       <recent name="C:\java\test3\usertest" />
       <recent name="C:\java\test3\admintest" />
       <recent name="C:\java\test3\admintest\src\main\resources" />
       <recent name="C:\java\test3" />
-      <recent name="C:\java\test3\usertest\src\main\webapp\views" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\java\test3\admintest\src\main\webapp\views" />
@@ -151,11 +176,35 @@
       </set>
     </option>
   </component>
-  <component name="RunManager" selected="Gradle.usertest [bootRun]">
-    <configuration name="admintest [bootRun]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+  <component name="RunManager" selected="Gradle.aitest [bootRun]">
+    <configuration name="CustomerCareServiceTest" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$/admintest" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$/aitest" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":test" />
+            <option value="--tests" />
+            <option value="&quot;edu.sm.service.CustomerCareServiceTest&quot;" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>true</RunAsTest>
+      <method v="2" />
+    </configuration>
+    <configuration name="aitest [bootRun]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$/aitest" />
         <option name="externalSystemIdString" value="GRADLE" />
         <option name="scriptParameters" />
         <option name="taskDescriptions">
@@ -164,28 +213,6 @@
         <option name="taskNames">
           <list>
             <option value="bootRun" />
-          </list>
-        </option>
-        <option name="vmOptions" />
-      </ExternalSystemSettings>
-      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
-      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
-      <DebugAllEnabled>false</DebugAllEnabled>
-      <RunAsTest>false</RunAsTest>
-      <method v="2" />
-    </configuration>
-    <configuration name="admintest [build]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
-      <ExternalSystemSettings>
-        <option name="executionName" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$/admintest" />
-        <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" />
-        <option name="taskDescriptions">
-          <list />
-        </option>
-        <option name="taskNames">
-          <list>
-            <option value="build" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -288,11 +315,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Gradle.aitest [bootRun]" />
+        <item itemvalue="Gradle.CustomerCareServiceTest" />
         <item itemvalue="Gradle.usertest [bootRun]" />
         <item itemvalue="Gradle.usertest [dependencies]" />
         <item itemvalue="Gradle.usertest [build]" />
-        <item itemvalue="Gradle.admintest [build]" />
-        <item itemvalue="Gradle.admintest [bootRun]" />
       </list>
     </recent_temporary>
   </component>
@@ -329,6 +356,7 @@
       <workItem from="1760096723719" duration="46000" />
       <workItem from="1760676081333" duration="1255000" />
       <workItem from="1760882993733" duration="217000" />
+      <workItem from="1760920020514" duration="2647000" />
     </task>
     <task id="LOCAL-00001" summary="ds">
       <option name="closed" value="true" />
