@@ -52,6 +52,11 @@
                 <item name="Tasks" type="e4a08cd1:TasksNode" />
                 <item name="application" type="c8890929:TasksNode$1" />
               </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="aitest" type="f1a62948:ProjectNode" />
+                <item name="Dependencies" type="6de06a37:ExternalSystemViewDefaultContributor$MyDependenciesNode" />
+              </path>
             </expand>
             <select />
           </tree_state>
@@ -63,8 +68,8 @@
     <option name="RECENT_TEMPLATES">
       <list>
 
-        <option value="Class" />
         <option value="Jsp File" />
+        <option value="Class" />
       </list>
     </option>
   </component>
@@ -82,12 +87,12 @@
     &quot;assignee&quot;: &quot;lsh030412&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings">{
-  &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/jhs0106/test3team.git&quot;,
-    &quot;accountId&quot;: &quot;3504a14b-84ff-4fc2-bc95-6566cfe88ad3&quot;
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/jhs0106/test3team.git",
+    "accountId": "3504a14b-84ff-4fc2-bc95-6566cfe88ad3"
   }
-}</component>
+}]]></component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 2
 }</component>
@@ -100,17 +105,9 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
-    "Gradle.AiScheduleServiceTest.processScheduleRequest1.executor": "Run",
-    "Gradle.AiScheduleServiceTest.processScheduleRequest2.executor": "Run",
-    "Gradle.AiScheduleServiceTest.processScheduleRequest3.executor": "Run",
-    "Gradle.AiScheduleServiceTest.processScheduleRequestUnclear.executor": "Run",
     "Gradle.Build admintest.executor": "Run",
     "Gradle.Build usertest.executor": "Run",
     "Gradle.CustomerCareServiceTest.executor": "Run",
-    "Gradle.ScheduleServiceTest.get.executor": "Run",
-    "Gradle.ScheduleServiceTest.getByDateRange.executor": "Run",
-    "Gradle.ScheduleServiceTest.register.executor": "Run",
-    "Gradle.ScheduleServiceTest.remove.executor": "Run",
     "Gradle.admintest [bootRun].executor": "Run",
     "Gradle.admintest [build].executor": "Run",
     "Gradle.aitest [bootRun].executor": "Run",
@@ -122,7 +119,7 @@
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager": "true",
     "RunOnceActivity.git.unshallow": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "jms",
+    "git-widget-placeholder": "jhs",
     "ignore.virus.scanning.warn.message": "true",
 
     "node.js.detected.package.eslint": "true",
@@ -165,7 +162,7 @@
     </option>
   </component>
   <component name="RunManager" selected="Gradle.aitest [bootRun]">
-    <configuration name="AiScheduleServiceTest.processScheduleRequest1" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="CustomerCareServiceTest" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$/aitest" />
@@ -178,79 +175,7 @@
           <list>
             <option value=":test" />
             <option value="--tests" />
-            <option value="&quot;edu.sm.service.AiScheduleServiceTest.processScheduleRequest1&quot;" />
-          </list>
-        </option>
-        <option name="vmOptions" />
-      </ExternalSystemSettings>
-      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
-      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
-      <DebugAllEnabled>false</DebugAllEnabled>
-      <RunAsTest>true</RunAsTest>
-      <method v="2" />
-    </configuration>
-    <configuration name="AiScheduleServiceTest.processScheduleRequest2" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
-      <ExternalSystemSettings>
-        <option name="executionName" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$/aitest" />
-        <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" value="" />
-        <option name="taskDescriptions">
-          <list />
-        </option>
-        <option name="taskNames">
-          <list>
-            <option value=":test" />
-            <option value="--tests" />
-            <option value="&quot;edu.sm.service.AiScheduleServiceTest.processScheduleRequest2&quot;" />
-          </list>
-        </option>
-        <option name="vmOptions" />
-      </ExternalSystemSettings>
-      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
-      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
-      <DebugAllEnabled>false</DebugAllEnabled>
-      <RunAsTest>true</RunAsTest>
-      <method v="2" />
-    </configuration>
-    <configuration name="AiScheduleServiceTest.processScheduleRequest3" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
-      <ExternalSystemSettings>
-        <option name="executionName" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$/aitest" />
-        <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" value="" />
-        <option name="taskDescriptions">
-          <list />
-        </option>
-        <option name="taskNames">
-          <list>
-            <option value=":test" />
-            <option value="--tests" />
-            <option value="&quot;edu.sm.service.AiScheduleServiceTest.processScheduleRequest3&quot;" />
-          </list>
-        </option>
-        <option name="vmOptions" />
-      </ExternalSystemSettings>
-      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
-      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
-      <DebugAllEnabled>false</DebugAllEnabled>
-      <RunAsTest>true</RunAsTest>
-      <method v="2" />
-    </configuration>
-    <configuration name="AiScheduleServiceTest.processScheduleRequestUnclear" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
-      <ExternalSystemSettings>
-        <option name="executionName" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$/aitest" />
-        <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" value="" />
-        <option name="taskDescriptions">
-          <list />
-        </option>
-        <option name="taskNames">
-          <list>
-            <option value=":test" />
-            <option value="--tests" />
-            <option value="&quot;edu.sm.service.AiScheduleServiceTest.processScheduleRequestUnclear&quot;" />
+            <option value="&quot;edu.sm.service.CustomerCareServiceTest&quot;" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -273,6 +198,72 @@
         <option name="taskNames">
           <list>
             <option value="bootRun" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>false</RunAsTest>
+      <method v="2" />
+    </configuration>
+    <configuration name="usertest [bootRun]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$/usertest" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="bootRun" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>false</RunAsTest>
+      <method v="2" />
+    </configuration>
+    <configuration name="usertest [build]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$/usertest" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="build" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>false</RunAsTest>
+      <method v="2" />
+    </configuration>
+    <configuration name="usertest [dependencies]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$/usertest" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="dependencies" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -310,10 +301,10 @@
     <recent_temporary>
       <list>
         <item itemvalue="Gradle.aitest [bootRun]" />
-        <item itemvalue="Gradle.AiScheduleServiceTest.processScheduleRequestUnclear" />
-        <item itemvalue="Gradle.AiScheduleServiceTest.processScheduleRequest3" />
-        <item itemvalue="Gradle.AiScheduleServiceTest.processScheduleRequest2" />
-        <item itemvalue="Gradle.AiScheduleServiceTest.processScheduleRequest1" />
+        <item itemvalue="Gradle.CustomerCareServiceTest" />
+        <item itemvalue="Gradle.usertest [bootRun]" />
+        <item itemvalue="Gradle.usertest [dependencies]" />
+        <item itemvalue="Gradle.usertest [build]" />
       </list>
     </recent_temporary>
   </component>
