@@ -4,10 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c5573ccb-e778-4258-b980-fd13f6548239" name="Changes" comment="1020">
-      <change beforePath="$PROJECT_DIR$/admintest/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/admintest/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/aitest/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/aitest/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/usertest/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/usertest/.gitignore" afterDir="false" />
+    <list default="true" id="c5573ccb-e778-4258-b980-fd13f6548239" name="Changes" comment="1020 리뷰 분석 후 고객케어 기능(aI)">
+      <change afterPath="$PROJECT_DIR$/aitest/src/main/java/edu/sm/controller/CustomerCareViewController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/aitest/src/main/resources/keystore.p12" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/aitest/src/main/webapp/views/customercare/center.jsp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -70,8 +70,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Jsp File" />
         <option value="Class" />
+        <option value="Jsp File" />
       </list>
     </option>
   </component>
@@ -122,7 +122,7 @@
     "RunOnceActivity.git.unshallow": "true",
     "git-widget-placeholder": "jhs",
     "ignore.virus.scanning.warn.message": "true",
-    "last_opened_file_path": "C:/test3team/admintest",
+    "last_opened_file_path": "C:/test3team/aitest/src/main/resources",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -142,11 +142,11 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\test3team\aitest\src\main\resources" />
       <recent name="C:\test3team\admintest" />
       <recent name="C:\test3team\usertest" />
       <recent name="C:\test3team\aitest" />
       <recent name="C:\test3team\aitest\src\main\java\edu\sm" />
-      <recent name="C:\java\test3\usertest" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\java\test3\admintest\src\main\webapp\views" />
@@ -346,7 +346,7 @@
       <workItem from="1760096723719" duration="46000" />
       <workItem from="1760676081333" duration="1255000" />
       <workItem from="1760882993733" duration="217000" />
-      <workItem from="1760920020514" duration="3535000" />
+      <workItem from="1760920020514" duration="5995000" />
     </task>
     <task id="LOCAL-00001" summary="ds">
       <option name="closed" value="true" />
@@ -388,7 +388,15 @@
       <option name="project" value="LOCAL" />
       <updated>1760924814637</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="1020 리뷰 분석 후 고객케어 기능(aI)">
+      <option name="closed" value="true" />
+      <created>1760926159732</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1760926159732</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -411,6 +419,7 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="ds" />
     <MESSAGE value="1020" />
-    <option name="LAST_COMMIT_MESSAGE" value="1020" />
+    <MESSAGE value="1020 리뷰 분석 후 고객케어 기능(aI)" />
+    <option name="LAST_COMMIT_MESSAGE" value="1020 리뷰 분석 후 고객케어 기능(aI)" />
   </component>
 </project>
