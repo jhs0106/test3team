@@ -5,6 +5,7 @@ import edu.sm.app.service.ScheduleService;
 import edu.sm.app.springai.schedule.AiScheduleService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
