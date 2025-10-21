@@ -19,15 +19,33 @@
       </div>
     </div>
     <div class="form-row">
-      <div class="form-group col-md-6">
+      <div class="form-group col-md-4">
         <label for="name">이름</label>
         <input type="text" name="name" id="name" class="form-control" placeholder="홍길동"
                value="${registerMember.name}" />
       </div>
-      <div class="form-group col-md-6">
+      <div class="form-group col-md-4">
         <label for="birthDate">생년월일</label>
         <input type="date" name="birthDate" id="birthDate" class="form-control"
                value="${registerMember.birthDate}" />
+      </div>
+      <div class="form-group col-md-4">
+        <label class="d-block">성별</label>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="gender" id="genderMale" value="남성"
+          ${registerMember.gender == '남성' ? 'checked' : ''}>
+          <label class="form-check-label" for="genderMale">남성</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="gender" id="genderFemale" value="여성"
+          ${registerMember.gender == '여성' ? 'checked' : ''}>
+          <label class="form-check-label" for="genderFemale">여성</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="gender" id="genderOther" value="기타"
+          ${registerMember.gender == '기타' ? 'checked' : ''}>
+          <label class="form-check-label" for="genderOther">기타</label>
+        </div>
       </div>
     </div>
     <div class="form-group">

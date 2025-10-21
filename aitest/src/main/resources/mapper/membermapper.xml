@@ -7,6 +7,7 @@
         <result property="loginId" column="login_id" />
         <result property="password" column="password" />
         <result property="name" column="name" />
+        <result property="gender" column="gender" />
         <result property="birthDate" column="birth_date" />
         <result property="address" column="address" />
         <result property="assetStatus" column="asset_status" />
@@ -14,17 +15,47 @@
         <result property="membershipLevel" column="membership_level" />
     </resultMap>
 
-    <insert id="insertMember" parameterType="edu.sm.app.dto.Member" useGeneratedKeys="true" keyProperty="memberNo">
+    <sql id="memberColumns">
+        member_no, login_id, password, name, gender, birth_date, address, asset_status, phone_number, membership_level
+    </sql>
+
+    <insert id="insert" parameterType="edu.sm.app.dto.Member" useGeneratedKeys="true" keyProperty="memberNo">
         INSERT INTO decision_member
-        (login_id, password, name, birth_date, address, asset_status, phone_number, membership_level)
+        (login_id, password, name, gender, birth_date, address, asset_status, phone_number, membership_level)
         VALUES
-            (#{loginId}, #{password}, #{name}, #{birthDate}, #{address}, #{assetStatus}, #{phoneNumber}, #{membershipLevel})
+            (#{loginId}, #{password}, #{name}, #{gender}, #{birthDate}, #{address}, #{assetStatus}, #{phoneNumber}, #{membershipLevel})
     </insert>
 
-    <select id="findByLoginId" parameterType="string" resultMap="memberResultMap">
-        SELECT member_no, login_id, password, name, birth_date, address, asset_status, phone_number, membership_level
+    <update id="update" parameterType="edu.sm.app.dto.Member">
+        UPDATE decision_member
+        SET
+            login_id = #{loginId},
+            password = #{password},
+            name = #{name},
+            gender = #{gender},
+            birth_date = #{birthDate},
+            address = #{address},
+            asset_status = #{assetStatus},
+            phone_number = #{phoneNumber},
+            membership_level = #{membershipLevel}
+        WHERE login_id = #{loginId}
+    </update>
+
+    <delete id="delete" parameterType="string">
+        DELETE FROM decision_member
+        WHERE login_id = #{loginId}
+    </delete>
+
+    <select id="select" parameterType="string" resultMap="memberResultMap">
+        SELECT <include refid="memberColumns" />
         FROM decision_member
         WHERE login_id = #{loginId}
+    </select>
+
+    <select id="selectAll" resultMap="memberResultMap">
+        SELECT <include refid="memberColumns" />
+        FROM decision_member
+        ORDER BY member_no
     </select>
 
     <select id="existsByLoginId" parameterType="string" resultType="boolean">
