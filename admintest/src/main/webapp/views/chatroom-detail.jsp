@@ -333,7 +333,7 @@
 
         loadCustomerLocation: function() {
             $.ajax({
-                url: 'https://10.20.33.248:8443/api/chatroom/' + this.roomId,
+                url: 'https://10.20.34.124:8445/api/chatroom/' + this.roomId,
                 type: 'GET',
                 success: (room) => {
                     if (room.latitude && room.longitude) {
@@ -401,7 +401,7 @@
                 return;
             }
             $.ajax({
-                url: 'https://10.20.33.248:8443/api/chatroom/' + this.roomId + '/assign',
+                url: 'https://10.20.34.124:8445/api/chatroom/' + this.roomId + '/assign',
                 type: 'POST',
                 data: { adminId },
                 success: (response) => {
@@ -432,7 +432,7 @@
 
         fetchRoomInfo() {
             $.ajax({
-                url: 'https://10.20.33.248:8443/api/chatroom/active/' + this.custId,
+                url: 'https://10.20.34.124:8445/api/chatroom/active/' + this.custId,
                 type: 'GET',
                 dataType: 'json',
                 success: (data) => {
@@ -511,7 +511,7 @@
             }
 
             $.ajax({
-                url: 'https://10.20.33.248:8443/api/chatroom/' + this.roomId + '/close',
+                url: 'https://10.20.34.124:8445/api/chatroom/' + this.roomId + '/close',
                 type: 'POST',
                 success: (response) => {
                     this.appendSystemMessage('✅ 상담이 종료되었습니다.');
@@ -640,7 +640,7 @@
         },
 
         setupAdminWebRTC: function() {
-            this.rtcSocket = new WebSocket('wss://10.20.33.248:8443/signal');
+            this.rtcSocket = new WebSocket('wss://10.20.34.124:8445/signal');
 
             this.rtcSocket.onopen = () => {
                 console.log('✅ Admin Signaling Server 연결');

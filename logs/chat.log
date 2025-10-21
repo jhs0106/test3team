@@ -1,0 +1,91 @@
+2025-10-20 20:50:08.212 | ROOM[4] | SYSTEM(CREATE) | 채팅방 생성 - 고객: cust
+2025-10-20 21:04:28.711 | ROOM[4] | cust(USER) | dssdsf
+2025-10-20 21:07:56.536 | ROOM[4] | cust(USER) | aaaa
+2025-10-20 21:12:26.012 | ROOM[4] | SYSTEM(ASSIGN) | 상담사 배정 - admin
+2025-10-20 21:12:35.951 | ROOM[4] | admin(ADMIN) | asdf
+2025-10-20 21:12:38.824 | ROOM[4] | cust(USER) | sda
+2025-10-20 21:12:56.755 | ROOM[4] | admin(ADMIN) | __VIDEO_CALL_START__
+2025-10-20 21:13:14.860 | ROOM[4] | cust(USER) | __VIDEO_CALL_START__
+2025-10-21 09:41:30.279 | ROOM[3] | SYSTEM(ASSIGN) | 상담사 배정 - admin
+2025-10-21 09:41:35.747 | ROOM[4] | SYSTEM(ASSIGN) | 상담사 배정 - admin
+2025-10-21 09:42:15.028 | ROOM[4] | SYSTEM(ASSIGN) | 상담사 배정 - admin
+2025-10-21 09:44:31.703 | ROOM[4] | SYSTEM(ASSIGN) | 상담사 배정 - admin
+2025-10-21 09:44:34.299 | ROOM[4] | admin(ADMIN) | ssdfsd
+2025-10-21 09:44:37.536 | ROOM[4] | cust(USER) | sdfsdfsd
+2025-10-20 20:50:08.212 | ROOM[4] | SYSTEM(CREATE) | 채팅방 생성 - 고객: cust
+2025-10-20 21:04:28.711 | ROOM[4] | cust(USER) | dssdsf
+2025-10-20 21:07:56.536 | ROOM[4] | cust(USER) | aaaa
+2025-10-20 21:12:26.012 | ROOM[4] | SYSTEM(ASSIGN) | 상담사 배정 - admin
+2025-10-20 21:12:35.951 | ROOM[4] | admin(ADMIN) | asdf
+2025-10-20 21:12:38.824 | ROOM[4] | cust(USER) | sda
+2025-10-20 21:12:56.755 | ROOM[4] | admin(ADMIN) | __VIDEO_CALL_START__
+2025-10-20 21:13:14.860 | ROOM[4] | cust(USER) | __VIDEO_CALL_START__
+2025-10-21 09:41:30.279 | ROOM[3] | SYSTEM(ASSIGN) | 상담사 배정 - admin
+2025-10-21 09:41:35.747 | ROOM[4] | SYSTEM(ASSIGN) | 상담사 배정 - admin
+2025-10-21 09:42:15.028 | ROOM[4] | SYSTEM(ASSIGN) | 상담사 배정 - admin
+2025-10-21 09:44:31.703 | ROOM[4] | SYSTEM(ASSIGN) | 상담사 배정 - admin
+2025-10-21 09:44:34.299 | ROOM[4] | admin(ADMIN) | ssdfsd
+2025-10-21 09:44:37.536 | ROOM[4] | cust(USER) | sdfsdfsd
+2025-10-21 10:14:46.794 | ROOM[4] | SYSTEM(ASSIGN) | 상담사 배정 - admin
+2025-10-21 10:14:59.105 | ROOM[4] | admin(ADMIN) | sd
+2025-10-21 10:15:03.325 | ROOM[5] | SYSTEM(CREATE) | 채팅방 생성 - 고객: guest_5685
+2025-10-21 10:15:07.167 | ROOM[5] | guest_5685(USER) | sdfsdf
+2025-10-21 10:15:10.278 | ROOM[4] | admin(ADMIN) | sdfd
+2025-10-21 10:15:13.691 | ROOM[5] | guest_5685(USER) | sdfsf
+2025-10-21 10:15:40.741 | ROOM[4] | SYSTEM(ASSIGN) | 상담사 배정 - admin
+2025-10-21 10:15:43.204 | ROOM[4] | admin(ADMIN) | asdf
+2025-10-21 10:15:55.145 | ROOM[4] | cust(USER) | sdfsd
+2025-10-21 10:15:58.445 | ROOM[4] | admin(ADMIN) | sdfsdf
+2025-10-21 10:16:01.282 | ROOM[4] | cust(USER) | sdfsafd
+2025-10-21 10:16:03.304 | ROOM[4] | cust(USER) | __VIDEO_CALL_START__
+2025-10-21 10:32:20.579 | ROOM[4] | SYSTEM(ASSIGN) | 상담사 배정 - admin
+2025-10-20 20:50:08.212 | ROOM[4] | SYSTEM(CREATE) | 채팅방 생성 - 고객: cust
+2025-10-20 21:04:28.711 | ROOM[4] | cust(USER) | dssdsf
+2025-10-20 21:07:56.536 | ROOM[4] | cust(USER) | aaaa
+2025-10-20 21:12:26.012 | ROOM[4] | SYSTEM(ASSIGN) | 상담사 배정 - admin
+2025-10-20 21:12:35.951 | ROOM[4] | admin(ADMIN) | asdf
+2025-10-20 21:12:38.824 | ROOM[4] | cust(USER) | sda
+2025-10-20 21:12:56.755 | ROOM[4] | admin(ADMIN) | __VIDEO_CALL_START__
+2025-10-20 21:13:14.860 | ROOM[4] | cust(USER) | __VIDEO_CALL_START__
+2025-10-21 09:41:30.279 | ROOM[3] | SYSTEM(ASSIGN) | 상담사 배정 - admin
+2025-10-21 09:41:35.747 | ROOM[4] | SYSTEM(ASSIGN) | 상담사 배정 - admin
+2025-10-21 09:42:15.028 | ROOM[4] | SYSTEM(ASSIGN) | 상담사 배정 - admin
+2025-10-21 09:44:31.703 | ROOM[4] | SYSTEM(ASSIGN) | 상담사 배정 - admin
+2025-10-21 09:44:34.299 | ROOM[4] | admin(ADMIN) | ssdfsd
+2025-10-21 09:44:37.536 | ROOM[4] | cust(USER) | sdfsdfsd
+2025-10-20 20:50:08.212 | ROOM[4] | SYSTEM(CREATE) | 채팅방 생성 - 고객: cust
+2025-10-20 21:04:28.711 | ROOM[4] | cust(USER) | dssdsf
+2025-10-20 21:07:56.536 | ROOM[4] | cust(USER) | aaaa
+2025-10-20 21:12:26.012 | ROOM[4] | SYSTEM(ASSIGN) | 상담사 배정 - admin
+2025-10-20 21:12:35.951 | ROOM[4] | admin(ADMIN) | asdf
+2025-10-20 21:12:38.824 | ROOM[4] | cust(USER) | sda
+2025-10-20 21:12:56.755 | ROOM[4] | admin(ADMIN) | __VIDEO_CALL_START__
+2025-10-20 21:13:14.860 | ROOM[4] | cust(USER) | __VIDEO_CALL_START__
+2025-10-21 09:41:30.279 | ROOM[3] | SYSTEM(ASSIGN) | 상담사 배정 - admin
+2025-10-21 09:41:35.747 | ROOM[4] | SYSTEM(ASSIGN) | 상담사 배정 - admin
+2025-10-21 09:42:15.028 | ROOM[4] | SYSTEM(ASSIGN) | 상담사 배정 - admin
+2025-10-21 09:44:31.703 | ROOM[4] | SYSTEM(ASSIGN) | 상담사 배정 - admin
+2025-10-21 09:44:34.299 | ROOM[4] | admin(ADMIN) | ssdfsd
+2025-10-21 09:44:37.536 | ROOM[4] | cust(USER) | sdfsdfsd
+2025-10-21 10:14:46.794 | ROOM[4] | SYSTEM(ASSIGN) | 상담사 배정 - admin
+2025-10-21 10:14:59.105 | ROOM[4] | admin(ADMIN) | sd
+2025-10-21 10:15:03.325 | ROOM[5] | SYSTEM(CREATE) | 채팅방 생성 - 고객: guest_5685
+2025-10-21 10:15:07.167 | ROOM[5] | guest_5685(USER) | sdfsdf
+2025-10-21 10:15:10.278 | ROOM[4] | admin(ADMIN) | sdfd
+2025-10-21 10:15:13.691 | ROOM[5] | guest_5685(USER) | sdfsf
+2025-10-21 10:15:40.741 | ROOM[4] | SYSTEM(ASSIGN) | 상담사 배정 - admin
+2025-10-21 10:15:43.204 | ROOM[4] | admin(ADMIN) | asdf
+2025-10-21 10:15:55.145 | ROOM[4] | cust(USER) | sdfsd
+2025-10-21 10:15:58.445 | ROOM[4] | admin(ADMIN) | sdfsdf
+2025-10-21 10:16:01.282 | ROOM[4] | cust(USER) | sdfsafd
+2025-10-21 10:16:03.304 | ROOM[4] | cust(USER) | __VIDEO_CALL_START__
+2025-10-21 10:32:20.579 | ROOM[4] | SYSTEM(ASSIGN) | 상담사 배정 - admin
+2025-10-21 10:42:09.196 | ROOM[4] | SYSTEM(ASSIGN) | 상담사 배정 - admin
+2025-10-21 10:42:50.308 | ROOM[4] | admin(ADMIN) | asd
+2025-10-21 10:44:44.266 | ROOM[4] | SYSTEM(ASSIGN) | 상담사 배정 - admin
+2025-10-21 10:48:16.031 | ROOM[4] | SYSTEM(ASSIGN) | 상담사 배정 - admin
+2025-10-21 10:58:55.242 | ROOM[4] | SYSTEM(ASSIGN) | 상담사 배정 - admin
+2025-10-21 10:59:30.005 | ROOM[4] | admin(ADMIN) | assdsa
+2025-10-21 11:04:13.491 | ROOM[4] | SYSTEM(ASSIGN) | 상담사 배정 - admin
+2025-10-21 11:04:15.641 | ROOM[4] | admin(ADMIN) | ㅁㄴㅇㄹ
+2025-10-21 11:04:18.473 | ROOM[4] | cust(USER) | ㅁㄴㅇㄹ
