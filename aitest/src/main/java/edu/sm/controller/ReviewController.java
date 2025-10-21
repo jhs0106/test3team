@@ -28,8 +28,9 @@ public class ReviewController {
     private final ReviewService reviewService;
 
     @GetMapping("/action-plan")
-    public CustomerCarePlan createActionPlan(@RequestParam("feedback") String feedback) {
-        return customerCareService.handleFeedback(feedback);
+    public CustomerCarePlan createActionPlan(@RequestParam("feedback") String feedback,
+                                             @RequestParam(value = "rating", defaultValue = "5") int rating) {
+        return customerCareService.handleFeedback(feedback, rating);
     }
 
     @PostMapping
@@ -41,7 +42,14 @@ public class ReviewController {
         }
         try {
             String review = payload != null ? payload.get("review") : null;
-            CustomerCarePlan plan = reviewService.saveMemberReview(member, review);
+            Integer rating = null;
+            if (payload != null) {
+                String ratingValue = payload.get("rating");
+                if (ratingValue != null && !ratingValue.isBlank()) {
+                    rating = Integer.parseInt(ratingValue);
+                }
+            }
+            CustomerCarePlan plan = reviewService.saveMemberReview(member, review, rating);
             return ResponseEntity.ok(plan);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().build();

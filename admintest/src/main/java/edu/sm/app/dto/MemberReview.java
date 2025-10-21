@@ -10,7 +10,9 @@ public class MemberReview {
     private Long reviewId;
     private Long memberNo;
     private String memberName;
+    private Integer rating;
     private String review;
+    private String careResponse;
     private String sentiment;
     private LocalDateTime createdAt;
 }

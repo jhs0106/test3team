@@ -5,7 +5,10 @@
             limitSelect: null,
             errorBox: null,
             state: {
-                isLoading: false
+                isLoading: false,
+                pendingReload: false,
+                refreshTimerId: null,
+                refreshIntervalMs: 3 * 60 * 1000 // 3분
             },
 
             init() {
@@ -15,16 +18,50 @@
 
                 // 셀렉트 변경 → 재조회
                 if (this.limitSelect) {
-                    this.limitSelect.addEventListener('change', () => this.load());
+                    this.limitSelect.addEventListener('change', () => {
+                        this.load();
+                        this.restartAutoRefresh();
+                    });
                 }
+
+                // 페이지 이탈 시 타이머 정리
+                window.addEventListener('beforeunload', () => this.stopAutoRefresh());
 
                 // 최초 로딩
                 this.load();
+                this.startAutoRefresh();
             },
 
-            async load() {
-                if (!this.limitSelect) return;
+            startAutoRefresh() {
+                this.stopAutoRefresh();
+                this.state.refreshTimerId = window.setInterval(() => {
+                    if (this.state.isLoading) {
+                        this.state.pendingReload = true;
+                        return;
+                    }
+                    this.load();
+                }, this.state.refreshIntervalMs);
+            },
 
+            stopAutoRefresh() {
+                if (this.state.refreshTimerId !== null) {
+                    window.clearInterval(this.state.refreshTimerId);
+                    this.state.refreshTimerId = null;
+                }
+            },
+
+            restartAutoRefresh() {
+                this.startAutoRefresh();
+            },
+
+            async load(force = false) {
+                if (!this.limitSelect) return;
+                if (!force && this.state.isLoading) {
+                    this.state.pendingReload = true;
+                    return;
+                }
+
+                this.state.pendingReload = false;
                 this.showLoading();
                 const limit = this.limitSelect.value;
 
@@ -57,6 +94,10 @@
                     this.showError(error.message || '케어 인사이트를 불러오는 중 문제가 발생했습니다.');
                 } finally {
                     this.state.isLoading = false;
+                    if (this.state.pendingReload) {
+                        this.state.pendingReload = false;
+                        this.load();
+                    }
                 }
             },
 
@@ -83,11 +124,13 @@
                     this.showError('데이터가 비어 있습니다.');
                     return;
                 }
-
-                // 안전하게 널 병합 연산자 사용
-                this.setText('reviewCount',     data.reviewCount ?? 0);
-                this.setText('summaryText',     data.summary     || '요약 정보가 없습니다.');
-                this.setText('careFocusText',   data.careFocus   || '집중해야 할 케어 포인트를 찾을 수 없습니다.');
+                this.setText('reviewCount', data.reviewCount ?? 0);
+                this.setText('averageRating', this.formatAverageRating(data.averageRating));
+                this.setText('positiveCount', data.positiveCount ?? 0);
+                this.setText('neutralCount', '중립 ' + (data.neutralCount ?? 0));
+                this.setText('negativeCount', data.negativeCount ?? 0);
+                this.setText('summaryText', data.summary || '요약 정보가 없습니다.');
+                this.setText('careFocusText', data.careFocus || '집중해야 할 케어 포인트를 찾을 수 없습니다.');
                 this.setText('encouragementText', data.encouragement || '케어 팀에게 전할 메시지가 없습니다.');
 
                 this.renderActionItems(data.actionItems);
@@ -148,23 +191,41 @@
                     title.textContent = review?.memberName || '익명 회원';
 
                     const mood = (review?.sentiment || 'UNKNOWN').toString().toUpperCase();
-                    const badge = document.createElement('span');
-                    badge.className = 'badge badge-' + this.sentimentBadgeClass(mood);
-                    badge.textContent = mood;
+                    const sentimentBadge = document.createElement('span');
+                    sentimentBadge.className = 'badge badge-' + this.sentimentBadgeClass(mood);
+                    sentimentBadge.textContent = mood;
 
                     header.appendChild(title);
-                    header.appendChild(badge);
+                    header.appendChild(sentimentBadge);
+
+                    const rating = Number.isFinite(Number(review?.rating)) ? Number(review.rating) : 0;
+                    const ratingInfo = document.createElement('div');
+                    ratingInfo.className = 'small text-warning font-weight-bold mt-1';
+                    ratingInfo.textContent = this.starText(rating) + ' (' + rating + '점)';
 
                     const text = document.createElement('p');
                     text.className = 'mb-1 text-gray-800';
                     text.textContent = review?.review || '';
+
+                    const careResponse = review?.careResponse || '';
+                    const response = document.createElement('p');
+                    response.className = 'mb-1';
+                    if (careResponse) {
+                        response.classList.add('text-primary');
+                        response.textContent = '케어 응답: ' + careResponse;
+                    } else {
+                        response.classList.add('text-muted');
+                        response.textContent = '케어 응답 기록 없음';
+                    }
 
                     const when = document.createElement('small');
                     when.className = 'text-muted';
                     when.textContent = this.formatDate(review?.createdAt);
 
                     item.appendChild(header);
+                    item.appendChild(ratingInfo);
                     item.appendChild(text);
+                    item.appendChild(response);
                     item.appendChild(when);
                     container.appendChild(item);
                 });
@@ -175,6 +236,13 @@
                 // ISO8601(YYYY-MM-DDTHH:mm:ss) → 'YYYY-MM-DD HH:mm' 형태로 자르기
                 return String(value).replace('T', ' ').substring(0, 16);
             },
+
+            formatAverageRating(value) {
+                const numeric = Number.isFinite(Number(value)) ? Number(value) : 0;
+                const rounded = Math.round(numeric * 10) / 10;
+                return this.starText(rounded) + ' (' + rounded.toFixed(1) + '점)';
+            },
+
 
             sentimentBadgeClass(sentiment) {
                 switch (sentiment) {
@@ -187,7 +255,15 @@
                     default:
                         return 'light';
                 }
+            },
+
+            starText(value) {
+                const safe = Math.max(0, Math.min(5, Math.round(value)));
+                const filled = '★'.repeat(safe);
+                const empty = '☆'.repeat(5 - safe);
+                return filled + empty;
             }
+
         };
 
         // 페이지가 DOM을 그리기 시작할 때 등록 (스크립트가 상단이므로 필수)
@@ -217,6 +293,33 @@
                 <div class="card-body">
                     <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">전체 리뷰</div>
                     <div id="reviewCount" class="h5 mb-0 font-weight-bold text-gray-800">0</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">평균 별점</div>
+                    <div id="averageRating" class="h5 mb-0 font-weight-bold text-gray-800">☆☆☆☆☆ (0.0점)</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">긍정 반응</div>
+                    <div id="positiveCount" class="h5 mb-0 font-weight-bold text-gray-800">0</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-danger shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">주의 필요</div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span id="negativeCount" class="h5 mb-0 font-weight-bold text-gray-800">0</span>
+                        <span id="neutralCount" class="badge badge-secondary">중립 0</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -263,7 +366,7 @@
 
             <div class="card shadow mb-4">
                 <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">최근 리뷰 샘플</h6>
+                    <h6 class="m-0 font-weight-bold text-primary">최근 리뷰</h6>
                 </div>
                 <div class="card-body p-0">
                     <div id="reviewList" class="list-group list-group-flush small">
