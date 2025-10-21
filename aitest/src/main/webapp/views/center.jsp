@@ -2,6 +2,50 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <style>
+    .hero-section {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 80px 20px;
+        text-align: center;
+        border-radius: 10px;
+        margin-bottom: 40px;
+    }
+    .hero-section h1 {
+        font-size: 3rem;
+        font-weight: bold;
+        margin-bottom: 20px;
+    }
+    .hero-section p {
+        font-size: 1.3rem;
+        margin-bottom: 30px;
+    }
+    .feature-card {
+        padding: 30px;
+        border: 2px solid #e9ecef;
+        border-radius: 10px;
+        text-align: center;
+        transition: all 0.3s;
+        margin-bottom: 20px;
+        background: white;
+    }
+    .feature-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        border-color: #667eea;
+    }
+    .feature-icon {
+        font-size: 3rem;
+        margin-bottom: 20px;
+        color: #667eea;
+    }
+    .cta-button {
+        padding: 15px 40px;
+        font-size: 1.2rem;
+        border-radius: 50px;
+        margin: 10px;
+    }
+
+    /* 명언 관련 스타일 */
     .quote-button {
         background-color: #4e73df;
         color: white;
@@ -71,7 +115,6 @@
             </c:choose>
 
             // 사용자별 로컬스토리지 키 생성
-            // const today = new Date().toDateString();
             const today = new Date().toISOString().slice(0, 16); // 분 단위까지 (1분마다 리셋)
             const userQuoteKey = 'quote_' + this.userId;
             const userDateKey = 'quoteDate_' + this.userId;
@@ -150,7 +193,6 @@
 
                 // 명언 저장 (사용자별로)
                 this.todayQuote = fullQuote;
-                // const today = new Date().toDateString();
                 const today = new Date().toISOString().slice(0, 16); // 분 단위까지 (1분마다 리셋)
                 const userQuoteKey = 'quote_' + this.userId;
                 const userDateKey = 'quoteDate_' + this.userId;
@@ -262,31 +304,92 @@
 </script>
 
 <div class="col-sm-10">
-    <h2>오늘의 사자성어 / 명언 / 속담</h2>
+    <!-- Hero Section -->
+    <div class="hero-section">
+        <h2>오늘의 사자성어 / 명언 / 속담</h2>
 
-    <!-- 로그인 필요 메시지 -->
-    <c:if test="${empty sessionScope.loginMember}">
-        <div class="login-required">
-            명언 기능을 사용하려면 <a href="<c:url value='/login'/>">로그인</a>이 필요합니다.
+        <!-- 로그인 필요 메시지 -->
+        <c:if test="${empty sessionScope.loginMember}">
+            <div class="login-required">
+                명언 기능을 사용하려면 <a href="<c:url value='/login'/>">로그인</a>이 필요합니다.
+            </div>
+        </c:if>
+
+        <!-- 로그인한 경우에만 명언 버튼 표시 -->
+        <c:if test="${not empty sessionScope.loginMember}">
+            <!-- 명언 버튼 -->
+            <button id="quoteBtn" class="quote-button">📖 오늘의 나를 위한 명언</button>
+
+            <!-- 명언 표시 영역 -->
+            <div id="quoteContainer" class="quote-container">
+                <div id="quoteText" class="quote-text"></div>
+            </div>
+
+            <!-- 이미 확인했다는 메시지 -->
+            <div id="alreadyChecked" class="already-checked" style="display: none;">
+                오늘은 이미 명언을 확인하셨어요.
+            </div>
+
+            <!-- 오디오 플레이어 (숨김) -->
+            <audio id="quoteAudioPlayer" style="display: none;"></audio>
+        </c:if>
+    </div>
+
+    <!-- Features Section -->
+    <h2 class="text-center mb-4">사람다움 케어 서비스</h2>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="feature-card">
+                <div class="feature-icon">💄</div>
+                <h4>외모 분석</h4>
+                <p>AI가 얼굴을 5가지 각도에서 분석하여 맞춤형 스타일링을 제안해드립니다.</p>
+                <a href="<c:url value='/appearance'/>" class="btn btn-primary">분석하기</a>
+            </div>
         </div>
-    </c:if>
-
-    <!-- 로그인한 경우에만 명언 버튼 표시 -->
-    <c:if test="${not empty sessionScope.loginMember}">
-        <!-- 명언 버튼 -->
-        <button id="quoteBtn" class="quote-button">📖 오늘의 나를 위한 명언</button>
-
-        <!-- 명언 표시 영역 -->
-        <div id="quoteContainer" class="quote-container">
-            <div id="quoteText" class="quote-text"></div>
+        <div class="col-md-4">
+            <div class="feature-card">
+                <div class="feature-icon">💬</div>
+                <h4>AI 상담</h4>
+                <p>AI 상담사와 대화하거나 사람 상담사와 연결할 수 있습니다.</p>
+                <c:if test="${not empty sessionScope.loginMember}">
+                    <a href="<c:url value='/websocket/inquiry'/>" class="btn btn-primary">상담하기</a>
+                </c:if>
+            </div>
         </div>
-
-        <!-- 이미 확인했다는 메시지 -->
-        <div id="alreadyChecked" class="already-checked" style="display: none;">
-            오늘은 이미 명언을 확인하셨어요.
+        <div class="col-md-4">
+            <div class="feature-card">
+                <div class="feature-icon">⭐</div>
+                <h4>리뷰 작성</h4>
+                <p>후기를 남기면 AI가 감정을 분석하고 맞춤형 케어를 제공합니다.</p>
+                <a href="<c:url value='/reviews'/>" class="btn btn-primary">리뷰 작성</a>
+            </div>
         </div>
+    </div>
 
-        <!-- 오디오 플레이어 (숨김) -->
-        <audio id="quoteAudioPlayer" style="display: none;"></audio>
-    </c:if>
+    <div class="row mt-4">
+        <div class="col-md-4">
+            <div class="feature-card">
+                <div class="feature-icon">📅</div>
+                <h4>일정 관리</h4>
+                <p>자연어로 일정을 입력하면 AI가 자동으로 캘린더에 추가합니다.</p>
+                <a href="<c:url value='/springai1/schedule'/>" class="btn btn-primary">관리하기</a>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="feature-card">
+                <div class="feature-icon">📚</div>
+                <h4>오늘의 책</h4>
+                <p>AI가 추천하는 오늘의 책을 확인해보세요.</p>
+                <a href="<c:url value='/book'/>" class="btn btn-primary">보러가기</a>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="feature-card">
+                <div class="feature-icon">🎨</div>
+                <h4>이미지 생성</h4>
+                <p>AI를 활용한 이미지 생성 기능을 체험해보세요.</p>
+                <a href="<c:url value='/createimg'/>" class="btn btn-primary">생성하기</a>
+            </div>
+        </div>
+    </div>
 </div>

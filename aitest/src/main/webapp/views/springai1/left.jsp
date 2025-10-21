@@ -5,7 +5,11 @@
     <h4>AI Schedule</h4>
     <ul class="nav nav-pills flex-column">
         <li class="nav-item">
-            <a class="nav-link active" href="<c:url value="/springai1/schedule"/>">일정 관리</a>
+            <a class="nav-link" href="<c:url value="/springai1/schedule"/>">일정 관리</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="<c:url value="/springai1/ai2"/>">습관 트래커</a>
         </li>
     </ul>
+    <hr class="d-sm-none">
 </div>
