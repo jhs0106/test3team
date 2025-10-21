@@ -1,6 +1,13 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" isELIgnored="true" %>
+<%
+  edu.sm.app.dto.Member m = (edu.sm.app.dto.Member) session.getAttribute("loginMember");
+  String gender = (m != null && m.getGender() != null) ? m.getGender() : "";
+  // JS 문자열로 안전하게 넣기 위한 간단 이스케이프
+  gender = gender.replace("\\", "\\\\").replace("'", "\\'");
+%>
+
 
 <!-- Bootstrap4 기반 스타일 -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
@@ -152,7 +159,10 @@
     to   { opacity: 1; transform: translateY(0); }
   }
 </style>
-
+<script>
+  const SESSION_GENDER = '<%= gender %>';
+  console.log('SESSION_GENDER =', SESSION_GENDER);
+</script>
 <div class="col-sm-10 fade-in">
   <div class="container mt-4 mb-5">
     <h3>👗 AI 추천 옷입히기 </h3>
@@ -352,7 +362,8 @@
       colorHex: $('#colorHex').val() || item.hex,
       brightness: parseFloat($('#brightness').val()||0),
       saturation: parseFloat($('#saturation').val()||0),
-      category: item.category || item.cat || (item.category = item.cat) || (item.cat = item.category)
+      category: item.category || item.cat || (item.category = item.cat) || (item.cat = item.category),
+      gender: SESSION_GENDER
     };
     try {
       const fd = new FormData();
