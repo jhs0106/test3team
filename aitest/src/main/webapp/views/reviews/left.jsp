@@ -3,9 +3,9 @@
 <div class="col-sm-2">
   <h5 class="font-weight-bold">사람다움 케어 여정</h5>
   <ol class="pl-3 small">
-    <li>회원의 일상을 담은 리뷰를 수집합니다.</li>
-    <li>AI가 감정과 케어 우선순위를 진단합니다.</li>
-    <li>코치가 사람다움 실천 계획을 설계합니다.</li>
+    <li>별점과 함께 케어 후기를 기록합니다.</li>
+    <li>AI 코치가 후기에 맞춘 응답과 케어 제안을 전달합니다.</li>
+    <li>필요 시 상담 쪽에서 더욱 자세한 케어가 가능합니다.</li>
   </ol>
   <hr>
   <p class="small text-muted mb-1">바로가기</p>

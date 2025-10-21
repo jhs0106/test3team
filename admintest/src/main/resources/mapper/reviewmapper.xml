@@ -6,7 +6,9 @@
         <id property="reviewId" column="review_id" />
         <result property="memberNo" column="member_no" />
         <result property="memberName" column="member_name" />
+        <result property="rating" column="rating" />
         <result property="review" column="review" />
+        <result property="careResponse" column="care_response" />
         <result property="sentiment" column="sentiment" />
         <result property="createdAt" column="created_at" />
     </resultMap>
@@ -15,7 +17,9 @@
         SELECT r.review_id,
                r.member_no,
                m.name AS member_name,
+               r.rating,
                r.review,
+               r.care_response,
                r.sentiment,
                r.created_at
         FROM decision_member_review r

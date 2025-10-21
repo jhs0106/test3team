@@ -8,6 +8,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,47 +26,60 @@ public class ReviewInsightService {
 
     private ChatClient chatClient;
 
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm", Locale.KOREA);
+    private static final DateTimeFormatter DATE_FORMATTER =
+            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm", Locale.KOREA);
 
     @PostConstruct
     void setUp() {
         this.chatClient = chatClientBuilder.build();
     }
 
+    /**
+     * 최근 리뷰를 분석해 케어 인사이트를 생성합니다.
+     * - limit가 비정상 값이면 10으로 보정 (최소 1, 최대 100 권장)
+     * - LLM 실패 시에도 빈 Insight를 생성해 null 반환을 막음
+     */
     public ReviewCareInsight generateCareInsight(int limit) {
-        int adjustedLimit = limit <= 0 ? 10 : limit;
-        List<MemberReview> reviews = fetchRecentReviews(adjustedLimit);
-        ReviewCareInsight insight;
+        // 1) limit 보정
+        int safeLimit = limit <= 0 ? 10 : Math.min(limit, 100);
 
+        // 2) 최근 리뷰 가져오기
+        List<MemberReview> reviews = fetchRecentReviews(safeLimit);
+
+        // 3) 리뷰가 전혀 없으면 기본 안내 반환 (LLM 호출 생략)
         if (reviews.isEmpty()) {
-            insight = new ReviewCareInsight();
-            insight.setSummary("최근 리뷰 데이터를 찾을 수 없습니다.");
-            insight.setCareFocus("회원들의 케어 경험을 먼저 수집해 주세요.");
-            insight.setEncouragement("리뷰가 확보되면 사람다움 케어 전략을 다시 제안하겠습니다.");
-            insight.ensureCollections();
-            return insight;
+            ReviewCareInsight empty = new ReviewCareInsight();
+            empty.setSummary("최근 리뷰가 없어 분석할 데이터가 없습니다.");
+            empty.setCareFocus("리뷰 수집 경로(앱/웹/콜센터) 동작 여부를 점검하세요.");
+            empty.setEncouragement("데이터가 쌓이면 더 정교한 인사이트를 제공할 수 있어요.");
+            applyReviewContext(empty, reviews);
+            return empty;
         }
 
+        // 4) 프롬프트 구성
         String prompt = buildPrompt(reviews);
 
+        // 5) LLM 호출 (예외 안전)
+        ReviewCareInsight insight;
         try {
-            insight = chatClient.prompt()
-                    .system("""
-                            당신은 '사람다움 케어' 서비스를 운영하는 총괄 케어 디렉터입니다.
-                            회원 리뷰를 토대로 사람다움 회복을 돕는 전략을 제시하세요.
-                            아래 JSON 형식으로만 응답합니다.
-                            {
-                              "summary": "전체 리뷰 분위기 요약",
-                              "careFocus": "집중해야 할 케어 주제",
-                              "actionItems": ["실행 과제 1", "실행 과제 2"],
-                              "encouragement": "케어 팀에 전하는 응원 메시지"
-                            }
-                            모든 설명은 한국어로 작성합니다.
-                            """)
+            ChatOptions options = ChatOptions.builder()
+                    .temperature(0.2)
+                    .maxTokens(800)
+                    .build();
+
+            insight = chatClient
+                    .prompt()
                     .user(prompt)
-                    .options(ChatOptions.builder().build())
+                    .options(options)
                     .call()
                     .entity(ReviewCareInsight.class);
+
+            if (insight == null) {
+                insight = new ReviewCareInsight();
+                insight.setSummary("AI 응답을 파싱하지 못했습니다.");
+                insight.setCareFocus("프롬프트/스키마를 점검하세요.");
+                insight.setEncouragement("임시로 내부 회의로 우선순위를 도출하세요.");
+            }
         } catch (Exception ex) {
             log.warn("Failed to analyse reviews with LLM", ex);
             insight = new ReviewCareInsight();
@@ -74,10 +88,12 @@ public class ReviewInsightService {
             insight.setEncouragement("임시로 케어팀 내부 회의를 통해 우선순위를 정해 주세요.");
         }
 
+        // 6) 통계/최근리뷰 등 컨텍스트 병합
         applyReviewContext(insight, reviews);
         return insight;
     }
 
+    /** 최근 리뷰 조회 – 예외 발생 시 빈 리스트 */
     private List<MemberReview> fetchRecentReviews(int limit) {
         try {
             return reviewRepository.findRecentReviews(limit);
@@ -87,35 +103,112 @@ public class ReviewInsightService {
         }
     }
 
+    /** LLM 결과에 통계/최근 리뷰(파생 감정 포함)를 채워 넣기 */
     private void applyReviewContext(ReviewCareInsight insight, List<MemberReview> reviews) {
+        if (insight == null) return;
+
         insight.setReviewCount(reviews.size());
-        insight.ensureCollections();
-        insight.setRecentReviews(reviews.stream()
-                .sorted(Comparator.comparing(MemberReview::getCreatedAt, Comparator.nullsLast(Comparator.reverseOrder())))
+        insight.setAverageRating(calculateAverageRating(reviews));
+        insight.setPositiveCount(countSentiment(reviews, "POSITIVE"));
+        insight.setNeutralCount(countSentiment(reviews, "NEUTRAL"));
+        insight.setNegativeCount(countSentiment(reviews, "NEGATIVE"));
+
+        insight.ensureCollections(); // 내부 리스트/컬렉션 null 방지
+
+        // 최근 5건을 최신순으로 정렬해 내려주고, 표시용 파생 감정을 채워줌
+        List<MemberReview> recent = reviews.stream()
+                .filter(Objects::nonNull)
+                .sorted(Comparator.comparing(
+                        MemberReview::getCreatedAt,
+                        Comparator.nullsLast(Comparator.reverseOrder())))
                 .limit(5)
-                .collect(Collectors.toList()));
+                .map(this::enrichWithDerivedSentiment)
+                .collect(Collectors.toList());
+
+        insight.setRecentReviews(recent);
     }
 
+    /** LLM에 던질 프롬프트 구성 */
     private String buildPrompt(List<MemberReview> reviews) {
         String header = "회원 리뷰 데이터:";
         String body = reviews.stream()
-                .sorted(Comparator.comparing(MemberReview::getCreatedAt, Comparator.nullsLast(Comparator.reverseOrder())))
+                .sorted(Comparator.comparing(
+                        MemberReview::getCreatedAt,
+                        Comparator.nullsLast(Comparator.reverseOrder())))
                 .map(review -> {
-                    String when = review.getCreatedAt() != null ? DATE_FORMATTER.format(review.getCreatedAt()) : "작성일 미상";
-                    String sentiment = defaultString(review.getSentiment(), "UNKNOWN");
-                    return "- %s (%s, 감정: %s): %s".formatted(
-                            defaultString(review.getMemberName(), "익명 회원"),
-                            when,
-                            sentiment,
-                            defaultString(review.getReview(), ""));
+                    String when = review.getCreatedAt() != null
+                            ? DATE_FORMATTER.format(review.getCreatedAt())
+                            : "작성일 미상";
+                    String sentiment = resolveSentiment(review);
+                    String careResponse = defaultString(review.getCareResponse(), "케어 응답 없음");
+                    int rating = review.getRating() == null ? 0 : review.getRating();
+                    return "- %s (%s, 별점 %d점, 감정: %s)\n  리뷰: %s\n  케어 응답: %s"
+                            .formatted(
+                                    defaultString(review.getMemberName(), "익명 회원"),
+                                    when,
+                                    rating,
+                                    sentiment,
+                                    defaultString(review.getReview(), ""),
+                                    careResponse
+                            );
                 })
                 .collect(Collectors.joining("\n"));
 
-        return header + "\n" + body + "\n\n" +
-                "목표: 리뷰 속 니즈와 위기 신호를 추려 사람다움 케어 전략을 제안하세요.";
+        return header + "\n" + body + "\n\n"
+                + "목표: 별점과 케어 응답 기록을 분석해 사람다움 케어 전략을 제안하세요. "
+                + "출력은 ReviewCareInsight 스키마에 맞춰 요약(summary), 케어 포커스(careFocus), 응원(encouragement), "
+                + "실행 과제(actionItems 3~5개), 핵심 키워드(keywords 5~10개)를 한국어로 제공하세요.";
     }
 
     private String defaultString(String value, String defaultValue) {
         return (value == null || value.isBlank()) ? defaultValue : value;
+    }
+
+    /** 표시용 감정을 파생 세팅 */
+    private MemberReview enrichWithDerivedSentiment(MemberReview review) {
+        if (review == null) return null;
+        review.setSentiment(resolveSentiment(review));
+        return review;
+    }
+
+    private double calculateAverageRating(List<MemberReview> reviews) {
+        return reviews.stream()
+                .map(MemberReview::getRating)
+                .filter(Objects::nonNull)
+                .mapToInt(Integer::intValue)
+                .average()
+                .orElse(0.0);
+    }
+
+    private int countSentiment(List<MemberReview> reviews, String expected) {
+        return (int) reviews.stream()
+                .filter(Objects::nonNull)
+                .map(this::resolveSentiment)
+                .filter(s -> s.equalsIgnoreCase(expected))
+                .count();
+    }
+
+    /**
+     * 감정 결정 로직:
+     * - 리뷰 객체에 sentiment가 있으면 이를 우선 사용
+     * - 없으면 rating 기준으로 유추 (>=4: POSITIVE, 3: NEUTRAL, 1~2: NEGATIVE)
+     * - rating이 없으면 UNKNOWN
+     */
+    private String resolveSentiment(MemberReview review) {
+        if (review == null) return "UNKNOWN";
+
+        String sentiment = review.getSentiment();
+        if (sentiment != null && !sentiment.isBlank()) {
+            return sentiment.trim().toUpperCase(Locale.ROOT);
+        }
+
+        Integer rating = review.getRating();
+        if (rating == null) return "UNKNOWN";
+
+        if (rating >= 4) return "POSITIVE";
+        if (rating == 3) return "NEUTRAL";
+        if (rating >= 1) return "NEGATIVE";
+
+        return "UNKNOWN";
     }
 }

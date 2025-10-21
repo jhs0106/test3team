@@ -6,23 +6,27 @@
         <id property="reviewId" column="review_id" />
         <result property="memberNo" column="member_no" />
         <result property="memberName" column="member_name" />
+        <result property="rating" column="rating" />
         <result property="review" column="review" />
+        <result property="careResponse" column="care_response" />
         <result property="sentiment" column="sentiment" />
         <result property="createdAt" column="created_at" />
     </resultMap>
 
     <insert id="insertReview" parameterType="edu.sm.app.dto.MemberReview" useGeneratedKeys="true" keyProperty="reviewId">
         INSERT INTO decision_member_review
-            (member_no, review, sentiment, created_at)
+            (member_no, rating, review, care_response, sentiment, created_at)
         VALUES
-            (#{memberNo}, #{review}, #{sentiment}, #{createdAt})
+            (#{memberNo}, #{rating}, #{review}, #{careResponse}, #{sentiment}, #{createdAt})
     </insert>
 
     <select id="findRecentReviews" parameterType="int" resultMap="memberReviewResultMap">
         SELECT r.review_id,
                r.member_no,
                m.name AS member_name,
+               r.rating,
                r.review,
+               r.care_response,
                r.sentiment,
                r.created_at
         FROM decision_member_review r
