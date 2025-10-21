@@ -10,7 +10,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Mapper
 @Data
 @Builder
 @NoArgsConstructor
@@ -20,6 +19,7 @@ public class Member {
     private String loginId;
     private String password;
     private String name;
+    private String gender;
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate birthDate;
     private String address;

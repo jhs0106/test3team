@@ -40,7 +40,7 @@ public class LoginController {
             Member member = memberService.login(loginMember.getLoginId(), loginMember.getPassword());
             session.setAttribute("loginMember", member);
             redirectAttributes.addFlashAttribute("loginMessage", member.getName() + "님 환영합니다.");
-            return "redirect:/customer-care";
+            return "redirect:/";
         } catch (IllegalArgumentException e) {
             bindingResult.reject("loginError", e.getMessage());
         }
@@ -54,6 +54,7 @@ public class LoginController {
     public String registerForm(Model model) {
         Member member = new Member();
         member.setMembershipLevel("스탠다드");
+        member.setGender("남성");
         model.addAttribute("registerMember", member);
         model.addAttribute("center", "register");
         model.addAttribute("left", "left");
@@ -66,7 +67,7 @@ public class LoginController {
                            RedirectAttributes redirectAttributes,
                            Model model) {
         try {
-            Member persisted = memberService.register(member);
+            Member persisted = memberService.registerMember(member);
             String message = String.format("%s님의 계정이 생성되었습니다. 로그인해주세요.", persisted.getName());
             redirectAttributes.addFlashAttribute("registerMessage", message);
             return "redirect:/login";
