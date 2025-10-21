@@ -611,10 +611,7 @@
 </script>
 
 <div class="col-sm-10">
-    <h2>📈 자기계발 캘린더</h2>
-    <p class="text-muted">
-        AI와 함께하는 나만의 성장 일정! 외모관리, 대화연습, 취미활동 등을 계획하고 실천해보세요. 💪
-    </p>
+    <h2>자기계발 캘린더</h2>
 
     <div class="schedule-wrapper">
         <!-- 상단: 캘린더 영역 -->
@@ -644,7 +641,7 @@
 
                 <div class="chat-input-area">
                     <textarea id="schedule-input" placeholder="예: 내일 저녁 7시 헬스장 / 이번주 운동 계획 / 다음 주 계획"></textarea>
-                    <button id="send-btn">✨ 일정 추가</button>
+                    <button id="send-btn">일정 추가</button>
                 </div>
             </div>
         </div>
@@ -655,7 +652,7 @@
 <div id="modal-overlay" class="modal-overlay"></div>
 <div id="schedule-modal" class="schedule-modal">
     <div class="modal-header">
-        <h5>📅 일정 상세</h5>
+        <h5>일정 상세</h5>
         <button class="close-btn" onclick="scheduleManager.closeModal()">×</button>
     </div>
     <div class="modal-body">
@@ -684,7 +681,7 @@
             <div id="modal-description" class="modal-value"></div>
         </div>
         <div class="modal-actions">
-            <button id="modal-delete-btn">🗑️ 삭제</button>
+            <button id="modal-delete-btn">삭제</button>
             <button id="modal-close-btn" onclick="scheduleManager.closeModal()">닫기</button>
         </div>
     </div>
