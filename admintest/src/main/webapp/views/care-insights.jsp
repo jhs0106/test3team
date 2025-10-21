@@ -5,7 +5,10 @@
             limitSelect: null,
             errorBox: null,
             state: {
-                isLoading: false
+                isLoading: false,
+                pendingReload: false,
+                refreshTimerId: null,
+                refreshIntervalMs: 3 * 60 * 1000 // 3분
             },
 
             init() {
@@ -15,16 +18,50 @@
 
                 // 셀렉트 변경 → 재조회
                 if (this.limitSelect) {
-                    this.limitSelect.addEventListener('change', () => this.load());
+                    this.limitSelect.addEventListener('change', () => {
+                        this.load();
+                        this.restartAutoRefresh();
+                    });
                 }
+
+                // 페이지 이탈 시 타이머 정리
+                window.addEventListener('beforeunload', () => this.stopAutoRefresh());
 
                 // 최초 로딩
                 this.load();
+                this.startAutoRefresh();
             },
 
-            async load() {
-                if (!this.limitSelect) return;
+            startAutoRefresh() {
+                this.stopAutoRefresh();
+                this.state.refreshTimerId = window.setInterval(() => {
+                    if (this.state.isLoading) {
+                        this.state.pendingReload = true;
+                        return;
+                    }
+                    this.load();
+                }, this.state.refreshIntervalMs);
+            },
 
+            stopAutoRefresh() {
+                if (this.state.refreshTimerId !== null) {
+                    window.clearInterval(this.state.refreshTimerId);
+                    this.state.refreshTimerId = null;
+                }
+            },
+
+            restartAutoRefresh() {
+                this.startAutoRefresh();
+            },
+
+            async load(force = false) {
+                if (!this.limitSelect) return;
+                if (!force && this.state.isLoading) {
+                    this.state.pendingReload = true;
+                    return;
+                }
+
+                this.state.pendingReload = false;
                 this.showLoading();
                 const limit = this.limitSelect.value;
 
@@ -57,6 +94,10 @@
                     this.showError(error.message || '케어 인사이트를 불러오는 중 문제가 발생했습니다.');
                 } finally {
                     this.state.isLoading = false;
+                    if (this.state.pendingReload) {
+                        this.state.pendingReload = false;
+                        this.load();
+                    }
                 }
             },
 
@@ -83,7 +124,6 @@
                     this.showError('데이터가 비어 있습니다.');
                     return;
                 }
-
                 this.setText('reviewCount', data.reviewCount ?? 0);
                 this.setText('averageRating', this.formatAverageRating(data.averageRating));
                 this.setText('positiveCount', data.positiveCount ?? 0);
