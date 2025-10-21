@@ -14,6 +14,10 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.19/index.global.min.js'></script>
 
+    <%-- Web Socket Lib --%>
+    <script src="/webjars/sockjs-client/sockjs.min.js"></script>
+    <script src="/webjars/stomp-websocket/stomp.min.js"></script>
+
     <script src="https://cdn.jsdelivr.net/npm/lamejs@1.2.0/lame.min.js"></script>
     <link href="<c:url value="/css/springai.css"/>" rel="stylesheet" />
     <script src="<c:url value="/js/springai.js"/>"></script>
@@ -151,6 +155,12 @@
                 <a class="nav-link" href="<c:url value="/customer-care"/>">CS</a>
             </li>
         </ul>
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" href="<c:url value="/websocket"/>">Chat</a>
+            </li>
+        </ul>
+
     </div>
 </nav>
 <div class="container" style="margin-top:30px; margin-bottom: 30px;">
