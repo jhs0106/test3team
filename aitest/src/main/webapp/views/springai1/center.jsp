@@ -55,7 +55,7 @@
             <c:choose>
                 <c:when test="${not empty sessionScope.loginMember}">
                     <a href="<c:url value='/members'/>" class="btn btn-light btn-lg cta-button">회원 매칭 보기</a>
-                    <a href="<c:url value='/ai-chat'/>" class="btn btn-outline-light btn-lg cta-button">AI 상담 시작</a>
+                    <a href="<c:url value='/websocket/inquiry'/>" class="btn btn-outline-light btn-lg cta-button">AI 상담 시작</a>
                 </c:when>
                 <c:otherwise>
                     <a href="<c:url value='/register'/>" class="btn btn-light btn-lg cta-button">무료 가입하기</a>
@@ -92,7 +92,7 @@
                 <h4>24시간 AI 상담</h4>
                 <p>언제든지 AI 상담원과 연애 고민, 매칭 문의를 상담할 수 있습니다.</p>
                 <c:if test="${not empty sessionScope.loginMember}">
-                    <a href="<c:url value='/ai-chat'/>" class="btn btn-primary">상담하기</a>
+                    <a href="<c:url value='/websocket/inquiry'/>" class="btn btn-primary">상담하기</a>
                 </c:if>
             </div>
         </div>
