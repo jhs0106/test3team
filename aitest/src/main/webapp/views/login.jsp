@@ -1,7 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <div class="col-sm-10">
-  <h2 class="mb-4">결정사 로그인</h2>
+  <h2 class="mb-4">사람이 되어보자</h2>
   <c:if test="${not empty loginMessage}">
     <div class="alert alert-info">${loginMessage}</div>
   </c:if>
