@@ -15,11 +15,8 @@ import org.apache.ibatis.annotations.Mapper;
 @AllArgsConstructor
 public class CustomerCarePlan {
     private String review;
-    private ReviewClassification.Sentiment sentiment;
-    private String priority;
-    private String owner;
-    private String automationTrigger;
-
-    private String conciergeNote;
-    private List<String> followUpActions;
+    private Integer rating;
+    private String careTone;
+    private String responseMessage;
+    private List<String> followUpSuggestions;
 }

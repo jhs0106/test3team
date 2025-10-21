@@ -14,6 +14,10 @@ public class ReviewCareInsight {
     private List<String> actionItems;
     private String encouragement;
     private int reviewCount;
+    private double averageRating;
+    private int positiveCount;
+    private int neutralCount;
+    private int negativeCount;
     private List<MemberReview> recentReviews;
 
     public void ensureCollections() {

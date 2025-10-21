@@ -1,89 +1,56 @@
 package edu.sm.app.service;
 
 import edu.sm.app.dto.CustomerCarePlan;
-import edu.sm.app.dto.ReviewClassification;
-import lombok.RequiredArgsConstructor;
+import java.util.List;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
-
 @Service
-@RequiredArgsConstructor
 public class CustomerCareService {
 
-    private final ReviewClassificationClient reviewClassificationClient;
-
-    public CustomerCarePlan handleFeedback(String feedback) {
-        ReviewClassification classification = reviewClassificationClient.classifyReview(feedback);
-        if (classification == null) {
-            classification = new ReviewClassification();
+    public CustomerCarePlan handleFeedback(String feedback, int rating) {
+        String normalizedReview = feedback == null ? "" : feedback.trim();
+        if (normalizedReview.isBlank()) {
+            normalizedReview = "후기 내용이 입력되지 않았습니다.";
         }
 
-        ReviewClassification.Sentiment sentiment = Optional
-                .ofNullable(classification.getClassification())
-                .orElse(ReviewClassification.Sentiment.NEUTRAL);
-
-        String normalizedReview = Optional
-                .ofNullable(classification.getReview())
-                .filter(review -> !review.isBlank())
-                .orElse(feedback);
-
-        return buildPlan(normalizedReview, sentiment);
+        int safeRating = Math.max(1, Math.min(rating, 5));
+        return buildPlan(normalizedReview, safeRating);
     }
 
-    private CustomerCarePlan buildPlan(String review, ReviewClassification.Sentiment sentiment) {
-        String priority;
-        String owner;
-        String automationTrigger;
-        String conciergeNote;
-        List<String> followUpActions;
+    private CustomerCarePlan buildPlan(String review, int rating) {
+        String careTone;
+        String responseMessage;
+        List<String> followUpSuggestions;
 
-        switch (sentiment) {
-            case POSITIVE -> {
-                priority = "성장 촉진 케어";
-                owner = "사람다움 라이프 코치";
-                automationTrigger = "감사 체크인 메시지";
-                conciergeNote = "긍정 경험을 일상 변화와 연결해 사람다움을 확장하세요.";
-                followUpActions = List.of(
-                        "감사 음성과 함께 작은 실천 챌린지를 제안합니다.",
-                        "회원이 발견한 사람다움 순간을 스토리 카드로 정리합니다.",
-                        "다른 회원과의 연결 프로그램 또는 봉사 활동을 추천합니다."
-                );
-            }
-            case NEGATIVE -> {
-                priority = "즉각 회복 케어";
-                owner = "사람다움 회복 코치";
-                automationTrigger = "긴급 케어 핫라인 알림";
-                conciergeNote = "상처받은 경험을 공감으로 감싸고 회복 루틴을 설계하세요.";
-                followUpActions = List.of(
-                        "15분 내 공감 전화로 감정과 사건을 안전하게 수집합니다.",
-                        "불편을 해소할 수 있는 맞춤 회복 플랜과 자원(상담/휴식)을 제시합니다.",
-                        "후속 케어 일지를 공유하며 48시간 내 재확인을 약속합니다."
-                );
-            }
-            case NEUTRAL -> {
-                priority = "깊이 탐색 케어";
-                owner = "사람다움 성장 코디네이터";
-                automationTrigger = "관찰 노트 및 체크인 예약";
-                conciergeNote = "숨은 기대와 고민을 발견해 작은 변화를 돕는 여정을 설계하세요.";
-                followUpActions = List.of(
-                        "생활 리듬과 관계 점검을 위한 미니 코칭 세션을 제안합니다.",
-                        "회원의 관심사에 맞춘 사람다움 실천 자료(에세이, 워크북)를 제공합니다.",
-                        "1주 뒤 감정 변화를 확인하는 따뜻한 메시지를 예약합니다."
-                );
-            }
-            default -> throw new IllegalStateException("Unexpected sentiment: " + sentiment);
+        if (rating >= 4) {
+            careTone = "감사 케어";
+            responseMessage = "정성스러운 후기를 남겨 주셔서 감사합니다. 회원님의 따뜻한 사람이미가 다른 분들께도 큰 힘이 됩니다.";
+            followUpSuggestions = List.of(
+                    "좋았던 순간을 커뮤니티에 공유해 주세요.",
+                    "다음 방문 때 기대하는 점을 알려주시면 더 세심히 준비하겠습니다."
+            );
+        } else if (rating == 3) {
+            careTone = "성장 지원 케어";
+            responseMessage = "소중한 의견을 들려주셔서 감사합니다. 아쉬웠던 부분을 함께 점검하며 더 사람다운 경험을 준비하겠습니다.";
+            followUpSuggestions = List.of(
+                    "불편했던 상황을 자세히 남겨 주시면 개선에 큰 도움이 됩니다.",
+                    "추가로 원하시는 케어가 있다면 코치에게 직접 알려주세요."
+            );
+        } else {
+            careTone = "회복 케어";
+            responseMessage = "이용 중 겪으신 어려움에 진심으로 사과드립니다. 곧 전담 코치가 연락드려 회복 플랜을 세우겠습니다.";
+            followUpSuggestions = List.of(
+                    "불편 사항을 빠르게 해결하기 위해 연락 가능한 시간을 알려주세요.",
+                    "필요하다면 맞춤 휴식 프로그램과 상담을 즉시 연결해 드리겠습니다."
+            );
         }
 
         return CustomerCarePlan.builder()
                 .review(review)
-                .sentiment(sentiment)
-                .priority(priority)
-                .owner(owner)
-                .automationTrigger(automationTrigger)
-                .conciergeNote(conciergeNote)
-                .followUpActions(followUpActions)
+                .rating(rating)
+                .careTone(careTone)
+                .responseMessage(responseMessage)
+                .followUpSuggestions(followUpSuggestions)
                 .build();
     }
 }
