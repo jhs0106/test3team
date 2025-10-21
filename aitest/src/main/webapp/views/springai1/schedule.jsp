@@ -54,11 +54,114 @@
         border: 1px solid #ddd;
         border-radius: 5px;
     }
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        z-index: 9998;
+        animation: fadeIn 0.3s;
+    }
+    .schedule-modal {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        z-index: 9999;
+        width: 90%;
+        max-width: 600px;
+        max-height: 80vh;
+        overflow-y: auto;
+        animation: slideUp 0.3s;
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translate(-50%, -40%);
+        }
+        to {
+            opacity: 1;
+            transform: translate(-50%, -50%);
+        }
+    }
+    .modal-header {
+        padding: 20px;
+        border-bottom: 2px solid #f0f0f0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .modal-body {
+        padding: 20px;
+    }
+    .modal-footer {
+        padding: 15px 20px;
+        border-top: 1px solid #f0f0f0;
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+    }
+    .info-row {
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: 15px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #f5f5f5;
+    }
+    .info-icon {
+        width: 30px;
+        font-size: 1.2em;
+        margin-right: 10px;
+    }
+    .info-content {
+        flex: 1;
+    }
+    .info-label {
+        font-weight: bold;
+        color: #666;
+        font-size: 0.9em;
+        margin-bottom: 5px;
+    }
+    .info-value {
+        color: #333;
+        white-space: pre-line;
+    }
+    .close-modal {
+        background: none;
+        border: none;
+        font-size: 1.5em;
+        cursor: pointer;
+        color: #999;
+        transition: color 0.2s;
+    }
+    .close-modal:hover {
+        color: #333;
+    }
+    .category-badge {
+        display: inline-block;
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-size: 0.85em;
+        font-weight: bold;
+        color: white;
+    }
 </style>
 
 <script>
     let scheduleManager = {
         calendar: null,
+        currentEvent: null,
 
         init: function() {
             this.initCalendar();
@@ -82,8 +185,8 @@
                     week: '주',
                     day: '일'
                 },
-                events: (info, successCallback, failureCallback) => {
-                    this.loadSchedules(info.start, info.end, successCallback, failureCallback);
+                events: function(info, successCallback, failureCallback) {
+                    scheduleManager.loadSchedules(info.start, info.end, successCallback, failureCallback);
                 },
                 editable: true,
                 selectable: true,
@@ -117,7 +220,7 @@
             const loadingMsg = this.addMessage('ai', '일정을 분석하고 있습니다... ⏳');
 
             try {
-                const response = await fetch('/schedule/test', {
+                const response = await fetch('/schedule', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/x-www-form-urlencoded'},
                     body: 'input=' + encodeURIComponent(input)
@@ -142,6 +245,12 @@
                     setTimeout(() => {
                         this.calendar.refetchEvents();
                         this.addMessage('ai', '✅ 일정이 캘린더에 추가되었습니다!');
+
+                        const category = data.schedules[0].category;
+                        const encouragement = this.getEncouragementMessage(category);
+                        setTimeout(() => {
+                            this.addMessage('ai', encouragement);
+                        }, 500);
                     }, 500);
                 }
 
@@ -156,7 +265,7 @@
                 const startStr = start.toISOString();
                 const endStr = end.toISOString();
 
-                const response = await fetch(`/schedule/events?start=\${startStr}&end=\${endStr}`);
+                const response = await fetch('/schedule/events?start=' + startStr + '&end=' + endStr);
 
                 if (!response.ok) {
                     throw new Error('일정 로드 실패');
@@ -164,18 +273,21 @@
 
                 const events = await response.json();
 
-                const calendarEvents = events.map(event => ({
-                    id: event.scheduleId,
-                    title: event.title,
-                    start: event.startDatetime,
-                    end: event.endDatetime,
-                    backgroundColor: this.getCategoryColor(event.category),
-                    extendedProps: {
-                        description: event.description,
-                        location: event.location,
-                        category: event.category
-                    }
-                }));
+                const calendarEvents = events.map(event => {
+                    return {
+                        id: String(event.scheduleId || event.id),
+                        title: event.title,
+                        start: event.start,
+                        end: event.end,
+                        backgroundColor: this.getCategoryColor(event.category),
+                        extendedProps: {
+                            scheduleId: event.scheduleId || event.id,
+                            description: event.description,
+                            location: event.location,
+                            category: event.category
+                        }
+                    };
+                });
 
                 successCallback(calendarEvents);
 
@@ -187,34 +299,90 @@
 
         getCategoryColor: function(category) {
             const colors = {
-                '회의': '#007bff',
-                '약속': '#28a745',
-                '개인': '#ffc107',
-                '업무': '#dc3545',
-                '기타': '#6c757d'
+                '외모관리': '#FF6B9D',
+                '대화연습': '#4A90E2',
+                '취미활동': '#FFA07A',
+                '데이트연습': '#C44569',
+                '자기계발': '#9B59B6'
             };
-            return colors[category] || '#6c757d';
+            return colors[category] || '#95A5A6';
+        },
+
+        getEncouragementMessage: function(category) {
+            const messages = {
+                '외모관리': '💪 꾸준한 외모 관리는 자신감의 시작이에요! 화이팅!',
+                '대화연습': '🗣️ 사람을 만나는 게 최고의 연습이에요! 잘하고 있어요!',
+                '취미활동': '🎨 취미는 매력 포인트가 됩니다! 멋져요!',
+                '데이트연습': '💕 실전 연습이 중요해요! 긴장하지 말고 즐겨보세요!',
+                '자기계발': '📚 자기계발은 미래에 대한 투자예요! 응원합니다!'
+            };
+            return messages[category] || '👍 잘하고 있어요!';
         },
 
         handleEventClick: function(info) {
             const event = info.event;
             const props = event.extendedProps;
+            const scheduleId = event.id || event._def?.publicId || props.scheduleId;
 
-            let details = `제목: \${event.title}\n`;
-            details += `시작: \${this.formatDateTime(event.start)}\n`;
-            details += `종료: \${this.formatDateTime(event.end)}\n`;
-            if (props.location) details += `장소: \${props.location}\n`;
-            if (props.category) details += `카테고리: \${props.category}\n`;
-            if (props.description) details += `설명: \${props.description}\n`;
-
-            if (confirm(details + '\n\n이 일정을 삭제하시겠습니까?')) {
-                this.deleteSchedule(event.id, info.event);
+            if (!scheduleId || scheduleId === '') {
+                alert('일정 ID를 찾을 수 없습니다.');
+                return;
             }
+
+            this.currentEvent = event;
+
+            $('#modal-title').text(event.title);
+
+            const categoryColor = this.getCategoryColor(props.category);
+            $('#modal-category').html(
+                    '<span class="category-badge" style="background: ' + categoryColor + '">' + props.category + '</span>'
+            );
+
+            $('#modal-start').text(this.formatDateTime(event.start));
+            $('#modal-end').text(this.formatDateTime(event.end));
+
+            if (props.location) {
+                $('#modal-location').text(props.location);
+                $('#modal-location-row').show();
+            } else {
+                $('#modal-location-row').hide();
+            }
+
+            if (props.description) {
+                $('#modal-description').text(props.description);
+                $('#modal-description-row').show();
+            } else {
+                $('#modal-description-row').hide();
+            }
+
+            const self = this;
+
+            $('#modal-delete-btn').off('click').on('click', function() {
+                if (confirm('이 일정을 삭제하시겠습니까?')) {
+                    self.deleteSchedule(scheduleId, event);
+                    self.closeModal();
+                }
+            });
+
+            $('#modal-overlay').fadeIn(300);
+            $('#schedule-modal').fadeIn(300);
+        },
+
+        closeModal: function() {
+            $('#modal-overlay').fadeOut(300);
+            $('#schedule-modal').fadeOut(300);
+            this.currentEvent = null;
         },
 
         deleteSchedule: async function(scheduleId, eventObj) {
+            if (!scheduleId) {
+                alert('삭제할 일정 ID가 없습니다.');
+                return;
+            }
+
             try {
-                const response = await fetch(`/schedule/\${scheduleId}`, {
+                const url = '/schedule/' + scheduleId;
+                const response = await fetch(url, {
                     method: 'DELETE'
                 });
 
@@ -226,19 +394,20 @@
                 this.addMessage('ai', '🗑️ 일정이 삭제되었습니다.');
 
             } catch (error) {
-                alert('일정 삭제 실패');
+                console.error('삭제 실패:', error);
+                alert('일정 삭제 실패: ' + error.message);
             }
         },
 
         addMessage: function(type, text) {
             const messageClass = type === 'user' ? 'user-message' : 'ai-message';
-            const $message = $(`<div class="message \${messageClass}">\${text}</div>`);
-            $('#chat-messages').append($message);
+            const messageHtml = '<div class="message ' + messageClass + '">' + text + '</div>';
+            $('#chat-messages').append(messageHtml);
 
             const chatMessages = document.getElementById('chat-messages');
             chatMessages.scrollTop = chatMessages.scrollHeight;
 
-            return $message;
+            return $('#chat-messages .message:last');
         },
 
         formatDateTime: function(date) {
@@ -256,12 +425,18 @@
 
     $(document).ready(function() {
         scheduleManager.init();
+
+        $('#modal-overlay').click(function() {
+            scheduleManager.closeModal();
+        });
     });
 </script>
 
 <div class="col-sm-10">
-    <h2>🗓️ AI 일정 관리 캘린더</h2>
-    <p class="text-muted">자연어로 일정을 입력하면 AI가 자동으로 캘린더에 추가합니다!</p>
+    <h2>📈 자기계발 캘린더</h2>
+    <p class="text-muted">
+        AI와 함께하는 나만의 성장 일정! 외모관리, 대화연습, 취미활동 등을 계획하고 실천해보세요. 💪
+    </p>
 
     <div id="calendar-container">
         <!-- FullCalendar -->
@@ -270,13 +445,80 @@
         <!-- AI Chat Panel -->
         <div id="chat-panel">
             <h5>💬 일정 추가하기</h5>
+
+            <div style="background: #e3f2fd; padding: 10px; border-radius: 5px; margin-bottom: 10px; font-size: 0.85em;">
+                <strong>💡 예시:</strong><br>
+                • 내일 저녁 7시 헬스장<br>
+                • 다음주 토요일 친구들이랑 등산<br>
+                • 목요일 오후 2시 미용실<br>
+                • 10월 22일부터 26일까지 운동 계획 짜줘
+            </div>
+
             <div id="chat-messages">
                 <div class="message ai-message">
-                    안녕하세요! 일정을 자연어로 말씀해주시면 자동으로 캘린더에 추가해드립니다. 😊
+                    안녕하세요! 😊<br>
+                    자기계발 일정을 말씀해주시면 AI가 자동으로 캘린더에 추가해드립니다.<br><br>
+                    <strong>카테고리:</strong><br>
+                    💪 외모관리 | 🗣️ 대화연습 | 🎨 취미활동<br>
+                    💕 데이트연습 | 📚 자기계발
                 </div>
             </div>
-            <textarea id="schedule-input" placeholder="예: 내일 오후 3시에 강남에서 회의"></textarea>
-            <button id="send-btn" class="btn btn-primary btn-block">일정 추가</button>
+            <textarea id="schedule-input" placeholder="계획을 입력해주세요."></textarea>
+            <button id="send-btn" class="btn btn-primary btn-block">
+                <i class="fas fa-plus-circle"></i> 일정 추가
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modal-overlay"></div>
+    <div class="schedule-modal" id="schedule-modal">
+        <div class="modal-header">
+            <h4 id="modal-title" style="margin: 0;">일정 상세</h4>
+            <button class="close-modal" onclick="scheduleManager.closeModal()">×</button>
+        </div>
+        <div class="modal-body">
+            <div class="info-row">
+                <div class="info-icon">🏷️</div>
+                <div class="info-content">
+                    <div class="info-label">카테고리</div>
+                    <div id="modal-category"></div>
+                </div>
+            </div>
+            <div class="info-row">
+                <div class="info-icon">📅</div>
+                <div class="info-content">
+                    <div class="info-label">시작 시간</div>
+                    <div class="info-value" id="modal-start"></div>
+                </div>
+            </div>
+            <div class="info-row">
+                <div class="info-icon">⏰</div>
+                <div class="info-content">
+                    <div class="info-label">종료 시간</div>
+                    <div class="info-value" id="modal-end"></div>
+                </div>
+            </div>
+            <div class="info-row" id="modal-location-row" style="display: none;">
+                <div class="info-icon">📍</div>
+                <div class="info-content">
+                    <div class="info-label">장소</div>
+                    <div class="info-value" id="modal-location"></div>
+                </div>
+            </div>
+            <div class="info-row" id="modal-description-row" style="display: none;">
+                <div class="info-icon">📝</div>
+                <div class="info-content">
+                    <div class="info-label">상세 정보</div>
+                    <div class="info-value" id="modal-description"></div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="scheduleManager.closeModal()">닫기</button>
+            <button class="btn btn-danger" id="modal-delete-btn">
+                <i class="fas fa-trash"></i> 삭제
+            </button>
         </div>
     </div>
 </div>

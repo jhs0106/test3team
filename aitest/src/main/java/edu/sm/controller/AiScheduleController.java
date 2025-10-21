@@ -5,7 +5,7 @@ import edu.sm.app.service.ScheduleService;
 import edu.sm.app.springai.schedule.AiScheduleService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.ui.Model;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
@@ -26,64 +26,92 @@ public class AiScheduleController {
     private final AiScheduleService aiScheduleService;
     private final ScheduleService scheduleService;
 
-    @PostMapping("/test")
-    public Schedule test(@RequestParam("input") String input) throws Exception {
-        log.info("입력: {}", input);
+    /**
+     * AI 자연어 일정 추가
+     */
+    @PostMapping("")
+    public Schedule createSchedule(@RequestParam("input") String input) throws Exception {
+        log.info("📝 일정 생성 요청: {}", input);
         Schedule response = aiScheduleService.processScheduleRequest(input);
-        log.info("응답: {}", response);
+        log.info("✅ 생성 완료: {}", response.getMessage());
         return response;
     }
 
+    /**
+     * 캘린더 일정 조회
+     */
     @GetMapping("/events")
     public List<Map<String, Object>> getEvents(
             @RequestParam(value = "start", required = false) String start,
             @RequestParam(value = "end", required = false) String end) throws Exception {
 
-        log.info("일정 조회 요청 - start: {}, end: {}", start, end);
+        LocalDateTime startDate = parseDateTime(start, LocalDateTime.now().minusMonths(1));
+        LocalDateTime endDate = parseDateTime(end, LocalDateTime.now().plusMonths(2));
 
-        LocalDateTime startDate;
-        LocalDateTime endDate;
-
-        if (start == null || start.trim().isEmpty()) {
-            startDate = LocalDateTime.now().minusMonths(1);
-        } else {
-            // ISO 8601 형식 (밀리초, 타임존 포함) 파싱
-            startDate = LocalDateTime.ofInstant(
-                    Instant.parse(start),
-                    ZoneId.systemDefault()
-            );
-        }
-
-        if (end == null || end.trim().isEmpty()) {
-            endDate = LocalDateTime.now().plusMonths(2);
-        } else {
-            // ISO 8601 형식 (밀리초, 타임존 포함) 파싱
-            endDate = LocalDateTime.ofInstant(
-                    Instant.parse(end),
-                    ZoneId.systemDefault()
-            );
-        }
+        log.info("📅 일정 조회: {} ~ {}", startDate.toLocalDate(), endDate.toLocalDate());
 
         List<Schedule> schedules = scheduleService.getSchedulesByDateRange(startDate, endDate);
-        log.info("조회된 일정 개수: {}", schedules.size());
+        log.info("✅ 조회 결과: {}개", schedules.size());
 
-        return schedules.stream().map(s -> {
-            Map<String, Object> event = new HashMap<>();
-            event.put("id", s.getScheduleId());
-            event.put("title", s.getTitle());
-            event.put("start", s.getStartDatetime().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
-            event.put("end", s.getEndDatetime().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
-            event.put("description", s.getDescription());
-            event.put("location", s.getLocation());
-            event.put("category", s.getCategory());
-            return event;
-        }).collect(Collectors.toList());
+        return schedules.stream()
+                .map(this::convertToCalendarEvent)
+                .collect(Collectors.toList());
     }
 
+    /**
+     * 일정 삭제
+     */
     @DeleteMapping("/{scheduleId}")
-    public Map<String, String> deleteSchedule(@PathVariable Integer scheduleId) throws Exception {
-        log.info("일정 삭제 요청 - scheduleId: {}", scheduleId);
-        scheduleService.remove(scheduleId);
-        return Map.of("status", "SUCCESS", "message", "삭제 완료");
+    public ResponseEntity<Map<String, String>> deleteSchedule(@PathVariable Integer scheduleId) {
+        try {
+            log.info("🗑️ 일정 삭제: ID={}", scheduleId);
+
+            if (scheduleId == null) {
+                return ResponseEntity.badRequest()
+                        .body(Map.of("status", "ERROR", "message", "일정 ID가 없습니다"));
+            }
+
+            scheduleService.remove(scheduleId);
+            log.info("✅ 삭제 완료");
+
+            return ResponseEntity.ok(Map.of("status", "SUCCESS", "message", "삭제 완료"));
+
+        } catch (Exception e) {
+            log.error("❌ 삭제 실패: ID={}", scheduleId, e);
+            return ResponseEntity.internalServerError()
+                    .body(Map.of("status", "ERROR", "message", "삭제 실패"));
+        }
+    }
+
+    // ==================== Helper Methods ====================
+
+    private LocalDateTime parseDateTime(String dateStr, LocalDateTime defaultValue) {
+        if (dateStr == null || dateStr.trim().isEmpty()) {
+            return defaultValue;
+        }
+        try {
+            return LocalDateTime.ofInstant(Instant.parse(dateStr), ZoneId.systemDefault());
+        } catch (Exception e) {
+            log.warn("⚠️ 날짜 파싱 실패: {} → 기본값 사용", dateStr);
+            return defaultValue;
+        }
+    }
+
+    private Map<String, Object> convertToCalendarEvent(Schedule schedule) {
+        Map<String, Object> event = new HashMap<>();
+        event.put("id", schedule.getScheduleId());
+        event.put("scheduleId", schedule.getScheduleId());
+        event.put("title", schedule.getTitle());
+        event.put("start", formatDateTime(schedule.getStartDatetime()));
+        event.put("end", formatDateTime(schedule.getEndDatetime()));
+        event.put("description", schedule.getDescription());
+        event.put("location", schedule.getLocation());
+        event.put("category", schedule.getCategory());
+        return event;
+    }
+
+    private String formatDateTime(LocalDateTime dateTime) {
+        return dateTime != null ?
+                dateTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME) : null;
     }
 }

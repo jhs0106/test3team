@@ -14,10 +14,18 @@ public interface ScheduleRepository {
             "VALUES (#{title}, #{description}, #{startDatetime}, #{endDatetime}, #{location}, #{category})")
     void insert(Schedule schedule) throws Exception;
 
-    @Select("SELECT * FROM schedule WHERE start_datetime >= #{startDate} AND end_datetime <= #{endDate} ORDER BY start_datetime")
-    List<Schedule> selectByDateRange(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate) throws Exception;
+    @Select("SELECT schedule_id as scheduleId, title, description, " +
+            "start_datetime as startDatetime, end_datetime as endDatetime, " +
+            "location, category, created_at as createdAt " +
+            "FROM schedule WHERE start_datetime >= #{startDate} AND end_datetime <= #{endDate} " +
+            "ORDER BY start_datetime")
+    List<Schedule> selectByDateRange(@Param("startDate") LocalDateTime startDate,
+                                     @Param("endDate") LocalDateTime endDate) throws Exception;
 
-    @Select("SELECT * FROM schedule")
+    @Select("SELECT schedule_id as scheduleId, title, description, " +
+            "start_datetime as startDatetime, end_datetime as endDatetime, " +
+            "location, category, created_at as createdAt " +
+            "FROM schedule ORDER BY start_datetime")
     List<Schedule> selectAll() throws Exception;
 
     @Delete("DELETE FROM schedule WHERE schedule_id = #{scheduleId}")
