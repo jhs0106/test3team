@@ -98,6 +98,11 @@ public class MainController {
         model.addAttribute("center", "operation");
         return "index";
     }
-
+    @RequestMapping("/care-insights")
+    public String careInsights(Model model) {
+        prepareCommon(model);
+        model.addAttribute("center", "care-insights");
+        return "index";
+    }
 
 }

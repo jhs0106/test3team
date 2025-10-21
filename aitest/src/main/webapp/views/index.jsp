@@ -119,50 +119,53 @@
     </li>
 
 </ul>
-<nav class="navbar navbar-expand-sm bg-dark navbar-dark">
-    <a class="navbar-brand" href="<c:url value="/"/>">Home</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="collapsibleNavbar">
-        <ul class="navbar-nav">
-            <li class="nav-item">
-                <a class="nav-link" href="<c:url value="/springai1"/>">SrpingAi1</a>
-            </li>
-        </ul>
-        <ul class="navbar-nav">
-            <li class="nav-item">
-                <a class="nav-link" href="<c:url value="/springai2"/>">SrpingAi2</a>
-            </li>
-        </ul>
-        <ul class="navbar-nav">
-            <li class="nav-item">
-                <a class="nav-link" href="<c:url value="/springai3"/>">SrpingAi3</a>
-            </li>
-        </ul>
-        <ul class="navbar-nav">
-            <li class="nav-item">
-                <a class="nav-link" href="<c:url value="/springai4"/>">SrpingAi4</a>
-            </li>
-        </ul>
-        <ul class="navbar-nav">
-            <li class="nav-item">
-                <a class="nav-link" href="<c:url value="/springai5"/>">SrpingAi5</a>
-            </li>
-        </ul>
-        <ul class="navbar-nav">
-            <li class="nav-item">
-                <a class="nav-link" href="<c:url value="/customer-care"/>">CS</a>
-            </li>
-        </ul>
-        <ul class="navbar-nav">
-            <li class="nav-item">
-                <a class="nav-link" href="<c:url value="/websocket"/>">Chat</a>
-            </li>
-        </ul>
-
-    </div>
-</nav>
+<c:choose>
+    <c:when test="${not empty sessionScope.loginMember}">
+        <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+            <a class="navbar-brand" href="<c:url value="/"/>">Home</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="collapsibleNavbar">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="<c:url value="/springai1"/>">SrpingAi1</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="<c:url value="/springai2"/>">SrpingAi2</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="<c:url value="/springai3"/>">SrpingAi3</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="<c:url value="/springai4"/>">SrpingAi4</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="<c:url value="/springai5"/>">SrpingAi5</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="<c:url value="/reviews"/>">리뷰 작성</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </c:when>
+    <c:otherwise>
+        <div class="alert alert-light border rounded-0 mb-0 text-center" role="alert">
+            사람다움 케어 내비게이션은 로그인 후 이용할 수 있습니다.
+        </div>
+    </c:otherwise>
+</c:choose>
 <div class="container" style="margin-top:30px; margin-bottom: 30px;">
     <div class="row">
         <%-- Left Menu Start ........  --%>

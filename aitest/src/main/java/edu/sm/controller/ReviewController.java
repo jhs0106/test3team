@@ -20,19 +20,19 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/customer-care")
+@RequestMapping("/api/reviews")
 @RequiredArgsConstructor
-public class CustomerCareController {
+public class ReviewController {
 
     private final CustomerCareService customerCareService;
     private final ReviewService reviewService;
 
-    @RequestMapping("/action-plan")
+    @GetMapping("/action-plan")
     public CustomerCarePlan createActionPlan(@RequestParam("feedback") String feedback) {
         return customerCareService.handleFeedback(feedback);
     }
 
-    @PostMapping("/reviews")
+    @PostMapping
     public ResponseEntity<CustomerCarePlan> submitReview(@RequestBody Map<String, String> payload,
                                                          HttpSession session) {
         Member member = (Member) session.getAttribute("loginMember");
@@ -48,7 +48,7 @@ public class CustomerCareController {
         }
     }
 
-    @GetMapping("/reviews")
+    @GetMapping
     public List<MemberReview> recentReviews(@RequestParam(value = "limit", defaultValue = "10") int limit) {
         return reviewService.getRecentReviews(limit);
     }

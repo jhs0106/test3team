@@ -1,7 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <script>
-  let customerCare = {
+  let reviewCare = { = {
     form: null,
     feedbackInput: null,
     alertBox: null,
@@ -17,8 +17,7 @@
     isLoggedIn: false,
 
     init() {
-      // DOM 캐시
-      this.form = document.getElementById('customerCareForm');
+      this.form = document.getElementById('reviewForm');
       this.feedbackInput = document.getElementById('feedbackInput');
       this.alertBox = document.getElementById('formAlert');
       this.resultCard = document.getElementById('planResult');
@@ -73,8 +72,8 @@
     renderPlan(plan) {
       const sentiment = plan?.sentiment ?? '분석 불가';
       const priority = plan?.priority ?? '정보 없음';
-      const owner = plan?.owner ?? '담당 부서 확인 필요';
-      const trigger = plan?.automationTrigger ?? '자동 조치 없음';
+      const owner = plan?.owner ?? '담당 코치 확인 필요';
+      const trigger = plan?.automationTrigger ?? '자동 케어 없음';
       const conciergeNote = plan?.conciergeNote ?? '';
       const actions = Array.isArray(plan?.followUpActions) ? plan.followUpActions : [];
 
@@ -181,12 +180,12 @@
     submitReview() {
       const feedback = (this.feedbackInput?.value || '').trim();
       if (!feedback) {
-        this.showAlert('결정사 서비스 후기를 입력해주세요.');
+        this.showAlert('사람다움 케어 경험을 들려주세요.');
         return;
       }
       this.hideAlert();
 
-      fetch('<c:url value="/customer-care/reviews"/>', {
+      fetch('<c:url value="/api/reviews"/>', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ review: feedback })
@@ -214,7 +213,7 @@
 
     // ====== 후기 목록 로드 ======
     loadReviews() {
-      fetch('<c:url value="/customer-care/reviews"/>')
+      fetch('<c:url value="/api/reviews"/>')
               .then(response => response.json())
               .then(reviews => this.renderReviews(reviews))
               .catch(() => {
@@ -228,26 +227,25 @@
     }
   };
 
-  // 초기화
-  window.addEventListener('DOMContentLoaded', () => customerCare.init());
+  window.addEventListener('DOMContentLoaded', () => reviewCare.init());
+
 </script>
 
 <div class="col-sm-10">
-  <h2>결정사 고객 케어 센터</h2>
-  <p class="text-muted">결혼 정보사 결정사 회원들의 생생한 후기를 수집하고, AI가 맞춤형 케어 전략을 제안합니다.</p>
+  <h2>사람다움 케어 후기 작성</h2>
+  <p class="text-muted">사람이 사람답게 살아갈 수 있도록 돕는 케어 경험을 기록하고, AI 코치에게 맞춤 케어 전략을 받아보세요.</p>
 
   <div id="loginAlert" class="alert alert-info d-none" role="alert">
     로그인 후 후기를 작성하실 수 있습니다. <a href="<c:url value='/login'/>" class="alert-link">로그인 이동</a>
   </div>
 
-  <%-- ⚠ data-logged-in 에서만 JSP-EL 사용 (서버에서 평가) --%>
-  <form id="customerCareForm" class="mb-4" data-logged-in="${not empty sessionScope.loginMember}">
+  <form id="reviewForm" class="mb-4" data-logged-in="${not empty sessionScope.loginMember}">
     <div class="form-group">
-      <label for="feedbackInput">결정사 서비스 이용 후기</label>
-      <textarea class="form-control" id="feedbackInput" rows="5" placeholder="담당 매니저, 맞춤 소개, 상담 분위기 등에 대한 의견을 남겨주세요"></textarea>
-      <small class="form-text text-muted">입력한 후기는 AI가 감정과 케어 우선순위를 분석하고, 결정사 운영팀 대응 전략에 활용됩니다.</small>
+      <label for="feedbackInput">사람다움 케어 서비스 이용 후기</label>
+      <textarea class="form-control" id="feedbackInput" rows="5" placeholder="케어를 통해 느낀 변화, 함께한 코치, 일상에서의 실천 등을 자유롭게 나눠주세요."></textarea>
+      <small class="form-text text-muted">작성된 리뷰는 AI가 감정과 케어 우선순위를 분석하여 사람다움 케어 플랜을 제안합니다.</small>
     </div>
-    <button type="submit" id="generatePlanBtn" class="btn btn-primary">후기 등록 및 분석</button>
+    <button type="submit" id="generatePlanBtn" class="btn btn-primary">리뷰 등록 및 케어 분석</button>
     <div id="formAlert" class="mt-3 alert d-none" role="alert"></div>
   </form>
 
@@ -256,11 +254,11 @@
     <div class="card-body">
       <p><strong>감정 분석:</strong> <span id="planSentiment"></span></p>
       <p><strong>케어 우선순위:</strong> <span id="planPriority"></span></p>
-      <p><strong>담당 매니저:</strong> <span id="planOwner"></span></p>
+      <p><strong>담당 케어 코치:</strong> <span id="planOwner"></span></p>
       <p><strong>자동 케어 트리거:</strong> <span id="planTrigger"></span></p>
       <p><strong>케어 노트:</strong> <span id="planConciergeNote"></span></p>
       <div>
-        <strong>제안된 후속 조치:</strong>
+        <strong>제안된 실천 과제:</strong>
         <ul id="planActions" class="mt-2"></ul>
       </div>
     </div>
@@ -269,7 +267,7 @@
   <div class="card">
     <div class="card-header d-flex justify-content-between align-items-center">
       <span>최근 후기</span>
-      <a href="<c:url value='/register'/>" class="btn btn-sm btn-outline-secondary">결정사 회원 가입</a>
+      <a href="<c:url value='/register'/>" class="btn btn-sm btn-outline-secondary">사람다움 케어 함께하기</a>
     </div>
     <ul class="list-group list-group-flush" id="reviewList">
       <li class="list-group-item text-muted">후기를 불러오는 중입니다…</li>
