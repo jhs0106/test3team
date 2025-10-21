@@ -5,8 +5,6 @@ import edu.sm.app.springai.service3.AiQuoteService;
 import edu.sm.app.springai.service3.AiSttService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.MediaType;
-import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -93,7 +91,7 @@ public class Ai3Controller {
             @RequestParam("question") String question,
             @RequestParam(value = "attach", required = false) MultipartFile attach) throws IOException {
         // 이미지가 업로드 되지 않았을 경우
-        if (attach == null || !attach.getContentType().contains("image/")) {
+        if (attach == null || !attach.getContentType().contains("static/image/")) {
             Flux<String> response = Flux.just("이미지를 올려주세요.");
             return response;
         }

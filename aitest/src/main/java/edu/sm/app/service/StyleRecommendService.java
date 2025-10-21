@@ -35,6 +35,10 @@ public class StyleRecommendService {
         rec.setOnepiece(List.of(
                 item("D401","soft pastel onepiece","onepiece",pick(a,3),null,null,"팔레트 컬러 적용")
         ));
+        try {
+            var om = new com.fasterxml.jackson.databind.ObjectMapper();
+            log.info("[RECOMMEND][OUT]", om.writeValueAsString(rec));
+        } catch (Exception ignore) {}
         return rec;
     }
 
