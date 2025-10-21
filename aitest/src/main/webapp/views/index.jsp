@@ -167,6 +167,11 @@
                         <a class="nav-link" href="<c:url value="/book"/>">Book</a>
                     </li>
                 </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="<c:url value="/diary"/>">Diary</a>
+                    </li>
+                </ul>
             </div>
         </nav>
     </c:when>
