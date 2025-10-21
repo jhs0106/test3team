@@ -5,7 +5,7 @@
   <ul class="nav nav-pills flex-column">
     <li class="nav-item">
       <a class="nav-link" href="<c:url value ="/createimg/createimg1"/>">createimg1</a>
-      <a class="nav-link" href="<c:url value ="/createimg/createimg2"/>">createimg1</a>
+      <a class="nav-link" href="<c:url value ="/createimg/createimg2"/>">createimg2</a>
     </li>
   </ul>
   <hr class="d-sm-none">

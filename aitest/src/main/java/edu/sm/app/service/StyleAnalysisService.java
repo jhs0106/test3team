@@ -1,5 +1,6 @@
 package edu.sm.app.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import edu.sm.app.dto.StyleAnalysisResult;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +13,8 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MimeType;
 import org.springframework.web.multipart.MultipartFile;
+import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.core.type.TypeReference;
 
 import java.util.Arrays;
 import java.util.List;
@@ -22,75 +25,99 @@ import java.util.List;
 public class StyleAnalysisService {
 
     private final ChatClient.Builder chatClientBuilder;
+    private final ObjectMapper om = new ObjectMapper();
+
+
 
     public StyleAnalysisResult analyze(MultipartFile selfie) {
         try {
-            ChatClient chat = chatClientBuilder.build();
+            var chat = chatClientBuilder.build();
 
-            SystemMessage system = SystemMessage.builder()
-                    .text("""
-              당신은 퍼스널 컬러/패션 분석 전문가입니다.
-              사용자 셀피를 보고 다음 JSON 키만 채워서 한국어로 간결하게 답하세요.
-              tone(spring-light|summer-light|autumn-muted|winter-bright 등), 
-              contrast(low|medium|high), faceShape, mood, palette(HEX 4~6개), 
-              quality{exposure, whiteBalance, needsRetake(true/false)}.
-              """)
-                    .build();
+            var system = SystemMessage.builder().text("""
+              너는 퍼스널 컬러/패션 분석 전문가.
+              아래 정확한 JSON만 반환해. 자연어/코드펜스/주석 금지.
+              {
+                "tone": "summer-light|winter-bright|autumn-muted|spring-light",
+                "contrast": "low|medium|high",
+                "faceShape": "oval|square|heart|round|oblong",
+                "mood": "neutral|soft-cool|warm-bright|...",
+                "palette": ["#RRGGBB", "#RRGGBB", "#RRGGBB", "#RRGGBB"],
+                "quality": {"exposure": 0.0, "whiteBalance": 0.0, "needsRetake": false}
+              }
+            """).build();
 
-            Media media = Media.builder()
+            // [A] 업로드된 이미지 메타 로그 (여기!)
+            log.info("[ANALYSIS][MEDIA] contentType={}, bytes={}", selfie.getContentType(), selfie.getSize());
+
+            var media = Media.builder()
                     .mimeType(MimeType.valueOf(selfie.getContentType()))
                     .data(new ByteArrayResource(selfie.getBytes()))
                     .build();
 
-            UserMessage user = UserMessage.builder()
-                    .text("셀피 기반 퍼스널 컬러/대비/얼굴형/팔레트/품질을 JSON으로만 반환해줘.")
-                    .media(media)
-                    .build();
+            var user = UserMessage.builder()
+                    .text("위 스키마 그대로 JSON만 반환.")
+                    .media(media).build();
 
-            Prompt prompt = Prompt.builder().messages(system, user).build();
-            String content = chat.prompt(prompt).call().content();
+            var prompt = Prompt.builder().messages(system, user).build();
+            var raw = chat.prompt(prompt).call().content();
+            log.info("[ANALYSIS][RAW]\n{}", raw);
 
-            // ⚠️ 간단 파서: 실제 운영 시 JSON Schema 기반 파싱/검증 권장
-            StyleAnalysisResult r = new StyleAnalysisResult();
-            // 기본값
-            r.setTone(extract(content, "tone", "summer-light"));
-            r.setContrast(extract(content, "contrast", "low"));
-            r.setFaceShape(extract(content, "faceShape", "oval"));
-            r.setMood(extract(content, "mood", "soft-cool"));
 
-            List<String> palette = Arrays.asList(
-                    "#cfe7f5","#e7dfff","#c7e9e3","#f7f1ea"
-            );
-            String pal = extract(content, "palette", null);
-            if (pal != null && pal.contains("#")) {
-                // 매우 간단 분리
-                palette = Arrays.stream(pal.replace("[","").replace("]","")
-                                .replace("\"","").split(","))
-                        .map(String::trim).toList();
+            // ```json ... ``` 제거
+            String json = raw.replaceAll("^```json\\s*|\\s*```$", "").trim();
+
+            // [C] 코드펜스 제거 후 JSON 문자열 로그 (여기!)
+            log.info("[ANALYSIS][JSON]\n{}", json);
+
+            // 안전 파싱
+            JsonNode root = om.readTree(json);
+
+            // [D] 루트/키/팔레트 노드 상태 로그 (여기!)
+            log.info("[ANALYSIS][ROOT isObject={} keys={}]", root.isObject(), root.fieldNames().hasNext());
+            JsonNode palNode = root.path("palette");
+            log.info("[ANALYSIS][PALETTE nodeType={}, isArray={}, value={}]",
+                    palNode.getNodeType(), palNode.isArray(), palNode.toString());
+            if (palNode.isArray()) {
+                log.info("[ANALYSIS][PALETTE size={}]", palNode.size());
             }
-            r.setPalette(palette);
 
+            StyleAnalysisResult r = new StyleAnalysisResult();
+            r.setTone(optText(root,"tone","summer-light"));
+            r.setContrast(optText(root,"contrast","low"));
+            r.setFaceShape(optText(root,"faceShape","oval"));
+            r.setMood(optText(root,"mood","neutral"));
+
+            // palette
+            if (root.has("palette") && root.get("palette").isArray()) {
+                var list = om.convertValue(root.get("palette"), new TypeReference<java.util.List<String>>(){});
+                r.setPalette(list);
+            } else {
+                r.setPalette(java.util.List.of("#cfe7f5","#e7dfff","#c7e9e3","#f7f1ea"));
+            }
+
+            // quality
             StyleAnalysisResult.Quality q = new StyleAnalysisResult.Quality();
-            q.setExposure(parseDoubleSafe(extract(content,"exposure","0.8"), 0.8));
-            q.setWhiteBalance(parseDoubleSafe(extract(content,"whiteBalance","0.8"), 0.8));
-            q.setNeedsRetake(Boolean.parseBoolean(extract(content,"needsRetake","false")));
+            var qn = root.path("quality");
+            q.setExposure(qn.path("exposure").asDouble(0.8));
+            q.setWhiteBalance(qn.path("whiteBalance").asDouble(0.8));
+            q.setNeedsRetake(qn.path("needsRetake").asBoolean(false));
             r.setQuality(q);
 
             return r;
         } catch (Exception e) {
-            log.error("analyze failed", e);
-            // 실패 시 기본값
+            // 실패시 안전 기본값
             StyleAnalysisResult r = new StyleAnalysisResult();
-            r.setTone("summer-light");
-            r.setContrast("low");
-            r.setFaceShape("oval");
-            r.setMood("soft-cool");
-            r.setPalette(List.of("#cfe7f5","#e7dfff","#c7e9e3","#f7f1ea"));
-            StyleAnalysisResult.Quality q = new StyleAnalysisResult.Quality();
-            q.setExposure(0.8); q.setWhiteBalance(0.8); q.setNeedsRetake(false);
+            r.setTone("summer-light"); r.setContrast("low"); r.setFaceShape("oval"); r.setMood("neutral");
+            r.setPalette(java.util.List.of("#cfe7f5","#e7dfff","#c7e9e3","#f7f1ea"));
+            var q = new StyleAnalysisResult.Quality(); q.setExposure(0.8); q.setWhiteBalance(0.8); q.setNeedsRetake(false);
             r.setQuality(q);
             return r;
         }
+
+    }
+
+    private String optText(JsonNode n, String k, String def){
+        return n.has(k) ? n.get(k).asText(def) : def;
     }
 
     private String extract(String text, String key, String def) {

@@ -25,14 +25,29 @@ public class ImgRestController {
     private final VirtualTryOnService virtualTryOnService;
 
     @PostMapping(value = "/analyze", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public StyleAnalysisResult analyze(
-            @RequestParam("selfie") MultipartFile selfie) {
-        return styleAnalysisService.analyze(selfie);
+    public StyleAnalysisResult analyze(@RequestParam("selfie") MultipartFile selfie) {
+        StyleAnalysisResult result = styleAnalysisService.analyze(selfie);
+
+        // [E] 컨트롤러 응답 로그 (여기!)
+        try {
+            com.fasterxml.jackson.databind.ObjectMapper om = new com.fasterxml.jackson.databind.ObjectMapper();
+            log.info("[ANALYSIS][RESPONSE] {}", om.writeValueAsString(result));
+        } catch (Exception ignore) {}
+
+        return result;
     }
 
     @PostMapping(value = "/recommend", consumes = MediaType.APPLICATION_JSON_VALUE)
     public StyleRecommendation recommend(@RequestBody StyleAnalysisResult analysis) {
-        return styleRecommendService.recommend(analysis);
+        StyleRecommendation rec = styleRecommendService.recommend(analysis);
+
+        // ★ 추가: 실제로 내려가는 JSON 구조 확인
+        try {
+            var om = new com.fasterxml.jackson.databind.ObjectMapper();
+            log.info("[RECOMMEND][RESPONSE] {}", om.writeValueAsString(rec));
+        } catch (Exception ignore) {}
+
+        return rec;
     }
 
     @PostMapping(value = "/tryon", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

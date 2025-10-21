@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.Base64;
 
 @Slf4j
 @Service
@@ -24,13 +23,41 @@ public class VirtualTryOnService {
 
     public TryOnResult tryOn(MultipartFile selfie, TryOnRequest req) {
         TryOnResult out = new TryOnResult();
-        try {
-            String desc = """
-          Create a realistic portrait preview of a person wearing the selected outfit.
-          The style should match: garmentId=%s, color=%s.
-          Keep a soft, flattering lighting, fashion photo grade, upper-body framing.
-          """.formatted(req.getGarmentId(), req.getColorHex());
 
+        try {
+            // ===============================
+            // ① 남성 중심 묘사 (명시적으로 남성으로 한정)
+            // ===============================
+            String genderDesc = """
+                    Male model, masculine features, short hair, natural expression.
+                    Realistic skin tone, Asian male appearance preferred.
+                    """;
+
+            // ===============================
+            // ② 카테고리별 촬영 구도 설정
+            // ===============================
+            String focusDesc = switch (req.getCategory() == null ? "tops" : req.getCategory().toLowerCase()) {
+                case "bottoms" -> "Full-body shot, focus on pants and lower outfit, standing pose, straight posture.";
+                case "outer" -> "Half-body shot, showing jacket or coat clearly over outfit.";
+                case "onepiece" -> "Full-body portrait, showing entire outfit naturally.";
+                default -> "Upper-body portrait, focus on top outfit with realistic body fit.";
+            };
+
+            // ===============================
+            // ③ 최종 프롬프트
+            // ===============================
+            String desc = """
+                    Fashion look visualization for male styling.
+                    %s
+                    Outfit: %s, color %s.
+                    %s
+                    Lighting soft and natural, background plain studio.
+                    Maintain real proportion and realistic clothes texture.
+                    """.formatted(genderDesc, req.getGarmentId(), req.getColorHex(), focusDesc);
+
+            // ===============================
+            // ④ 이미지 생성 요청
+            // ===============================
             ImageMessage msg = new ImageMessage(desc);
 
             OpenAiImageOptions opt = OpenAiImageOptions.builder()
@@ -44,10 +71,14 @@ public class VirtualTryOnService {
             ImagePrompt prompt = new ImagePrompt(List.of(msg), opt);
             ImageResponse res = imageModel.call(prompt);
 
+            // ===============================
+            // ⑤ 결과 처리
+            // ===============================
             String b64 = res.getResult().getOutput().getB64Json();
             out.setStatus("done");
             out.setImageB64("data:image/png;base64," + b64);
             return out;
+
         } catch (Exception e) {
             log.error("tryOn failed", e);
             out.setStatus("failed");
