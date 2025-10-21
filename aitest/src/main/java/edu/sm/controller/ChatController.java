@@ -40,6 +40,14 @@ public class ChatController {
         return "index";
     }
 
+    @RequestMapping("/aichat")
+    public String aichat(Model model) {
+        model.addAttribute("websocketurl", webSocketUrl);
+        model.addAttribute("center", dir+"aichat");
+        model.addAttribute("left", dir+"left");
+        return "index";
+    }
+
     @RequestMapping("/videocall")
     public String videocall(@RequestParam(required = false) String roomId,
                             @RequestParam(required = false) String custId,
