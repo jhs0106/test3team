@@ -65,7 +65,13 @@ logging:
 # @Value("${}")
 app:
   url:
-    adminserver: https://10.20.34.95:8444/
+    adminserver: https://10.20.34.124:8444/
+    websocketurl: https://10.20.34.124:8445/
+  dir:
+    imgsdir: file:///C:/test3team/imgs/
+    uploadimgsdir: C:/test3team/imgs/    # 파일 Write 용
+    logsdir: file:///C:/test3team/logs/     # 로그 출력 용
+    logsdirRead: C:/test3team/logs/ # Read용
   key:
     skey: ${MY_KEY}
 #    chatgpt: ENC(96io+0B0aLRRY31p7DlYjdEZoAu0vUpwK5l/FG10h6uYM0Dei2wRdzwMa78eru7XaOhjf9I4f7DRthbA1TKnekluejmFUaZ11vZCQu98rOjlAX/4UM0ExC//AunnSJYocdJb0np6ZVCLOfzHfOaaa8WvUrQyATrcBFXWWGTzPF2OMdpZKCzP+MBidcvQnPlZIcL+8rWvx5Fs4qTTie0Eho1YdIX0zGVO1HP2YfLtQ4k=)

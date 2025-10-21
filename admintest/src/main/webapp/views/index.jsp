@@ -110,6 +110,11 @@
                     <span>Operation</span></a>
             </li>
             <li class="nav-item active">
+                <a class="nav-link" href="<c:url value="/care-insights" />">
+                    <i class="fas fa-fw fa-heart"></i>
+                    <span>Care Insights</span></a>
+            </li>
+            <li class="nav-item active">
                 <a class="nav-link" href="<c:url value="/chat" />">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>chat</span></a>

@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("customer-care")
-public class CustomerCareViewController {
-    private static final String dir = "customercare/";
+@RequestMapping("reviews")
+public class ReviewViewController {
+    private static final String dir = "reviews/";
 
     @GetMapping("")
     public String view(Model model, HttpSession session){

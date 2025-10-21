@@ -15,6 +15,10 @@ java {
     }
 }
 
+ext {
+    set('springAiVersion', "1.0.3")
+}
+
 configurations {
     compileOnly {
         extendsFrom annotationProcessor
@@ -32,6 +36,9 @@ dependencies {
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     annotationProcessor 'org.projectlombok:lombok'
     providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
+
+    implementation 'org.springframework.ai:spring-ai-starter-model-openai'
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
 
 
     //websocket
@@ -78,6 +85,12 @@ dependencies {
     testAnnotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.ai:spring-ai-bom:${springAiVersion}"
+    }
 }
 
 tasks.named('test') {

@@ -18,12 +18,20 @@ spring:
       suffix: .jsp
   datasource:
     #url: jdbc:mysql://127.0.0.1:3306/shopdb?serverTimezone=Asia/Seoul
-#    driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
-#    url: jdbc:log4jdbc:mysql://127.0.0.1:3306/shopdb?characterEncoding=utf8
-#    username: smuser
+    #    driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+    #    url: jdbc:log4jdbc:mysql://127.0.0.1:3306/shopdb?characterEncoding=utf8
+    #    username: smuser
     url: jdbc:postgresql://localhost:5432/postgres
     username: postgres
     password: ENC(AZD/oOYNtCPlDC68dabOeA==)
+  ai:
+    openai:
+      api-key: ENC(+T9SWaH75QZqZr5jsSY/GPfYhyJSiku54nYHGBHzq2D8M6Ri7sq3QXgWNzqalZw1kxI4ewSWJ5sbOH0zCQt6418r05/ShuliVIYKCWLIZtjMAOwzahzqKH+vtkWOlu2v5C3XBYdZYl2/14oOWDyR6yjYFNOTyCBOpxAEphIYS2SVMLqr6rTbFFN1RpBFs4Iko7C3Lmx1PdzADzBqyCezj4u+2PCSYN4ChZKtLrY7QnI=)
+      chat:
+        options:
+          model: gpt-4o-mini
+          temperature: 0.1
+          max-tokens: 1000
 
 mybatis:
   type-aliases-package: edu.sm.app.dto
@@ -44,6 +52,7 @@ app:
     wsurl: https://192.168.45.41:8443/ #shop
     websocketurl: https://192.168.45.41:8443/ #shop
     operationbase: https://192.168.45.41:8443/ # user metrics
+    reviews: https://localhost:8445/
   dir:
     imgsdir: file:///C:/smspring/imgs/     # 화면 출력 용
     uploadimgsdir: C:/smspring/imgs/    # 파일 Write 용

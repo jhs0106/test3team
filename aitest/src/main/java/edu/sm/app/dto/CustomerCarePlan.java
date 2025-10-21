@@ -1,7 +1,5 @@
 package edu.sm.app.dto;
 
-
-
 import java.util.List;
 
 import lombok.AllArgsConstructor;
