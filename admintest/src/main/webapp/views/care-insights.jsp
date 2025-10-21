@@ -141,8 +141,19 @@
                     const item = document.createElement('div');
                     item.className = 'list-group-item';
 
+                    const header = document.createElement('div');
+                    header.className = 'd-flex justify-content-between align-items-center';
+
                     const title = document.createElement('strong');
                     title.textContent = review?.memberName || '익명 회원';
+
+                    const mood = (review?.sentiment || 'UNKNOWN').toString().toUpperCase();
+                    const badge = document.createElement('span');
+                    badge.className = 'badge badge-' + this.sentimentBadgeClass(mood);
+                    badge.textContent = mood;
+
+                    header.appendChild(title);
+                    header.appendChild(badge);
 
                     const text = document.createElement('p');
                     text.className = 'mb-1 text-gray-800';
@@ -152,7 +163,7 @@
                     when.className = 'text-muted';
                     when.textContent = this.formatDate(review?.createdAt);
 
-                    item.appendChild(title);
+                    item.appendChild(header);
                     item.appendChild(text);
                     item.appendChild(when);
                     container.appendChild(item);
@@ -163,6 +174,19 @@
                 if (!value) return '작성일 미상';
                 // ISO8601(YYYY-MM-DDTHH:mm:ss) → 'YYYY-MM-DD HH:mm' 형태로 자르기
                 return String(value).replace('T', ' ').substring(0, 16);
+            },
+
+            sentimentBadgeClass(sentiment) {
+                switch (sentiment) {
+                    case 'POSITIVE':
+                        return 'success';
+                    case 'NEGATIVE':
+                        return 'danger';
+                    case 'NEUTRAL':
+                        return 'secondary';
+                    default:
+                        return 'light';
+                }
             }
         };
 

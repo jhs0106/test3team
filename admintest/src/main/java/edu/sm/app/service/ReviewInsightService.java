@@ -2,6 +2,7 @@ package edu.sm.app.service;
 
 import edu.sm.app.dto.MemberReview;
 import edu.sm.app.dto.ReviewCareInsight;
+import edu.sm.app.repository.ReviewRepository;
 import jakarta.annotation.PostConstruct;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
@@ -12,39 +13,28 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.prompt.ChatOptions;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
-import org.springframework.web.client.RestClient;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class ReviewInsightService {
 
-    private final RestClient.Builder restClientBuilder;
+    private final ReviewRepository reviewRepository;
     private final ChatClient.Builder chatClientBuilder;
 
-    @Value("${app.url.reviews}")
-    private String reviewServiceBaseUrl;
-
-    private RestClient reviewClient;
     private ChatClient chatClient;
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm", Locale.KOREA);
 
     @PostConstruct
     void setUp() {
-        String baseUrl = (reviewServiceBaseUrl == null || reviewServiceBaseUrl.isBlank())
-                ? "http://localhost:8445"
-                : StringUtils.trimTrailingCharacter(reviewServiceBaseUrl, '/');
-        this.reviewClient = restClientBuilder.baseUrl(baseUrl).build();
         this.chatClient = chatClientBuilder.build();
     }
 
     public ReviewCareInsight generateCareInsight(int limit) {
-        List<MemberReview> reviews = fetchRecentReviews(limit);
+        int adjustedLimit = limit <= 0 ? 10 : limit;
+        List<MemberReview> reviews = fetchRecentReviews(adjustedLimit);
         ReviewCareInsight insight;
 
         if (reviews.isEmpty()) {
@@ -90,14 +80,9 @@ public class ReviewInsightService {
 
     private List<MemberReview> fetchRecentReviews(int limit) {
         try {
-            return reviewClient.get()
-                    .uri(builder -> builder.path("/reviews")
-                            .queryParam("limit", limit)
-                            .build())
-                    .retrieve()
-                    .body(new ParameterizedTypeReference<List<MemberReview>>() {});
+            return reviewRepository.findRecentReviews(limit);
         } catch (Exception ex) {
-            log.warn("Failed to fetch reviews from review service", ex);
+            log.warn("Failed to fetch reviews from database", ex);
             return List.of();
         }
     }
@@ -117,9 +102,11 @@ public class ReviewInsightService {
                 .sorted(Comparator.comparing(MemberReview::getCreatedAt, Comparator.nullsLast(Comparator.reverseOrder())))
                 .map(review -> {
                     String when = review.getCreatedAt() != null ? DATE_FORMATTER.format(review.getCreatedAt()) : "작성일 미상";
-                    return "- %s (%s): %s".formatted(
+                    String sentiment = defaultString(review.getSentiment(), "UNKNOWN");
+                    return "- %s (%s, 감정: %s): %s".formatted(
                             defaultString(review.getMemberName(), "익명 회원"),
                             when,
+                            sentiment,
                             defaultString(review.getReview(), ""));
                 })
                 .collect(Collectors.joining("\n"));

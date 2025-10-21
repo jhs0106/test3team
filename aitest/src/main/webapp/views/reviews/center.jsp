@@ -1,7 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <script>
-  let reviewCare = { = {
+  const reviewCare= {
     form: null,
     feedbackInput: null,
     alertBox: null,
@@ -30,8 +30,8 @@
       this.reviewList = document.getElementById('reviewList');
       this.loginAlert = document.getElementById('loginAlert');
 
-      // 서버에서 평가되는 JSP-EL은 HTML 속성에서만 사용 (JS 문자열 템플릿에는 절대 사용 X)
-      this.isLoggedIn = this.form?.dataset.loggedIn === 'true';
+      const loggedInAttr = this.form && this.form.dataset ? this.form.dataset.loggedIn : 'false';
+      this.isLoggedIn = String(loggedInAttr).toLowerCase() === 'true';
 
       if (this.form) {
         this.form.addEventListener('submit', (event) => {
@@ -267,7 +267,14 @@
   <div class="card">
     <div class="card-header d-flex justify-content-between align-items-center">
       <span>최근 후기</span>
-      <a href="<c:url value='/register'/>" class="btn btn-sm btn-outline-secondary">사람다움 케어 함께하기</a>
+      <c:choose>
+        <c:when test="${empty sessionScope.loginMember}">
+          <a href="<c:url value='/register'/>" class="btn btn-sm btn-outline-secondary">사람다움 케어 함께하기</a>
+        </c:when>
+        <c:otherwise>
+          <span class="small text-muted">함께해 주셔서 감사합니다.</span>
+        </c:otherwise>
+      </c:choose>
     </div>
     <ul class="list-group list-group-flush" id="reviewList">
       <li class="list-group-item text-muted">후기를 불러오는 중입니다…</li>

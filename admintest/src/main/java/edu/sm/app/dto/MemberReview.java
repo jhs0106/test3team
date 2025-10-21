@@ -11,5 +11,6 @@ public class MemberReview {
     private Long memberNo;
     private String memberName;
     private String review;
+    private String sentiment;
     private LocalDateTime createdAt;
 }
