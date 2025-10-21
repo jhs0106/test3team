@@ -322,7 +322,7 @@
             <div class="reco-right">
               <div class="reco-chip" style="background:${hex}"></div>
               <button type="button" class="btn btn-sm btn-outline-primary tryon-btn"
-                      data-id="${id}" data-hex="${hex}">입어보기</button>
+                      data-id="${id}" data-hex="${hex}" data-cat="${cat}">입어보기</button>
             </div>
           </div>
         `);
@@ -337,7 +337,8 @@
   $('#recoArea').on('click', 'button.tryon-btn', function(){
     const id  = $(this).data('id');
     const hex = $(this).data('hex');
-    doTryOn({ id, hex });
+    const cat = $(this).data('cat');   // ✅ 카테고리 추출
+    doTryOn({ id, hex, category: cat });
   });
 
   async function doTryOn(item){
@@ -350,9 +351,9 @@
       garmentId: item.id,
       colorHex: $('#colorHex').val() || item.hex,
       brightness: parseFloat($('#brightness').val()||0),
-      saturation: parseFloat($('#saturation').val()||0)
+      saturation: parseFloat($('#saturation').val()||0),
+      category: item.category || item.cat || (item.category = item.cat) || (item.cat = item.category)
     };
-
     try {
       const fd = new FormData();
       fd.append('selfie', lastSelfieFile);
