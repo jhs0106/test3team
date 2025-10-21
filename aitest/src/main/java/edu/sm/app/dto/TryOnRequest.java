@@ -14,4 +14,5 @@ public class TryOnRequest {
     // (선택) 밝기, 채도 조정용
     private double brightness;
     private double saturation;
+
 }
