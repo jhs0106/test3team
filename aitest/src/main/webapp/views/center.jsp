@@ -416,7 +416,7 @@
                 <div class="feature-icon">🎨</div>
                 <h4>이미지 생성</h4>
                 <p>AI를 활용한 이미지 생성 기능을 체험해보세요.</p>
-                <a href="<c:url value='/createimg'/>" class="btn btn-primary">생성하기</a>
+                <a href="<c:url value='/createimg/createimg1'/>" class="btn btn-primary">생성하기</a>
             </div>
         </div>
         <div class="col-md-6">
