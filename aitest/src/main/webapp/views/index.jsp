@@ -96,6 +96,11 @@
                         <a class="nav-link" href="<c:url value="/createimg/createimg1"/>">옷 추천</a>
                     </li>
                 </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="<c:url value="/websocket"/>">상담</a>
+                    </li>
+                </ul>
             </div>
         </nav>
     </c:when>
