@@ -1,7 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
-<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=15d758eb02a2d0158ff32a94530e3426"></script>
+<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=8ee89925e1f9948cdc13431478266ba8"></script>
 
 <style>
     .chatroom-detail-wrapper {
@@ -269,6 +269,7 @@
 </style>
 
 <script>
+    const API_BASE_URL = window.location.protocol + '//' + window.location.hostname + ':8445';
     const adminChatDetail = {
         roomId: '${roomId}',
         custId: '${custId}',
@@ -333,7 +334,7 @@
 
         loadCustomerLocation: function() {
             $.ajax({
-                url: 'https://10.20.34.124:8445/api/chatroom/' + this.roomId,
+                url: API_BASE_URL + '/api/chatroom/' + this.roomId,
                 type: 'GET',
                 success: (room) => {
                     if (room.latitude && room.longitude) {
@@ -401,7 +402,7 @@
                 return;
             }
             $.ajax({
-                url: 'https://10.20.34.124:8445/api/chatroom/' + this.roomId + '/assign',
+                url: API_BASE_URL + '/api/chatroom/' + this.roomId + '/assign',
                 type: 'POST',
                 data: { adminId },
                 success: (response) => {
@@ -432,7 +433,7 @@
 
         fetchRoomInfo() {
             $.ajax({
-                url: 'https://10.20.34.124:8445/api/chatroom/active/' + this.custId,
+                url: API_BASE_URL + '/api/chatroom/active/' + this.custId,
                 type: 'GET',
                 dataType: 'json',
                 success: (data) => {
@@ -456,7 +457,7 @@
             if (!this.adminId) {
                 return;
             }
-            const socket = new SockJS('${wsurl}adminchat');
+            const socket = new SockJS(API_BASE_URL+'/adminchat');
             this.stompClient = Stomp.over(socket);
             this.$connection.text('연결 중...').removeClass('text-danger').addClass('text-warning');
             this.stompClient.connect({}, (frame) => {
@@ -511,7 +512,7 @@
             }
 
             $.ajax({
-                url: 'https://10.20.34.124:8445/api/chatroom/' + this.roomId + '/close',
+                url: API_BASE_URL + '/api/chatroom/' + this.roomId + '/close',
                 type: 'POST',
                 success: (response) => {
                     this.appendSystemMessage('✅ 상담이 종료되었습니다.');
@@ -640,7 +641,7 @@
         },
 
         setupAdminWebRTC: function() {
-            this.rtcSocket = new WebSocket('wss://10.20.34.124:8445/signal');
+            this.rtcSocket = new WebSocket('wss://' + window.location.hostname + ':8445/signal');
 
             this.rtcSocket.onopen = () => {
                 console.log('✅ Admin Signaling Server 연결');

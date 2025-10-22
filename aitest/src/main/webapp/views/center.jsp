@@ -323,12 +323,6 @@
 </script>
 
 <div class="col-sm-12">
-    <!-- Hero Section -->
-    <div class="hero-section">
-        <h1>사람다움 케어</h1>
-        <p>당신의 일상, 외모, 마음, 습관을 가꿔드립니다</p>
-    </div>
-
     <!-- 명언 섹션 -->
     <div class="quote-section">
         <h2 style="font-size: 1.5rem; font-weight: 600; margin-bottom: 20px; color: #212529;">오늘의 지혜</h2>

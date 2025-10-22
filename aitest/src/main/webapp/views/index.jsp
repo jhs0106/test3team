@@ -14,6 +14,8 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.19/index.global.min.js'></script>
 
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=8ee89925e1f9948cdc13431478266ba8"></script>
+
     <%-- Web Socket Lib --%>
     <script src="/webjars/sockjs-client/sockjs.min.js"></script>
     <script src="/webjars/stomp-websocket/stomp.min.js"></script>
@@ -28,70 +30,12 @@
         }
     </style>
 
-
-
-    <script>
-        let index = {
-            init:function(){
-                //this.startQuestion();
-                //this.startVoice();
-            },
-            startVoice: async function(){
-                const audioPlayer = document.getElementById("mainAudioPlayer");
-                await audioPlayer.play();
-            },
-            startQuestion:function(){
-                springai.voice.initMic(this);
-                $('#mainSpinner').css('visibility','hidden');
-            },
-            handleVoice: async function(mp3Blob){
-
-                //스피너 보여주기
-                $('#mainSpinner').css('visibility','visible');
-
-                // 멀티파트 폼 구성
-                const formData = new FormData();
-                formData.append("speech", mp3Blob, 'speech.mp3');
-
-                // 녹화된 음성을 텍스트로 변환 요청
-                const response = await fetch("/ai3/stt2", {
-                    method: "post",
-                    headers: {
-                        'Accept': 'text/plain'
-                    },
-                    body: formData
-                });
-
-                // 텍스트 질문을 채팅 패널에 보여주기
-                const target = await response.text();
-                console.log('Handle:'+target);
-                location.href=target;
-
-                //
-                // $.ajax({
-                //     url:'/ai3/target',
-                //     data:{'questionText':questionText},
-                //     success:(target)=>{
-                //         location.href=target;
-                //     }
-                // });
-            }
-        }
-
-        $((()=>{
-            index.init();
-        }));
-
-    </script>
-
-
-
 </head>
 <body>
-<audio id="mainAudioPlayer" src="<c:url value="/mp3/start.mp3"/>" controls style="display:none;"></audio>
 
 <div class="jumbotron text-center" style="margin-bottom:0">
-    <h1>SpringAI System</h1>
+    <h1>사람다움 케어</h1>
+    <p>당신의 일상, 외모, 마음, 습관을 가꿔드립니다</p>
 </div>
 <ul class="nav justify-content-end">
     <c:choose>
@@ -112,11 +56,6 @@
             </li>
         </c:otherwise>
     </c:choose>
-    <li class="nav-item">
-        <button class="btn btn-primary" disabled >
-            <span class="spinner-border spinner-border-sm" id="mainSpinner"></span>
-        </button>
-    </li>
 
 </ul>
 <c:choose>
@@ -194,7 +133,7 @@
 </div>
 
 <div class="text-center" style="background-color:black; color: white; margin-bottom:0; max-height: 50px;">
-    <p>Footer</p>
+    <p></p>
 </div>
 
 </body>
