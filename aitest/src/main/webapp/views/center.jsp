@@ -322,7 +322,7 @@
     });
 </script>
 
-<div class="col-sm-10">
+<div class="col-sm-12">
     <!-- Hero Section -->
     <div class="hero-section">
         <h1>사람다움 케어</h1>

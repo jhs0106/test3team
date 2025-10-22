@@ -129,27 +129,7 @@
             <div class="collapse navbar-collapse" id="collapsibleNavbar">
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link" href="<c:url value="/springai1"/>">SrpingAi1</a>
-                    </li>
-                </ul>
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link" href="<c:url value="/springai2"/>">SrpingAi2</a>
-                    </li>
-                </ul>
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link" href="<c:url value="/springai3"/>">SrpingAi3</a>
-                    </li>
-                </ul>
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link" href="<c:url value="/springai4"/>">SrpingAi4</a>
-                    </li>
-                </ul>
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link" href="<c:url value="/springai5"/>">SrpingAi5</a>
+                        <a class="nav-link" href="<c:url value="/springai1"/>">일정</a>
                     </li>
                 </ul>
                 <ul class="navbar-nav">
@@ -159,23 +139,22 @@
                 </ul>
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link" href="<c:url value="/appearance"/>">Appearance</a>
+                        <a class="nav-link" href="<c:url value="/appearance"/>">외모 관리</a>
                     </li>
                 </ul>
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link" href="<c:url value="/book"/>">Book</a>
+                        <a class="nav-link" href="<c:url value="/book"/>">책 추천</a>
                     </li>
                 </ul>
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link" href="<c:url value="/diary"/>">Diary</a>
-                        <a class="nav-link" href="<c:url value="/book"/>">Book</a>
+                        <a class="nav-link" href="<c:url value="/diary"/>">일기 작성</a>
                     </li>
                 </ul>
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link" href="<c:url value="/createimg"/>">test</a>
+                        <a class="nav-link" href="<c:url value="/createimg"/>">옷 추천</a>
                     </li>
                 </ul>
             </div>
