@@ -53,6 +53,8 @@
         closed: '#closedRoomListBody'
     };
 
+    const API_BASE_URL = window.location.protocol + '//' + window.location.hostname + ':8445';
+
     let chatRoomList = {
         init: function() {
             console.log("🚀 채팅방 리스트 초기화");
@@ -66,7 +68,7 @@
 
         loadRooms: function() {
             $.ajax({
-                url: 'https://10.20.34.124:8445/api/chatroom/all',
+                url: API_BASE_URL + '/api/chatroom/all',
                 type: 'GET',
                 success: (data) => {
                     console.log("✅ 채팅방 리스트 조회 성공:", data);
