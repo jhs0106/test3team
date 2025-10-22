@@ -158,6 +158,21 @@
     from { opacity: 0; transform: translateY(10px); }
     to   { opacity: 1; transform: translateY(0); }
   }
+  .spinner-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    background: rgba(255, 255, 255, 0.75);
+    width: 100%;
+    height: 100%;
+    border-radius: 8px;
+  }
 </style>
 <script>
   const SESSION_GENDER = '<%= gender %>';
@@ -174,8 +189,10 @@
           <div class="card-body text-center">
             <input type="file" id="selfie" accept="image/*" class="form-control mb-2">
             <img id="selfiePreview" class="img-fluid border" src="/image/assistant.jpg" alt="selfie preview">
-            <button id="btnAnalyze" class="btn btn-primary mt-3 w-100">분석 시작</button>
-            <div id="analyzeStatus" class="small text-muted mt-2">대기 중</div>
+            <button id="btnAnalyze" class="btn btn-primary mt-3 w-100">
+              <span class="spinner-border spinner-border-sm d-none" id="analyzeSpinner"></span>
+              <span id="analyzeText">분석 시작</span>
+            </button>            <div id="analyzeStatus" class="small text-muted mt-2">대기 중</div>
           </div>
         </div>
       </div>
@@ -206,13 +223,16 @@
       <div class="col-sm-4 mb-3">
         <div class="card">
           <div class="card-header">4️⃣ 가상 착장 프리뷰</div>
-          <div class="card-body text-center">
-            <img id="tryonImage" class="img-fluid border" src="/image/assistant.jpg" alt="try-on preview">
-            <div class="mt-3 d-flex justify-content-center">
-              <input type="color" id="colorHex" value="#E6EEF7" class="form-control form-control-color mr-2">
-              <input type="number" id="brightness" step="0.05" min="-1" max="1" value="0" class="form-control mr-2" placeholder="밝기">
-              <input type="number" id="saturation" step="0.05" min="-1" max="1" value="0" class="form-control" placeholder="채도">
+          <div class="card-body text-center position-relative">
+
+            <!-- 스피너 오버레이 -->
+            <div id="tryonSpinner" class="spinner-overlay d-none">
+              <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status"></div>
+              <div class="mt-2 text-primary font-weight-bold">착장 생성 중...</div>
             </div>
+
+            <img id="tryonImage" class="img-fluid border" src="/image/assistant.jpg" alt="try-on preview">
+
           </div>
         </div>
       </div>
@@ -260,6 +280,12 @@
     if (!lastSelfieFile) { alert('이미지를 선택하세요'); return; }
     $('#analyzeStatus').text('분석 중...');
 
+    //  스피너 표시
+    $('#analyzeSpinner').removeClass('d-none');
+    $('#analyzeText').text('분석 중...');
+    $('#btnAnalyze').prop('disabled', true);
+    $('#analyzeStatus').text('분석 중...');
+
     // 분석 호출
     const fd = new FormData();
     fd.append('selfie', lastSelfieFile);
@@ -293,6 +319,11 @@
     } catch (e) {
       console.error('[RECOMMEND][ERROR]', e);
       $('#recoArea').html('<div class="text-danger small">추천 호출 실패: ' + e.message + '</div>');
+    } finally {
+      // 스피너 끔
+      $('#analyzeSpinner').addClass('d-none');
+      $('#analyzeText').text('분석 시작');
+      $('#btnAnalyze').prop('disabled', false);
     }
 
     $('#analyzeStatus').text('완료');
@@ -310,7 +341,7 @@
       any = true;
       area.append(`<div class="fw-bold mt-2">${cat}</div>`);
 
-      arr.forEach((item, idx)=>{
+      arr.forEach((item, idx) => {
         const name   = item?.name || item?.title || '(추천 아이템)';
         const hex    = item?.hex || item?.colorHex || item?.color || '#E6EEF7';
         const id     = item?.id || `${cat}-${idx}`;
@@ -320,6 +351,7 @@
         const thumbHtml  = thumb  ? `<img src="${thumb}" alt="thumb" class="reco-thumb">` : '';
         const reasonHtml = reason ? `<div class="reco-reason">${reason}</div>` : '';
 
+        // ✅ 버튼 내부에 스피너와 텍스트를 함께 넣음
         const $card = $(`
           <div class="reco-card">
             <div class="reco-left">
@@ -332,7 +364,10 @@
             <div class="reco-right">
               <div class="reco-chip" style="background:${hex}"></div>
               <button type="button" class="btn btn-sm btn-outline-primary tryon-btn"
-                      data-id="${id}" data-hex="${hex}" data-cat="${cat}">입어보기</button>
+                      data-id="${id}" data-hex="${hex}" data-cat="${cat}">
+                <span class="spinner-border spinner-border-sm d-none"></span>
+                <span class="btn-text">입어보기</span>
+              </button>
             </div>
           </div>
         `);
@@ -347,24 +382,28 @@
   $('#recoArea').on('click', 'button.tryon-btn', function(){
     const id  = $(this).data('id');
     const hex = $(this).data('hex');
-    const cat = $(this).data('cat');   // ✅ 카테고리 추출
-    doTryOn({ id, hex, category: cat });
+    const cat = $(this).data('cat');
+    doTryOn({ id, hex, category: cat }, this);
   });
 
-  async function doTryOn(item){
+  async function doTryOn(item, btn){
     if (!lastSelfieFile) { alert('이미지를 선택하세요'); return; }
 
-    const $btn = $(document.activeElement).closest('button.tryon-btn');
-    $btn.prop('disabled', true).text('처리중…');
+    const $btn = $(btn);
+    $btn.prop('disabled', true).text('처리중...');
+
+    // ✅ 프리뷰 스피너 표시
+    $('#tryonSpinner').removeClass('d-none');
 
     const req = {
       garmentId: item.id,
-      colorHex: $('#colorHex').val() || item.hex,
+      colorHex: item.hex || $('#colorHex').val() || '#E6EEF7',
       brightness: parseFloat($('#brightness').val()||0),
       saturation: parseFloat($('#saturation').val()||0),
-      category: item.category || item.cat || (item.category = item.cat) || (item.cat = item.category),
+      category: item.category || item.cat,
       gender: SESSION_GENDER
     };
+
     try {
       const fd = new FormData();
       fd.append('selfie', lastSelfieFile);
@@ -386,7 +425,10 @@
       console.error('[TRYON][ERROR]', e);
       alert('착장 합성 실패: ' + e.message);
     } finally {
+      // ✅ 프리뷰 스피너 숨기기
+      $('#tryonSpinner').addClass('d-none');
       $btn.prop('disabled', false).text('입어보기');
     }
   }
+
 </script>

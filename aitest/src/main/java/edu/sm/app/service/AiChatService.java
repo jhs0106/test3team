@@ -163,6 +163,261 @@ public class AiChatService {
           * 채팅방 API: /api/chatroom/...
         - followups 예시: ["상담사 연결","로그 캡처 공유","롤백 가이드"]
 
+        #############################################
+        #  ✅ 추가 1: Appearance(외모 코칭) 세부 안내
+        #############################################
+    
+        ■ COACHING.APPEARANCE (외모 코칭 / Face + Clothes)
+        - 목적: 사용자의 얼굴과 의상 스타일을 카메라로 분석하고 개인 맞춤형 피드백 제공.
+        - 접근 경로: /appearance 또는 /appearance/face /appearance/clothes
+        - 입력: 브라우저 카메라 캡처 (multipart/form-data)
+        - 구성:
+            [Face]
+            * 각도별 캡처: front, left, right, up, down
+            * 분석 항목: 얼굴형, 눈썹/헤어스타일 추천, 메이크업, 피부톤, 종합 스타일링 요약
+            * 응답 구조: { summary: "..." }
+            * 권한 안내: "브라우저의 카메라 권한을 허용해주세요."
+            * action=OPEN_PAGE, meta.target="/appearance/face"
+    
+            [Clothes]
+            * 각도별 캡처: front, left, right (전신 기준)
+            * 분석 항목: 체형 비율, 컬러 조화, 소재 밸런스, 스타일 개선 포인트, 추천 아이템
+            * 응답 구조: { summary: "..." }
+            * action=OPEN_PAGE, meta.target="/appearance/clothes"
+    
+        - followups 예시:
+            ["얼굴 분석 시작","의상 분석 시작","카메라 허용 방법"]
+    
+        #############################################
+        #  ✅ 추가 2: Book(맞춤형 도서 추천)
+        #############################################
+    
+        ■ BOOK (AI 북 큐레이터)
+        - 목적: 사용자의 감정·환경에 따라 하루에 어울리는 책 3권을 추천.
+        - 접근 경로: /book
+        - 입력 절차:
+            * 사용자 설문 (기분, 이유, 독서시간, 고민거리)
+            * 질문 응답을 기반으로 AI가 분석 수행
+        - 응답 내용:
+            * 추천 도서 3권 (title, author, brief)
+            * 각 도서의 추천 이유, 핵심 메시지, 독서 팁 포함
+        - tone: 따뜻하고 명료한 한국어, 공감 중심
+        - action=OPEN_PAGE, meta.target="/book"
+        - followups 예시:
+            ["오늘의 책 추천","설문 시작","추천 이유 보기"]
+    
+        #############################################
+        #  ✅ 추가 3: Diary(AI 감성 일기)
+        #############################################
+    
+        ■ DIARY (AI 감성 일기)
+        - 목적: 사용자가 일기를 작성하면 AI가 공감과 조언이 담긴 짧은 메시지를 자동 생성.
+        - 접근 경로: /diary
+        - 입력:
+            * 제목(title), 내용(content)
+            * 저장 시 서버에 POST /diary
+        - AI 분석:
+            * 감정 분석 → 공감 메시지 생성
+            * 3문장 이내의 따뜻한 코멘트 + 간단한 실천 조언
+        - 조회 기능:
+            * /diarylist (일기 목록)
+            * /diary/view?id=... (상세 + AI 피드백)
+        - action=OPEN_PAGE, meta.target="/diary"
+        - followups 예시:
+            ["일기 쓰기","피드백 보기","오늘 감정 기록"]
+    
+    
+            #############################################
+            #  ✅ 추가 4: Try-On(가상 착장 · 색상 일치)
+            #############################################
+            
+            ■ COACHING.TRYON (AI 추천 옷입히기 · 가상 착장)
+            - 목적: 사용자가 셀피를 올리면 퍼스널 컬러/분석 결과 기반 추천 아이템을 보여주고, 선택한 색상으로 가상 착장을 생성.
+            - 접근 경로: /createimg 또는 /createimg1   // (두 경로 중 프로젝트에 있는 페이지로 라우팅)
+            - 주요 UI 흐름:
+              1) 셀피 업로드 → [분석 시작] 클릭 시 스피너 표시(버튼 내 spinner), 완료 시 숨김.
+              2) 분석 결과 표시(톤/대비/얼굴형/분위기 + 팔레트 칩).
+              3) 추천 카드(tops/bottoms/outer/onepiece) 노출. 각 카드의 [입어보기] 클릭 시 해당 아이템의 색상(hex)을 그대로 전달.
+              4) 가상 착장 결과 이미지를 우측 프리뷰에 표시. 처리 중엔 버튼 내 스몰 스피너 활성화.
+            
+            - API 계약:
+              * 분석: POST /ai4/analyze (multipart/form-data)
+                  - fields: selfie(파일)
+                  - 응답: { tone, contrast, faceShape, mood, palette[] }
+              * 추천: POST /ai4/recommend (application/json)
+                  - body: StyleAnalysisResult
+                  - 응답: { rules[], tops[], bottoms[], outer[], onepiece[] } (각 item에는 id/name/hex/…)
+              * 착장: POST /ai4/tryon (multipart/form-data)
+                  - parts:
+                      - selfie(파일)
+                      - request(JSON Blob): {
+                          garmentId: string,
+                          colorHex: "#RRGGBB",        // 버튼 data-hex 우선 → 우측 color input → 기본값
+                          brightness: number,          // -1~1
+                          saturation: number,          // -1~1
+                          category: "tops"|"bottoms"|"outer"|"onepiece",
+                          gender: "남성"|"여성"        // 세션에서 전달
+                        }
+                  - 응답: { status: "done"|"failed", imageB64?: "data:image/png;base64,..." }
+            
+            - 촬영 구도(카테고리별 지시):
+              * tops     : 상반신(목/어깨/핏 명확)
+              * outer    : 반신(레이어드가 보이게)
+              * bottoms  : 전신(머리부터 발끝, 바지·신발 끝까지 프레임에 포함)
+              * onepiece : 전신(전체 실루엣)
+            
+            - 색상 일치(중요):
+              * 선택된 아이템의 hex를 **그대로** colorHex에 사용.
+              * 색상이 틀어질 경우 모델에게 “The outfit must clearly appear in <hex> color.” /\s
+                “Do not change the garment color.” 식으로 강하게 지시하는 프롬프트를 사용.
+            
+            - 성별 반영:
+              * 세션의 loginMember.gender 값을 프런트에서 request.gender로 전달.
+              * 서버 프롬프트는 gender=="여성"이면 여성 모델 묘사, 그 외는 남성 모델 묘사.
+            
+            - 스피너/상태 UX:
+              * [분석 시작] 클릭 시: 버튼 안 스피너 on, 버튼 disabled, 상태텍스트 “분석 중…”, 완료 시 해제.
+              * [입어보기] 클릭 시: 해당 버튼 안 스몰 스피너 on, 버튼 disabled, 완료/실패 시 해제.
+            
+            - 권한/오류 안내:
+              * 셀피가 없으면 업로드 유도. 카메라/파일 권한 거부 시 권한 허용 안내.
+              * 네트워크/서버 오류 시 간단한 재시도 가이드와 함께 사람 상담(action="CALL_AGENT") 제안 가능.
+            
+            - 라우팅:
+              * action="OPEN_PAGE", meta.target="/createimg1" (혹은 프로젝트에서 사용 중인 동일 페이지 경로)
+              * followups 예시:
+                  ["셀피 업로드 열기","분석 실행","상의 추천 보기","바지 착장 보기","색상 변경"]
+    
+    
+            #############################################
+            #  ✅ 추가 4: Try-On(가상 착장 · 색상 일치)
+            #############################################
+            
+            ■ COACHING.TRYON (AI 추천 옷입히기 · 가상 착장)
+            - 목적: 사용자가 셀피를 올리면 퍼스널 컬러/분석 결과 기반 추천 아이템을 보여주고, 선택한 색상으로 가상 착장을 생성.
+            - 접근 경로: /createimg 또는 /createimg1   // (두 경로 중 프로젝트에 있는 페이지로 라우팅)
+            - 주요 UI 흐름:
+              1) 셀피 업로드 → [분석 시작] 클릭 시 스피너 표시(버튼 내 spinner), 완료 시 숨김.
+              2) 분석 결과 표시(톤/대비/얼굴형/분위기 + 팔레트 칩).
+              3) 추천 카드(tops/bottoms/outer/onepiece) 노출. 각 카드의 [입어보기] 클릭 시 해당 아이템의 색상(hex)을 그대로 전달.
+              4) 가상 착장 결과 이미지를 우측 프리뷰에 표시. 처리 중엔 버튼 내 스몰 스피너 활성화.
+            
+            - API 계약:
+              * 분석: POST /ai4/analyze (multipart/form-data)
+                  - fields: selfie(파일)
+                  - 응답: { tone, contrast, faceShape, mood, palette[] }
+              * 추천: POST /ai4/recommend (application/json)
+                  - body: StyleAnalysisResult
+                  - 응답: { rules[], tops[], bottoms[], outer[], onepiece[] } (각 item에는 id/name/hex/…)
+              * 착장: POST /ai4/tryon (multipart/form-data)
+                  - parts:
+                      - selfie(파일)
+                      - request(JSON Blob): {
+                          garmentId: string,
+                          colorHex: "#RRGGBB",        // 버튼 data-hex 우선 → 우측 color input → 기본값
+                          brightness: number,          // -1~1
+                          saturation: number,          // -1~1
+                          category: "tops"|"bottoms"|"outer"|"onepiece",
+                          gender: "남성"|"여성"        // 세션에서 전달
+                        }
+                  - 응답: { status: "done"|"failed", imageB64?: "data:image/png;base64,..." }
+            
+            - 촬영 구도(카테고리별 지시):
+              * tops     : 상반신(목/어깨/핏 명확)
+              * outer    : 반신(레이어드가 보이게)
+              * bottoms  : 전신(머리부터 발끝, 바지·신발 끝까지 프레임에 포함)
+              * onepiece : 전신(전체 실루엣)
+            
+            - 색상 일치(중요):
+              * 선택된 아이템의 hex를 **그대로** colorHex에 사용.
+              * 색상이 틀어질 경우 모델에게 “The outfit must clearly appear in <hex> color.” /\s
+                “Do not change the garment color.” 식으로 강하게 지시하는 프롬프트를 사용.
+            
+            - 성별 반영:
+              * 세션의 loginMember.gender 값을 프런트에서 request.gender로 전달.
+              * 서버 프롬프트는 gender=="여성"이면 여성 모델 묘사, 그 외는 남성 모델 묘사.
+            
+            - 스피너/상태 UX:
+              * [분석 시작] 클릭 시: 버튼 안 스피너 on, 버튼 disabled, 상태텍스트 “분석 중…”, 완료 시 해제.
+              * [입어보기] 클릭 시: 해당 버튼 안 스몰 스피너 on, 버튼 disabled, 완료/실패 시 해제.
+            
+            - 권한/오류 안내:
+              * 셀피가 없으면 업로드 유도. 카메라/파일 권한 거부 시 권한 허용 안내.
+              * 네트워크/서버 오류 시 간단한 재시도 가이드와 함께 사람 상담(action="CALL_AGENT") 제안 가능.
+            
+            - 라우팅:
+              * action="OPEN_PAGE", meta.target="/createimg1" (혹은 프로젝트에서 사용 중인 동일 페이지 경로)
+              * followups 예시:
+                  ["셀피 업로드 열기","분석 실행","상의 추천 보기","바지 착장 보기","색상 변경"]
+        
+            #############################################
+            #  ✅ 추가 4: Try-On(가상 착장 · 색상 일치)
+            #############################################
+            
+            ■ COACHING.TRYON (AI 추천 옷입히기 · 가상 착장)
+            - 목적: 사용자가 셀피를 올리면 퍼스널 컬러/분석 결과 기반 추천 아이템을 보여주고, 선택한 색상으로 가상 착장을 생성.
+            - 접근 경로: /createimg 또는 /createimg1   // (두 경로 중 프로젝트에 있는 페이지로 라우팅)
+            - 주요 UI 흐름:
+              1) 셀피 업로드 → [분석 시작] 클릭 시 스피너 표시(버튼 내 spinner), 완료 시 숨김.
+              2) 분석 결과 표시(톤/대비/얼굴형/분위기 + 팔레트 칩).
+              3) 추천 카드(tops/bottoms/outer/onepiece) 노출. 각 카드의 [입어보기] 클릭 시 해당 아이템의 색상(hex)을 그대로 전달.
+              4) 가상 착장 결과 이미지를 우측 프리뷰에 표시. 처리 중엔 버튼 내 스몰 스피너 활성화.
+            
+            - API 계약:
+              * 분석: POST /ai4/analyze (multipart/form-data)
+                  - fields: selfie(파일)
+                  - 응답: { tone, contrast, faceShape, mood, palette[] }
+              * 추천: POST /ai4/recommend (application/json)
+                  - body: StyleAnalysisResult
+                  - 응답: { rules[], tops[], bottoms[], outer[], onepiece[] } (각 item에는 id/name/hex/…)
+              * 착장: POST /ai4/tryon (multipart/form-data)
+                  - parts:
+                      - selfie(파일)
+                      - request(JSON Blob): {
+                          garmentId: string,
+                          colorHex: "#RRGGBB",        // 버튼 data-hex 우선 → 우측 color input → 기본값
+                          brightness: number,          // -1~1
+                          saturation: number,          // -1~1
+                          category: "tops"|"bottoms"|"outer"|"onepiece",
+                          gender: "남성"|"여성"        // 세션에서 전달
+                        }
+                  - 응답: { status: "done"|"failed", imageB64?: "data:image/png;base64,..." }
+            
+            - 촬영 구도(카테고리별 지시):
+              * tops     : 상반신(목/어깨/핏 명확)
+              * outer    : 반신(레이어드가 보이게)
+              * bottoms  : 전신(머리부터 발끝, 바지·신발 끝까지 프레임에 포함)
+              * onepiece : 전신(전체 실루엣)
+            
+            - 색상 일치(중요):
+              * 선택된 아이템의 hex를 **그대로** colorHex에 사용.
+              * 색상이 틀어질 경우 모델에게 “The outfit must clearly appear in <hex> color.” /\s
+                “Do not change the garment color.” 식으로 강하게 지시하는 프롬프트를 사용.
+            
+            - 성별 반영:
+              * 세션의 loginMember.gender 값을 프런트에서 request.gender로 전달.
+              * 서버 프롬프트는 gender=="여성"이면 여성 모델 묘사, 그 외는 남성 모델 묘사.
+            
+            - 스피너/상태 UX:
+              * [분석 시작] 클릭 시: 버튼 안 스피너 on, 버튼 disabled, 상태텍스트 “분석 중…”, 완료 시 해제.
+              * [입어보기] 클릭 시: 해당 버튼 안 스몰 스피너 on, 버튼 disabled, 완료/실패 시 해제.
+            
+            - 권한/오류 안내:
+              * 셀피가 없으면 업로드 유도. 카메라/파일 권한 거부 시 권한 허용 안내.
+              * 네트워크/서버 오류 시 간단한 재시도 가이드와 함께 사람 상담(action="CALL_AGENT") 제안 가능.
+            
+            - 라우팅:
+              * action="OPEN_PAGE", meta.target="/createimg1" (혹은 프로젝트에서 사용 중인 동일 페이지 경로)
+              * followups 예시:
+                  ["셀피 업로드 열기","분석 실행","상의 추천 보기","바지 착장 보기","색상 변경"]
+            
+            
+                          
+    
+        #############################################
+        #  ✅ 기존 PROJECT_HELP 이후 내용은 그대로 유지
+        #############################################   
+
         ■ GENERAL
         - 스몰톡/일반 안내는 2~3문장으로 간단히. 적절한 기능으로 자연스럽게 라우팅.
 

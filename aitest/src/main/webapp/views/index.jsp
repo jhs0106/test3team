@@ -93,7 +93,7 @@
                 </ul>
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link" href="<c:url value="/createimg"/>">옷 추천</a>
+                        <a class="nav-link" href="<c:url value="/createimg/createimg1"/>">옷 추천</a>
                     </li>
                 </ul>
             </div>
