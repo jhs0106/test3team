@@ -13,7 +13,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>SB Admin 2 - Dashboard</title>
+    <title>AI 파일럿 - 어드민 대시보드</title>
 
     <!-- Custom fonts for this template-->
     <link href="<c:url value="/vendor/fontawesome-free/css/all.min.css"/>" rel="stylesheet" type="text/css">
@@ -95,29 +95,14 @@
                     <span>Dashboard</span></a>
             </li>
             <li class="nav-item active">
-                <a class="nav-link" href="<c:url value="/websocket" />">
-                    <i class="fas fa-fw fa-tachometer-alt"></i>
-                    <span>Web Socket</span></a>
-            </li>
-            <li class="nav-item active">
                 <a class="nav-link" href="<c:url value="/chart" />">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>chart</span></a>
             </li>
             <li class="nav-item active">
-                <a class="nav-link" href="<c:url value="/operation" />">
-                    <i class="fas fa-fw fa-project-diagram"></i>
-                    <span>Operation</span></a>
-            </li>
-            <li class="nav-item active">
                 <a class="nav-link" href="<c:url value="/care-insights" />">
                     <i class="fas fa-fw fa-heart"></i>
                     <span>Care Insights</span></a>
-            </li>
-            <li class="nav-item active">
-                <a class="nav-link" href="<c:url value="/chat" />">
-                    <i class="fas fa-fw fa-tachometer-alt"></i>
-                    <span>chat</span></a>
             </li>
             <li class="nav-item active">
                 <a class="nav-link" href="<c:url value="/chatroom" />">

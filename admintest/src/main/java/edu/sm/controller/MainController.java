@@ -23,12 +23,10 @@ public class MainController {
     @Value("${app.url.websocketurl}")
     String websocketurl;
 
-    @Value("${app.url.operationbase}")
-    String operationBaseUrl;
+
 
     private void prepareCommon(Model model) {
         model.addAttribute("sseUrl", sseUrl);
-        model.addAttribute("operationBaseUrl", operationBaseUrl);
     }
 
     @RequestMapping("/")
@@ -45,21 +43,7 @@ public class MainController {
         return "index";
     }
 
-    @RequestMapping("/chat")
-    public String chat(Model model) {
-        prepareCommon(model);
-        model.addAttribute("wsurl",wsurl);
-        model.addAttribute("center", "chat");
-        return "index";
-    }
 
-    @RequestMapping("/websocket")
-    public String websocket(Model model) {
-        prepareCommon(model);
-        model.addAttribute("websocketurl",websocketurl);
-        model.addAttribute("center", "websocket");
-        return "index";
-    }
 
     @RequestMapping("/chatroom")
     public String chatroom(Model model) {
@@ -92,12 +76,7 @@ public class MainController {
         return "index";
     }
 
-    @RequestMapping("/operation")
-    public String operation(Model model) {
-        prepareCommon(model);
-        model.addAttribute("center", "operation");
-        return "index";
-    }
+
     @RequestMapping("/care-insights")
     public String careInsights(Model model) {
         prepareCommon(model);
