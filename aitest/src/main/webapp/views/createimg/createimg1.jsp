@@ -189,7 +189,7 @@
             <div>대비: <span id="contrast">-</span></div>
             <div>얼굴형: <span id="faceShape">-</span></div>
             <div>분위기: <span id="mood">-</span></div>
-            <div class="mt-2">🎨 팔레트:</div>
+            <div class="mt-2">🎨 추천 색상:</div>
             <div id="palette"></div>
           </div>
         </div>

@@ -559,7 +559,7 @@
     <div class="habit-tracker">
         <div class="habit-header">
             <div>
-                <h2>습관 트래커 💪</h2>
+                <h2>습관 관리</h2>
                 <p class="text-muted">꾸준함이 당신을 변화시킵니다</p>
             </div>
             <div style="display: flex; gap: 10px;">
