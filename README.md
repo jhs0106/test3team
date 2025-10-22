@@ -1,6 +1,6 @@
 ### 🧑‍💻TEAM 3 - 파일럿명 : 사람다움 케어
 ***
-### 시연 영상 : [![Video Label](http://img.youtube.com/vi/'JNBo558s100'/0.jpg)]
+### 시연 영상 : [![Video Label](http://img.youtube.com/vi/JNBo558s100/0.jpg)]
 ***
 # 🎯 주제
 -  Spring Boot와 JSP 그리고 OpenAI API를 중심으로 구축된 케어 웹앱 
